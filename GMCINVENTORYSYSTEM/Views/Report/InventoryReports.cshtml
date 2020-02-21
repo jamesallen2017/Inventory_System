@@ -1,0 +1,15 @@
+﻿@{
+    Layout = null;
+}
+@using ReportViewerForMvc
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+</head>
+<body style="padding-left: 100px;">
+    @Html.ReportViewer(ViewBag.ReportViewer as Microsoft.Reporting.WebForms.ReportViewer, new { @style = "width: 1350px;height: 765px;padding-left: 50px;" })
+</body>
+</html>

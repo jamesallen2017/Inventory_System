@@ -1,0 +1,1075 @@
+﻿@model GMCINVENTORYSYSTEM.Models.AllModels
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    @Scripts.Render("~/ContentJS/Modernizr")
+    @Styles.Render("~/Content/css")
+    <link href="~/assets/fonts/sli-icons/simple-line-icons.css" rel="stylesheet" />
+    <link href="~/assets/fonts/ff-din-pro/ff-din-pro.css" rel="stylesheet" />
+    <link href="~/assets/fonts/dashicons/css/dashicons.css" rel="stylesheet" />
+    <link href="~/assets/fonts/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/assets/fonts/fsquere/style.css" rel="stylesheet" />
+    <link href="~/assets/fonts/weather-icons/css/weather-icons.min.css" rel="stylesheet" />
+    <link href="~/assets/fonts/weather-icons/css/weather-icons-wind.min.css" rel="stylesheet" />
+</head>
+<body>
+    <style>
+        p {
+            word-wrap: break-word;
+            white-space: pre-wrap;
+        }
+
+        .header-top .navbar-brand img {
+            width: 150px;
+            height: 30px;
+        }
+
+        .header-top .navbar-brand {
+            line-height: 45px;
+        }
+
+        .header-top .navbar-nav > li.user-profile > a .user-name {
+            margin-left: 10px;
+        }
+    </style>
+    <div class="wrapper no-footer">
+        <header class="header-top navbar fixed-top">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle side-nav-toggle">
+                    <i class="ti-align-left"></i>
+                </button>
+
+                <a class="navbar-brand clicktab" style="padding-left: 30px; padding-top:15px">
+                    <img src="~/assets/images/GMC%20LOGO%20TRANSPARENT.png" width="150%" height="150%" />
+                </a>
+            </div>
+
+            <div class="collapse navbar-collapse" id="headerNavbarCollapse">
+                <ul class="nav navbar-nav navbar-right">
+                    @for (int main = 0; main < Model.RoleAccess.Main.Length; main++)
+                    {
+                        if (Model.RoleAccess.Main[main] == "1")
+                        {
+                            <li class="dropdown">
+                                <a href="javascript:;" class="btnitemNotification dropdown-toggle" data-toggle="dropdown">
+                                    <i class="sli-basket"></i>
+                                    <div class="badge bg-danger" id="RedBasketDot" style="display:none;"><span class="ItemCountNotification"></span> </div>
+                                </a>
+                                <ul class="dropdown-menu dropdown-lg list-group-dropdown" id="NotificationBasketDetails">
+                                    <li class="no-link"> New List For PR</li>
+                                </ul>
+                            </li>
+                        }
+                    }
+
+                    <li class="dropdown" id="ApprovalNotification" style="display:none">
+                        <a href="javascript:;" class="btnNotification dropdown-toggle" data-toggle="dropdown">
+                            <i class="sli-bell"></i>
+                            <div class="badge bg-danger" id="RedDot" style="display:none;"><span class="CountNotification"></span></div>
+                        </a>
+                        <ul class="dropdown-menu dropdown-lg list-group-dropdown" id="NotificationDetails">
+                            <li class="no-link">New Item Request For Approval</li>
+                        </ul>
+                    </li>
+
+                    <li class="dropdown" id="RequestNotification" style="display:none">
+                        <a href="javascript:;" class="btnRequestNotification dropdown-toggle" data-toggle="dropdown">
+                            <i class="sli-bell"></i>
+                            <div class=" badge bg-danger" id="RedDots" style="display:none;"><span class="CountRequestNotification"></span></div>
+                        </a>
+                        <ul class="dropdown-menu dropdown-lg list-group-dropdown" id="NotificationRequestsDetails">
+                            <li class="no-link"> New Item Request Status</li>
+                        </ul>
+                    </li>
+
+                    @*<li class="dropdown">
+                            <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">
+                                <i class="sli-bell"></i>
+                                <div class="new-alert active" id="RedDot" style="display:none;"></div>
+                            </a>
+                            <ul class="dropdown-menu dropdown-lg list-group-dropdown" id="NotificationDetails"></ul>
+                        </li>*@
+
+                    <li class="user-profile dropdown">
+                        <a href="javascript:;" class="clearfix dropdown-toggle" data-toggle="dropdown">
+                            <div class="user-name">@Session["FullName"].ToString() (@Session["UserRole"].ToString()) <small class="fa fa-angle-down"></small></div>
+                        </a>
+                        <ul class="dropdown-menu dropdown-animated pop-effect" role="menu">
+                            <li><a><i class="sli-user"></i>@Session["GroupName"].ToString() </a></li>
+                            <li><a><i class="fa fa-users"></i>@Session["Department"].ToString() </a></li>
+                            <li><a><i class="di di-admin-multisite"></i>@Session["DesignationName"].ToString() </a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="@Url.Action("LogoutAuthentication", "Login")" id="UserLogout"><i class="sli-logout"></i>Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <!-- END: Navbar-collapse -->
+
+        </header>
+        <!-- END: Header -->
+
+
+        <aside class="side-navigation-wrap sidebar-fixed">
+            <!-- START: Side Navigation -->
+            <div class="sidenav-inner">
+
+                <ul class="side-nav magic-nav">
+
+                    <li class="clicktab" style="margin-top: 10px">
+                        <a href="@Url.Action("Dashboard", "Home")" style="color: white; font: bold"><i class="di di-admin-home"></i><span class="nav-text">Home</span></a>
+                    </li>
+                    <!-- Stock man and Storeroom clerk-->
+                    @for (int main = 0; main < Model.RoleAccess.Main.Length; main++)
+                    {
+                        if (Model.RoleAccess.Main[main] == "2")
+                        {
+                            <li class="has-submenu">
+                                <a href="#submenuOne" data-toggle="collapse" aria-expanded="false" style="color: white; font: bold">
+                                    @*<i class="di di-forms"></i>*@
+
+                                    <i class="di fa fa-file-text-o"></i>
+                                    <span class="nav-text">Item Request</span>
+                                </a>
+
+                                <div class="sub-menu collapse secondary" id="submenuOne">
+                                    <ul>
+                                        @for (int sub = 0; sub < Model.RoleAccess.Sub.Length; sub++)
+                                        {
+                                            if (Model.RoleAccess.Sub[sub] == "21")
+                                            {
+                                                if (@Session["GroupName"].ToString() == "Central")
+                                                {
+                                                    <li class="clicktab"><a href="@Url.Action("CreateItemRequest", "Home", new { @id = "Central" })">Create Item Request</a></li>
+                                                    continue;
+                                                }
+                                                else if (@Session["GroupName"].ToString() == "Satellite")
+                                                {
+                                                    <li class="clicktab"><a href="@Url.Action("CreateItemRequest", "Home", new { @id = "Common" })">Create Item Request (Common)</a></li>
+
+                                                    <li class="clicktab"><a href="@Url.Action("CreateItemRequest", "Home", new { @id = "Unique" })">Create Item Request (Unique)</a></li>
+                                                    continue;
+                                                }
+                                            }
+                                            if (Model.RoleAccess.Sub[sub] == "22")
+                                            {
+
+                                                if (@Session["GroupName"].ToString() == "Central")
+                                                {
+                                                    <li class="clicktab"><a href="@Url.Action("ReleaseItem", "Home", new { @id = "Central" })">Release Item</a></li>
+                                                    continue;
+                                                }
+                                                else if (@Session["GroupName"].ToString() == "Satellite")
+                                                {
+                                                    <li class="clicktab"><a href="@Url.Action("ReleaseItem", "Home", new { @id = "Satellite" })">Release Item</a></li>
+                                                    continue;
+                                                }
+                                                continue;
+                                            }
+                                        }
+                                    </ul>
+                                </div>
+                            </li>
+                                        continue;
+                        }
+                    }
+                    @for (int main = 0; main < Model.RoleAccess.Main.Length; main++)
+                    {
+                        if (Model.RoleAccess.Main[main] == "3")
+                        {
+                            <li class="has-submenu">
+                                <a href="#submenufour" data-toggle="collapse" aria-expanded="false" style="color: white; font: bold">
+                                    @*<i class="di di-visibility"></i>*@
+                                    <i class="di fa fa-file-text-o"></i>
+                                    <span class="nav-text">Purchase Request</span>
+                                </a>
+
+                                <div class="sub-menu collapse secondary" id="submenufour">
+                                    <ul>
+                                        @for (int sub = 0; sub < Model.RoleAccess.Sub.Length; sub++)
+                                        {
+                                            if (Model.RoleAccess.Sub[sub] == "31")
+                                            {
+                                                <li class="clicktab"><a href="@Url.Action("CreatePR", "Home", new { @id="table"})">Create PR</a></li>
+                                                continue;
+                                            }
+                                            if (Model.RoleAccess.Sub[sub] == "32")
+                                            {
+                                                if (@Session["GroupName"].ToString() == "Central")
+                                                {
+                                                    <li class="clicktab"><a href="@Url.Action("PRReceiving", "Home", new { @id="Central"})">PR Receiving</a></li>
+                                                    continue;
+                                                }
+                                                else if (@Session["GroupName"].ToString() == "Satellite")
+                                                {
+                                                    <li class="clicktab"><a href="@Url.Action("PRReceiving", "Home", new { @id = "Satellite" })">PR Receiving</a></li>
+                                                    continue;
+                                                }
+                                                continue;
+                                            }
+                                        }
+                                    </ul>
+                                </div>
+                            </li>
+                                        continue;
+                        }
+                    }
+                    @for (int main0 = 0; main0 < Model.RoleAccess.Main.Length; main0++)
+                    {
+                        if (Model.RoleAccess.Main[main0] == "4")
+                        {
+                            if (@Session["GroupName"].ToString() == "Central")
+                            {
+                                <li class="clicktab">
+                                    <a href="@Url.Action("ApproveRequest", "Home")" style="color: white; font: bold">
+                                        @*<i class="di di-arrow-right-alt"></i>*@
+                                        <i class="di di-yes"></i>
+                                        <span class="nav-text">Approve Request</span>
+                                    </a>
+                                </li>
+                                continue;
+                            }
+                            else if (@Session["GroupName"].ToString() == "Satellite")
+                            {
+                                <li>
+                                    <a href="@Url.Action("Unique_Request", "Home")" style="color: white; font: bold">
+                                        <i class="di di-arrow-right-alt"></i>
+                                        <span class="nav-text">Approve Request</span>
+                                    </a>
+                                </li>
+                                continue;
+                            }
+                            continue;
+                        }
+                    }
+                    @for (int main1 = 0; main1 < Model.RoleAccess.Main.Length; main1++)
+                    {
+                        if (Model.RoleAccess.Main[main1] == "5")
+                        {
+                            <li class="has-submenu">
+                                <a href="#submenuTwo" data-toggle="collapse" aria-expanded="false" style="color: white; font: bold">
+                                    <i class="di di-visibility"></i>
+                                    <span class="nav-text">Inquiry</span>
+                                </a>
+
+                                <div class="sub-menu collapse secondary" id="submenuTwo">
+                                    <ul>
+                                        @for (int sub = 0; sub < Model.RoleAccess.Sub.Length; sub++)
+                                        {
+                                            if (Model.RoleAccess.Sub[sub] == "51")
+                                            {
+                                                if (@Session["GroupName"].ToString() == "Central")
+                                                {
+                                                    <li class="clicktab"><a href="@Url.Action("CreatedItemRequest", "Home", new { @id = "Central"})">Created Item Request</a></li>
+                                                    continue;
+                                                }
+                                                else if (@Session["GroupName"].ToString() == "Satellite")
+                                                {
+                                                    <li class="clicktab"><a href="@Url.Action("CreatedItemRequest", "Home", new { @id = "Common" })">Created Item Request (Common)</a></li>
+                                                    <li class="clicktab"><a href="@Url.Action("CreatedItemRequest", "Home", new { @id = "Unique" })">Created Item Request (Unique)</a></li>
+                                                }
+                                            }
+                                            if (Model.RoleAccess.Sub[sub] == "52")
+                                            {
+                                                <li class="clicktab"><a href="@Url.Action("ApprovedItemRequest", "Home")">Approved Item Request</a></li>
+                                                continue;
+                                            }
+                                            if (Model.RoleAccess.Sub[sub] == "53")
+                                            {
+                                                <li class="clicktab"><a href="@Url.Action("RejectedItemRequest", "Home")">Rejected Item Request</a></li>
+                                                continue;
+                                            }
+                                            if (Model.RoleAccess.Sub[sub] == "54")
+                                            {
+                                                <li class="clicktab"><a href="@Url.Action("InquiryReleasedItem", "Home")">Released Item</a></li>
+                                                continue;
+                                            }
+                                            if (Model.RoleAccess.Sub[sub] == "55")
+                                            {
+                                                <li class="clicktab"><a href="@Url.Action("InquiryCreatedPR", "Home")">Created PR</a></li>
+                                                continue;
+                                            }
+                                            if (Model.RoleAccess.Sub[sub] == "56")
+                                            {
+                                                <li class="clicktab"><a href="@Url.Action("InquiryPRReceived", "Home")">PR Received</a></li>
+                                                continue;
+                                            }
+                                        }
+                                    </ul>
+                                </div>
+                            </li>
+                                        continue;
+                        }
+                        if (Model.RoleAccess.Main[main1] == "6")
+                        {
+                            <li class="has-submenu">
+                                <a href="#submenuTree" data-toggle="collapse" aria-expanded="false" style="color: white; font: bold">
+                                    <i class="di di-visibility"></i>
+                                    <span class="nav-text">Monitoring</span>
+                                </a>
+                                <div class="sub-menu collapse secondary" id="submenuTree">
+                                    <ul>
+
+                                        @for (int sub0 = 0; sub0 < Model.RoleAccess.Sub.Length; sub0++)
+                                        {
+                                            if (Model.RoleAccess.Sub[sub0] == "61")
+                                            {
+                                                <li class="clicktab"><a href="@Url.Action("MonitoringCreatedPR", "Home")">Created PR</a></li>
+                                                continue;
+                                            }
+                                            if (Model.RoleAccess.Sub[sub0] == "62")
+                                            {
+                                                <li class="clicktab"><a href="@Url.Action("MonitoringRequestedItem", "Home")">Requested Item</a></li>
+                                                continue;
+                                            }
+                                            if (Model.RoleAccess.Sub[sub0] == "63")
+                                            {
+                                                <li class="clicktab"><a href="@Url.Action("MonitoringReleasedItem", "Home")">Released Item</a></li>
+                                                continue;
+                                            }
+                                            if (Model.RoleAccess.Sub[sub0] == "64")
+                                            {
+                                                <li class="clicktab"><a href="@Url.Action("MonitoringPRReceived", "Home")">PR Received</a></li>
+                                                continue;
+                                            }
+                                            if (Model.RoleAccess.Sub[sub0] == "65")
+                                            {
+                                                <li class="clicktab"><a href="@Url.Action("MonitoringItemLocation", "Home")">Item Location</a></li>
+                                                continue;
+                                            }
+                                            if (Model.RoleAccess.Sub[sub0] == "66")
+                                            {
+                                                <li class="clicktab"><a href="@Url.Action("MonitoringManualAdjustment", "Home")">Manual Adjustment</a></li>
+                                                continue;
+                                            }
+                                            if (Model.RoleAccess.Sub[sub0] == "67")
+                                            {
+                                                <li class="clicktab"><a href="@Url.Action("MonitoringItemMovement", "Home")">Item Movement</a></li>
+                                                continue;
+                                            }
+                                            continue;
+                                        }
+                                    </ul>
+                                </div>
+                            </li>
+                                        continue;
+                        }
+                        if (Model.RoleAccess.Main[main1] == "7")
+                        {
+                            <li class="has-submenu">
+                                <a href="#submenuTen" id="mainmain" data-toggle="collapse" aria-expanded="false" style="color: white; font: bold">
+                                    <i class="di di-admin-generic"></i><span class="nav-text">Maintenance</span>
+                                </a>
+                                <div class="sub-menu collapse secondary" id="submenuTen">
+                                    <ul>
+                                        @for (int sub = 0; sub < Model.RoleAccess.Sub.Length; sub++)
+                                        {
+                                            if (Model.RoleAccess.Sub[sub] == "71")
+                                            {
+                                                <li class="clicktab" id="mainli1"><a href="@Url.Action("ItemManagement", "Maintenance", new { @id = "table" })">Item Management</a></li>
+                                                continue;
+                                            }
+                                            if (Model.RoleAccess.Sub[sub] == "72")
+                                            {
+                                                @*<li><a href="@Url.Action("ItemLocation", "Maintenance")">Create Item Location</a></li>
+                                                    <li><a href="@Url.Action("E_ItemLocation", "Maintenance")">Edit Item Location</a></li>*@
+                                                <li class="has-submenu" id="subitem">
+                                                    <a href="#contentmenuOne" id="mainsub" data-toggle="collapse" aria-expanded="false">
+                                                        <span class="nav-text">Item Location</span>
+                                                    </a>
+                                                    <div class="sub-menu collapse secondary" id="contentmenuOne">
+                                                        <ul>
+                                                            <li class="clicktab" id="mainitem1"><a style="left:20px" href="@Url.Action("ItemLocation", "Maintenance")">Create</a></li>
+                                                            <li class="clicktab" id="mainitem2"><a style="left:20px" href="@Url.Action("EditItemLocation", "Maintenance")">Edit</a></li>
+                                                        </ul>
+                                                    </div>
+                                                </li>
+                                                continue;
+                                            }
+                                            if (Model.RoleAccess.Sub[sub] == "73")
+                                            {
+                                                <li class="clicktab" id="mainli2"><a href="@Url.Action("ManualAdjustment","Maintenance")" class="animation-link">Manual Adjustment</a></li>
+                                                continue;
+                                            }
+                                            if (Model.RoleAccess.Sub[sub] == "74")
+                                            {
+                                                <li class="clicktab" id="mainli3"><a href="@Url.Action("UserManagement","Maintenance", new { @id="table"})">User Management</a></li>
+                                                continue;
+                                            }
+                                            if (Model.RoleAccess.Sub[sub] == "75")
+                                            {
+                                                <li class="clicktab" id="mainli4"><a href="@Url.Action("RoleManagement","Maintenance", new { @id="table"})">Role Management</a></li>
+                                                continue;
+                                            }
+                                            if (Model.RoleAccess.Sub[sub] == "76")
+                                            {
+                                                <li class="clicktab" id="mainli5"><a href="@Url.Action("SMTP","Maintenance")">SMTP</a></li>
+                                                continue;
+                                            }
+                                        }
+                                    </ul>
+                                </div>
+                            </li>
+                                        continue;
+                        }
+                    }
+                </ul>
+            </div>
+            <!-- END: sidebar-inner -->
+
+        </aside>
+        <!-- END: Side Navigation -->
+        <div class="main-container">
+            <!-- START: Main Container -->
+            @RenderBody()
+
+        </div>
+        <!-- END: Main Container -->
+        <script>
+
+            var mySessionVariableID = '@Session["UserID"].ToString()';
+            var UserRoleID = '@Session["UserRoleID"].ToString()';
+
+        </script>
+    </div>
+    <!-- END: wrapper -->
+    @Scripts.Render("~/bundles/jquery")
+    <script src="~/signalr/hubs"></script>
+    @RenderSection("scripts", required: false)
+    <script>
+        jQuery(document).ready(function () {
+            DataTableBasic.init();
+            FormValidationInline.init();
+            FormValidationTooltip.init();
+        });
+    </script>
+
+
+
+    <div class="modal modal-secondary fade" id="myModal82" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Requested Item</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="panel panel-default">
+                        <div class="row">
+                            <input type="hidden" id="HiddenReferenceNo" />
+                            <input type="hidden" id="HiddenStatus" />
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Requested by:</label>  <span id="Requesteds"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Responsible:</label>  <span id="Responsibles"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Purpose:</label>  <span id="Purposeses"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <table class="table" id="ItemRequestlist">
+                                    <thead>
+                                        <tr>
+                                            <th class="col-md-2">Item Code</th>
+                                            <th class="col-md-5">Part Name</th>
+                                            <th class="col-md-2 text-center">Remaining Stock</th>
+                                            <th class="col-md-2 text-center">Requested Quantity</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+
+                            <div class="col-md-12" id="showhiderejects" hidden="hidden">
+                                <div class="form-group input-group">
+                                    <span class="input-group-addon">Reject Remarks</span>
+                                    <textarea name="RejectRemarks" id="RejectRemarkss" rows="2" style="resize:vertical;" type="text" class="form-control validate[required]" placeholder="Reject Remarks....."></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btnCloses" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" id="btnRejects" class="btn btn-danger">Reject</button>
+                    <button type="button" id="btnConfirms" class="btn btn-primary" onclick="ApprovedButton()">Approve</button>
+                    <button type="button" id="btnCancels" class="btn btn-danger" style="display:none">Cancel</button>
+                    <button type="button" id="btnRejectConfirms" class="btn btn-primary" style="display:none" onclick="RejectedButton()">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal modal-secondary fade" id="myModal85" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog modal-lg" role="document">
+
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Item Request</h4>
+                </div>
+                <div class="modal-body">
+                    <div id="RejectDetails" style="display:none;">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Rejected by:</label>  <span id="RejectedBy"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Rejected Date:</label>  <span id="RejectedDate"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Reject Remarks:</label>  <span id="RejectRemarks"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="ApprovedDetails" style="display:none;">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Approved by:</label>  <span id="ApprovedBy"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Approved Date:</label>  <span id="ApprovedDate"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel panel-default">
+                        <div class="row">
+                            <div class="panel-body">
+                                <div class="col-md-12">
+                                    <table class="table" id="TableItemRequestForReleasing">
+                                        <thead>
+                                            <tr>
+                                                <th class="col-md-2">Item Code</th>
+                                                <th class="col-md-3">Part Name</th>
+                                                <th class="col-md-1 text-center">Requested Quantity</th>
+                                                <th class="col-md-1 text-center">Received</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+<script>
+    $(document).ready(function () {
+        if ($('#mainitem1,#mainitem2').hasClass('active') == true) {
+            $('#mainmain').attr("aria-expanded", "true");
+            $('#submenuTen').addClass("in");
+            $('#mainsub').css("color", "white");
+            $('#mainsub').css("font", "bold");
+            $('#mainsub').attr("aria-expanded", "true");
+        }
+        else if ($('#mainli1,#mainli2,#mainli3,#mainli4,#mainli5').hasClass('active') == true) {
+            $('#mainmain').attr("aria-expanded", "true");
+        }
+        else {
+            $('#mainmain').attr("aria-expanded", "false");
+            $('#submenuTen').removeClass("in");
+            $('#mainsub').css("color", "");
+            $('#mainsub').css("font", "");
+            $('#mainsub').attr("aria-expanded", "false");
+        }
+    });
+</script>
+<script type="text/javascript">
+    $(function () {
+
+        // signalr js code for start hub and send receive notification
+        var notificationHub = $.connection.notificationHub;
+        $.connection.hub.start(function () {
+            if (UserRoleID == "2" || UserRoleID == "3" || UserRoleID == "5") {
+                $("#ApprovalNotification").show();
+                $("#RequestNotification").hide();
+                GetValue();
+                NotificationApprovalDetails()
+            }
+            else {
+                GetRequestValue();
+                NotificationRequestDetails();
+                $("#RequestNotification").show();
+                $("#ApprovalNotification").hide();
+            }
+            NotificationItemDetails()
+            GetItemValue()
+        });
+
+        notificationHub.client.updateMessages = function () {
+            if (UserRoleID == "2" || UserRoleID == "3" || UserRoleID == "5") {
+                $("#ApprovalNotification").show();
+                $("#RequestNotification").hide();
+                GetValue();
+                NotificationApprovalDetails();
+            }
+            else {
+                GetRequestValue();
+                NotificationRequestDetails();
+                $("#RequestNotification").show();
+                $("#ApprovalNotification").hide();
+            }
+            NotificationItemDetails()
+            GetItemValue()
+        };
+
+
+
+
+
+    });
+
+    function GetValue() {
+
+        $('span.CountNotification').html(0)
+        $.ajax({
+            type: 'GET',
+
+            url: '/Home/GetCountNotification',
+            success: function (data) {
+                $('span.CountNotification').html(data)
+                if (data == 0) {
+                    $("#RedDot").hide();
+                }
+                else {
+                    $("#RedDot").show();
+                }
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        })
+    }
+
+    function GetRequestValue() {
+
+        $('span.CountNotification').html(0)
+        $.ajax({
+            type: 'GET',
+
+            url: '/Home/GetRequestCountNotification',
+            success: function (data) {
+                $('span.CountRequestNotification').html(data)
+                if (data == 0) {
+                    $("#RedDots").hide();
+                }
+                else {
+                    $("#RedDots").show();
+                }
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        })
+    }
+
+    function NotificationApprovalDetails() {
+
+        $.ajax({
+            type: 'POST',
+            url: '/home/GetNotificationApprovalDetails',
+            success: function (response) {
+
+                $('#NotificationDetails').empty();
+
+
+                $('#NotificationDetails').append($('<li class="no-link"> New Item Request For Approval</li>'));
+                var itemCount = 0;
+                $.each(response, function (index, value) {
+                    itemCount++;
+                    $('#NotificationDetails').append($('<li ><a href="#" class="NotificationApprove" id="' + value.NotificationReferenceNo + '">' +
+                        '<div class="user-list-wrap"><div class="profile-pic profile-icon"><i class="ti-file"></i></div> <div class="detail">' +
+                        '<span class="ReferenceNo text-normal" id="test">' + value.NotificationReferenceNo + '</span> <span class="time">' + value.NotificationEntryDate + '</span>' +
+                        '<p class="font-10 no-m-b text-overflow">(' + value.NotificationDesignation + ')</p> </div> </div> </a> </li >'));
+                });
+
+                GetValue();
+
+                $('#NotificationDetails').append($('<li><a href="/Home/ApproveRequest/" class="text-center">See all</a></li>'));
+
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        })
+    }
+
+    function NotificationRequestDetails() {
+
+        $.ajax({
+            type: 'POST',
+            url: '/home/GetNotificationRequestDetails',
+            success: function (response) {
+
+                $('#NotificationRequestsDetails').empty();
+
+                $('#NotificationRequestsDetails').append($('<li class="no-link"> New Item Request Status</li>'));
+                var itemCount = 0;
+
+                $.each(response, function (index, value) {
+                    itemCount++;
+                    $('#NotificationRequestsDetails').append($('<li ><a href="#" class="NotificationApprove" id="' + value.NotificationReferenceNo + '">' +
+                        '<div class="user-list-wrap"><div class="profile-pic profile-icon"><i class="ti-file"></i></div> <div class="detail">' +
+                        '<span class="ReferenceNo text-normal" id="test">' + value.NotificationReferenceNo + '</span> <span class="time">' + value.NotificationEntryDate + '</span>' +
+                        '<p class="font-10 no-m-b text-overflow">(' + value.NotificationDesignation + ')</p> </div> </div> </a> </li >'));
+                });
+
+
+
+
+                $('#NotificationRequestsDetails').append($('<li><a href="/Home/CreatedItemRequest/Common" class="text-center">See all</a></li>'));
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        })
+    }
+
+    function GetItemValue() {
+
+        $('span.ItemCountNotification').html(0)
+        $.ajax({
+            type: 'GET',
+
+            url: '/Home/GetItemCountNotification',
+            success: function (data) {
+                $('span.ItemCountNotification').html(data)
+                if (data == 0) {
+                    $("#RedBasketDot").hide();
+                }
+                else {
+                    $("#RedBasketDot").show();
+                }
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        })
+    }
+
+    function NotificationItemDetails() {
+
+        $.ajax({
+            type: 'GET',
+            url: '/home/GetNotificationItemDetails',
+            success: function (response) {
+
+                $('#NotificationBasketDetails').empty();
+
+                $('#NotificationBasketDetails').append($('<li class="no-link"> New List For PR</li>'));
+                var itemCount = 0;
+
+                $.each(response, function (index, value) {
+                    $('#NotificationBasketDetails').append($('<li ><a href="/Home/CreatePR/table" class="NotificationItemPR" id="' + value.NotificationStockNo + '">' +
+                        '<div class="user-list-wrap"><div class="profile-pic profile-icon"><i class="ti-file"></i></div> <div class="detail">' +
+                        '<span class="ReferenceNo text-normal" id="test">' + value.NotificationStockNo + '</span> <span class="time">' + value.NotificationDate + '</span>' +
+                        '<p class="font-10 no-m-b text-overflow">' + value.NotificationItemName + ' (' + value.NotificationTypeOfItem + ')</p> </div> </div> </a> </li >'));
+                });
+
+                GetItemValue();
+                $('#NotificationBasketDetails').append($('<li><a href="/Home/CreatePR/table" class="text-center">See all</a></li>'));
+
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        })
+    }
+
+    $(document).on("click", ".NotificationApprove", function () {
+        var ReferenceNo = $(this).attr('id')
+        $("#HiddenReferenceNo").val(ReferenceNo);
+
+        if (UserRoleID == "2" || UserRoleID == "3" || UserRoleID == "5") {
+            $.ajax({
+                url: '/Home/RetrieveAllItemRequestCommon/',
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    ReferenceNo: ReferenceNo
+                }),
+                dataType: "json",
+                success: function (data) {
+                    var ItemRequestlist = $('#ItemRequestlist tbody');
+                    ItemRequestlist.empty();
+
+                    $(data).each(function (index, data) {
+                        ItemRequestlist.append('<tr><td>' + data.StockNo + '</td><td>' + data.ItemName + '</td><td><label style="font-weight:normal; text-align:center; display:block">' + data.StockOnHand + '</label></td><td><label style="font-weight:normal; text-align:center; display:block">' + data.qty + '</label></td><td style="display:none;"><input type="text" class="form-control" value="' + data.StockNo
+                            + '" id="HiddenStockNo"></td><td style="display:none;"><input type="text" class="form-control" value="' + data.ItemName
+                            + '" id="HiddenItemName"></td><td style="display:none;"><input type="text" class="form-control" value="' + data.qty
+                            + '" id="HiddenQty"></td></tr>');
+
+                        $("#Requesteds").html(data.ApproverID);
+                        $("#Purposeses").html(data.Purpose);
+                        $("#HiddenStatus").val(data.RequestStatus);
+                        $("#Responsibles").html(data.Responsible);
+                    });
+                }
+            });
+
+            $('#myModal82').modal({
+                show: 'false',
+                backdrop: 'static',
+            });
+        }
+        else {
+            $("#Central_DisplayReferenceNo").val(ReferenceNo);
+
+            var DisplayReferenceNo = ReferenceNo;
+
+            $.ajax({
+                url: '/Home/RetreiveItemCommonForReleasing/',
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    DisplayReferenceNo: DisplayReferenceNo
+                }),
+                dataType: "json",
+                success: function (data) {
+                    var TableItemForReleasing = $('#TableItemRequestForReleasing tbody');
+                    TableItemForReleasing.empty();
+
+                    $(data).each(function (index, data) {
+                        TableItemForReleasing.append('<tr><td>' + data.StockNo + '</td><td>' + data.ItemName + '</td><td style="text-align:center; ">' + data.qty + '</td><td style="text-align:center; ">' + data.Delivered + '</td></tr>');
+                        if (data.Rejectedby != "") {
+                            $("#RejectDetails").show();
+                            $("#ApprovedDetails").hide();
+                            $("#RejectedBy").html(data.Rejectedby);
+                            $("#RejectedDate").html(data.DateRejected);
+                            $("#RejectRemarks").html(data.RejectRemarks);
+                        }
+                        else {
+                            $("#RejectDetails").hide();
+                            $("#ApprovedDetails").show();
+                            $("#ApprovedBy").html(data.ApproverID);
+                            $("#ApprovedDate").html(data.DateApproved);
+                        }
+                    });
+                }
+            });
+            $('#myModal85').modal({
+                show: 'false',
+                backdrop: 'static',
+            });
+        }
+
+
+    });
+
+    $(document).on("click", ".NotificationItemPR", function () {
+
+        window.location.href = '/Home/CreatePR/table'
+    });
+
+    $(".btnNotification").on('click', function () {
+        if (UserRoleID == "1" || UserRoleID == "4" || UserRoleID == "6") {
+            NotificationApprovalDetails();
+        }
+    })
+
+    $(".btnRequestNotification").on('click', function (e) {
+        e.preventDefault();
+
+        if (UserRoleID == "1" || UserRoleID == "4" || UserRoleID == "6") {
+            GetRequestValue();
+            NotificationRequestDetails();
+        }
+    })
+
+    $(".btnitemNotification").on('click', function () {
+
+        e.preventDefault();
+        GetValue();
+        NotificationItemDetails();
+    })
+
+
+    $("#btnRejects").on('click', function () {
+        $('#showhiderejects').prop('hidden', false);
+        $('#btnCancels').show();
+        $('#btnRejectConfirms').show();
+        $('#btnRejects').hide();
+        $('#btnConfirms').hide();
+    })
+
+    $("#btnCancels").on('click', function () {
+        $('#showhiderejects').prop('hidden', true);
+        $('#btnCancels').hide();
+        $('#btnRejectConfirms').hide();
+        $('#btnRejects').show();
+        $('#btnConfirms').show();
+    })
+
+    //$("#btnClose").on('click', function () {
+    //    $('#showhiderejects').prop('hidden', true);
+    //    $('#btnCancels').hide();
+    //    $('#btnRejectConfirms').hide();
+    //    $('#btnRejects').show();
+    //    $('#btnConfirms').show();
+    //})
+
+    //function isValid(selector) {
+    //    if (this.value.trim() === "") {
+    //        return ($(selector).filter(function () {
+    //            return (this.value.trim() === "");
+    //        }).css("border-color", "red").length === 0);
+    //    }
+    //    else {
+    //        return ($(selector).filter(function () {
+    //        }).css("border-color", "").length != 0);
+    //    }
+    //}
+
+</script>
+
+<script>
+
+    function isNumber(evt) {
+        //evt = (evt) ? evt : window.event;
+        //var charCode = (evt.which) ? evt.which : evt.keyCode;
+        //if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+        //    return false;
+        //}
+        //return true;
+        evt.value = evt.value.replace(/[^0-9]/g, '');
+    }
+
+    $(document).ajaxError(function (xhr, props) {
+        if (props.status === 401) {
+            bootbox.alert({
+                size: "small",
+                title: "Session Timeout.",
+                message: "You will returned to the login page.",
+                callback: function () {
+                    window.location.href = '@Url.Action("LogoutAuthentication", "Login")';
+                }
+            })
+        }
+    });
+
+
+
+    $("#UserLogout").on("click", function (e) {
+
+        e.preventDefault();
+        var link = $(this).attr('href');
+
+        bootbox.confirm({
+            title: "Are you sure you want to logout?",
+            message: "You will returned to the login page.",
+            size: "small",
+            buttons: {
+                confirm: {
+                    label: 'Yes',
+                    className: 'btn-primary'
+                },
+                cancel: {
+                    label: 'No',
+                    className: 'btn-danger'
+                }
+            },
+            callback: function (result) {
+
+                if (result) {
+                    var backlen = history.length;
+                    history.go(-backlen);
+                    window.location.href = link;
+                }
+                else {
+                    return;
+                }
+            }
+        })
+    })
+
+
+</script>
+
+<script>
+    $(document).ready(function () {
+        $("li.clicktab, a.clicktab").click(function (e) {
+            var id = $(e.target).closest('a').attr("href").substr(1);
+            var query = window.location.pathname;
+            if (("/" + id) == query) {
+                return true
+            }
+            else if (query != "/Home/Dashboard") {
+                return confirm("Are you sure you want to leave this page?");
+            }
+        })
+    })
+</script>
+
+@*<script>
+        $(document).ready(function () {
+            $("li.clicktab ").click(function (e) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                var id = $(e.target).closest('a').attr("href").substr(1);
+                window.location.hash = id;
+                bootbox.confirm({
+                    title: "",
+                    message: "Are you sure you want to leave this page?",
+                    //message: "Item Inventory will be updated.",
+                    size: "small",
+                    buttons: {
+                        confirm: {
+                            label: 'Yes',
+                            className: 'btn-success'
+                        },
+                        cancel: {
+                            label: 'No',
+                            className: 'btn-danger'
+                        }
+                    },
+                    callback: function (result) {
+
+                        if (result) {
+                            var split = id.split("/")
+                            if (split[1] == "Dashboard") {
+                                window.location.href = "Dashboard";
+                            }
+                            else if (split[0] == "Home") {
+                                window.location.href = split[1];
+                            }
+                            else {
+                                window.location.href = id;
+                            }
+                        }
+                    }
+                })
+            })
+        })
+
+        // on load of the page: switch to the currently selected tab
+        var hash = window.location.hash;
+        $('a[href="' + hash + '"]').addClass('active');
+    </script>*@

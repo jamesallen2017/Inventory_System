@@ -1,0 +1,652 @@
+﻿@model GMCINVENTORYSYSTEM.Models.AllModels
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<title>Create Item Request @if (@Session["GroupID"].ToString() == "2")
+    {<text>(</text>@Html.DisplayFor(sat => sat.Satellite.TypeName)<text>)</text>}</title>
+
+<style>
+    textarea[id=Satellite_Purpose]::-webkit-input-placeholder {
+        vertical-align: middle;
+    }
+
+    textarea[id=Satellite_Purpose]:-moz-placeholder { /* Firefox 18- */
+        vertical-align: middle;
+    }
+
+    textarea[id=Satellite_Purpose]::-moz-placeholder { /* Firefox 19+ */
+        vertical-align: middle;
+    }
+
+    textarea[id=Satellite_Purpose]:-ms-input-placeholder {
+        vertical-align: middle;
+    }
+
+    .mytext {
+        width: 280px;
+        height: 150px;
+        /*text-align: center;*/
+        vertical-align: middle;
+        display: inline-block;
+        box-sizing: border-box;
+    }
+
+    .select2-container .select2-selection--single {
+        height: auto !important;
+        padding: 5px 0;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: normal !important;
+    }
+
+    .select2-container .select2-selection--single .select2-selection__rendered {
+        white-space: normal !important;
+    }
+
+    div.wraptext {
+        word-break: break-word;
+    }
+</style>
+<div class="page-header">
+    <h1>Create Item Request</h1>
+    <ol class="breadcrumb">
+        <li><a>Item Request</a></li>
+        <li class="active">
+            Create Item Request @if (@Session["GroupID"].ToString() == "2")
+            {<text>(</text>@Html.DisplayFor(sat => sat.Satellite.TypeName)<text>)</text>}
+        </li>
+        @*<li class="active">@Html.DisplayFor(sat => sat.Satellite.TypeName)</li>*@
+    </ol>
+</div>
+
+<div class="content-wrap">
+    <!--START: Content Wrap-->
+    @using (Html.BeginForm("InsertRequest", "Home", FormMethod.Post, new { @id = "formvalidationtooltip", @class = "Requestform", @role = "form" }))
+    {
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <span>Date: @DateTime.Now.ToShortDateString()</span>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel-body">
+                        @*@if (Session["GroupID"].ToString() == "2" || Session["UserRoleID"].ToString() == "7")
+                        {
+                            <div class="col-md-6">
+                                <div class="form-group input-group">
+                                    <span class="input-group-addon">Request by:</span>
+                                    @Html.TextBoxFor(sat => sat.Satellite.ApproverID, new { @class = "form-control validate[required]" })
+                                </div>
+                            </div>
+                        }*@
+
+                        <div class="col-md-6">
+                            <div class="form-group input-group">
+                                <span class="input-group-addon">Request by:</span>
+                                @Html.TextBoxFor(sat => sat.Satellite.ApproverID, new { @class = "form-control validate[required]", @placeholder = "Required" })
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="form-group input-group">
+                                <span class="input-group-addon">Purpose</span>
+                                @Html.HiddenFor(sat => sat.Satellite.Type)
+                                @Html.TextAreaFor(sat => sat.Satellite.Purpose, new { @class = "form-control validate[required] mytext", @style = "resize:vertical;", @placeholder = "Required" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="panel panel-default">
+            <div class="row">
+                <div class="panel-body">
+                    <div class="col-md-12">
+                        <table class="table" id="TableRequestItem">
+                            <thead>
+                                <tr>
+                                    <th class="col-md-1">Action</th>
+                                    @*<th class="col-md-9 row"><label class="col-md-2">Item Code</label><label class="col-md-7">Description</label></th>*@
+                                    <th class="col-md-9">Items</th>
+                                    <th class="col-md-2">Request Quantity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr id="RowRequestItem">
+                                    <td class="col-md-1">
+                                        <div class="form-group">
+                                            <a href="#" name="tbnadd" id="tbnadd" class="btn btn-link"><i class="di di-plus"></i></a>
+                                            <a href="#" name="btndelete" id="btndelete" class="btn btn-link"><i class="di di-minus"></i></a>
+                                        </div>
+                                    </td>
+                                    <td class="col-md-9">
+                                        <div class="form-group">
+                                            @Html.DropDownListFor(sat => sat.Satellite.StockNo, Model.Satellite.ddItemList, "Select Stock No.", new { @class = "form-control validate[required]", @style = "width:100%" })
+                                        </div>
+                                    </td>
+                                    @*<td class="col-md-2">
+                                            <div class="form-group">
+                                                @Html.DropDownListFor(sat => sat.Satellite.StockNo, Model.Satellite.ddItemList, "Select Stock No.", new { @class = "form-control select2Search validate[required]", @style = "width:100%" })
+                                            </div>
+                                        </td>
+                                        <td class="col-md-7">
+                                            <div class="form-group">
+                                                @Html.TextBoxFor(sat => sat.Satellite.ItemName, new { @class = "form-control", disabled = "" })
+                                            </div>
+                                        </td>*@
+                                    <td class="col-md-2">
+                                        <div class="form-group">
+                                            @Html.TextBoxFor(sat => sat.Satellite.Qty, new { @class = "form-control validate[required]", @placeholder = "Required", @oninput = "isNumber(this)", @onpaste = "return false", @style = "text-align:left" })
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-footer">
+                <div class="row">
+                    <div class="tool pull-right" style="margin-right:10px">
+                        <a class="btn btn-danger" id="btnClear" href="@Url.Action("CreateItemRequest", "Home")">Clear</a>
+                        <button class="btn btn-primary" id="btnSave" type="submit">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
+@section scripts
+{
+    <script>
+        $(".mytext").on({
+            mouseenter: function () {
+                var h = this.offsetHeight;
+                $(this).css({
+                    paddingTop: 0,
+                    height: 0
+                });
+
+                $(this).css({
+                    paddingTop: Math.max(0, h / 2 - this.scrollHeight / 2),
+                    height: h
+                });
+            },
+            mouseleave: function () {
+                var h = this.offsetHeight;
+                $(this).css({
+                    paddingTop: 0,
+                    height: 0
+                });
+
+                $(this).css({
+                    paddingTop: Math.max(0, h / 2 - this.scrollHeight / 2),
+                    height: h
+                });
+            },
+            click: function () {
+                var h = this.offsetHeight;
+                $(this).css({
+                    paddingTop: 0,
+                    height: 0
+                });
+
+                $(this).css({
+                    paddingTop: Math.max(0, h / 2 - this.scrollHeight / 2),
+                    height: h
+                });
+            },
+            focus: function () {
+                var h = this.offsetHeight;
+                $(this).css({
+                    paddingTop: 0,
+                    height: 0
+                });
+
+                $(this).css({
+                    paddingTop: Math.max(0, h / 2 - this.scrollHeight / 2),
+                    height: h
+                });
+            }
+        });
+    </script>
+
+    <script>
+        $(function() { // TableSearchBox
+            var firstEmptySelect = true;
+
+            function getResult(result) {
+                if (!result.id) {
+                    if (firstEmptySelect) {
+                        console.log('showing row');
+                        firstEmptySelect = false;
+                        return false;
+                    } else {
+                        console.log('skipping row');
+                        var $result = $(
+                            '<div class="row" style="font-weight: bolder ;display: block">' +
+                                '<div class="col-md-2" style="display: block; ">' + 'Item Code' + '</div>' +
+                                '<div class="col-md-6" style="display: block">' + 'Part Name' + '</div>' +
+                                '<div class="col-md-4" style="display: block">' + 'Specification' + '</div>' +
+                            '</div>'
+                        );
+                        return $result;
+                    }
+                    console.log('result');
+                    console.log($result);
+                }
+                var r = result.text.split('|');
+                var $result = $(
+                    '<div class="row">' +
+                        '<div class="wraptext col-md-2">' + r[0] + '</div>' + //split all value
+                        '<div class="wraptext col-md-6">' + r[1] + '</div>' +
+                        '<div class="wraptext col-md-4">' + r[2] + '</div>' +
+                            '</div>'
+                        );
+                return $result;
+            }
+
+            function permute(input, permArr, usedChars) {
+                var i, ch;
+                for (i = 0; i < input.length; i++) {
+                    ch = input.splice(i, 1)[0];
+                    usedChars.push(ch);
+                    if (input.length == 0) {
+                        permArr.push(usedChars.slice());
+                    }
+                    permute(input, permArr, usedChars);
+                    input.splice(i, 0, ch);
+                    usedChars.pop();
+                }
+                return permArr
+            };
+
+            $("#Satellite_StockNo").select2({
+                escapeMarkup: function(m) { return m; },
+                templateResult: getResult,
+                templateSelection: getResult,
+                matcher: function (params, data) {
+                    // If there are no search terms, return all of the data
+                    if ($.trim(params.term) === '') {
+                        return data;
+                    }
+                    // `params.term` should be the term that is used for searching
+                    // split by " " to get keywords
+                    keywords=(params.term).split(" ");
+                    // `data.text` is the text that is displayed for the data object
+                    // check if data.text contains all of keywords, if some is missing, return null
+                    for (var i = 0; i < keywords.length; i++) {
+
+                        if (((data.text).toUpperCase()).indexOf((keywords[i]).toUpperCase()) == -1)
+                            // Return `null` if the term should not be displayed
+                            return null;
+
+                    }
+                    // If here, data.text contains all keywords, so return it.
+                    return data;
+                }
+            });
+        });
+    </script>
+
+    <script>
+        $("#TableRequestItem").on("change", "#Satellite_StockNo", function () {
+
+            var row = $(this).closest("tr");
+            var StockNo = $("#Satellite_StockNo", row).val();
+
+            $.ajax({
+                url: '/Central/RetreiveItemName',
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    StockNo: StockNo,
+                }),
+
+                dataType: "json",
+                success: function (data) {
+                    $("#Satellite_ItemName", row).val(data);
+                }
+            })
+        })
+    </script>
+
+    <script>
+        $(".Requestform").submit(function (event) {
+            var count = 0;
+            var validate;
+            var Purpose = $("#Satellite_Purpose").val()
+            var StockNo = $("#Satellite_StockNo").val()
+            var ApproverID = $("#Satellite_ApproverID").val()
+            var qty = $("#Satellite_Qty").val()
+            var Type = $("#Satellite_Type").val()
+
+            if (ApproverID === undefined)
+            {
+                if (StockNo == null || Purpose == null || qty == null || StockNo == "" || qty == "" || Purpose == "") {
+                    return false;
+                }
+            }
+            else {
+                if (!ApproverID.trim() || StockNo == null || Purpose == null || qty == null || StockNo == "" || qty == "" || Purpose == "" || ApproverID == "") {
+                    return false;
+                }
+            }
+
+            event.preventDefault();
+            event.stopImmediatePropagation();
+
+            var ItemRequestList = new Array();
+            var VerifyList = new Array();
+            var ErrorList = new Array();
+            $("#TableRequestItem tbody tr").each(function () { //Loop through the Table rows
+                var row = $(this);
+                var RequestItem = {}; // SET DATA ARRAY TO STORED ALL DATA INSIDE OF TABLE
+                var Quantity = $("#Satellite_Qty", row).val();
+                var q = parseFloat($("#Satellite_Qty", row).val());
+                var StockNo = $("#Satellite_StockNo", row).val()
+                if (q <= 0) {
+                    count++;
+                }
+                if (StockNo == null || Quantity == null || StockNo == "" || Quantity == "" ) {
+
+                    validate = 'Required';
+                }
+
+                RequestItem.StockNo = StockNo;
+                RequestItem.ItemName = $("#Satellite_StockNo option:selected", row).text();
+                RequestItem.Qty = Quantity;
+                ItemRequestList.push(RequestItem); // RENDER DATA ARRAY TO JSON ARRAY
+                VerifyList.push(RequestItem); // RENDER DATA ARRAY TO JSON ARRAY
+            });        
+
+            if (validate == 'Required') {
+                $.toast({
+                    heading: "Error",
+                    text: "Please, fill out required fields.",
+                    showHideTransition: 'slide',
+                    icon: 'error',
+                    autoHideDelay: 3000,
+
+                    position: 'top-right',
+                    bgColor: '#FF4859'
+
+                });
+                return false;
+            }
+
+            if (count > 0) {
+                $.toast({
+                    heading: "Invalid",
+                    text: "0 is not allowed.",
+                    showHideTransition: 'slide',
+                    icon: 'error',
+                    autoHideDelay: 3000,
+                    position: 'top-right',
+                    bgColor: '#FF4859'
+                });
+                return false;
+            }
+
+            var StockNo = "";
+            var StockNo0 = "";
+
+            for (var i = 0; i < ItemRequestList.length; i++) {
+                StockNo = ItemRequestList[i].StockNo;
+                VerifyList.splice(0, 1);
+                for (var j = 0; j < VerifyList.length; j++) {
+                    StockNo0 = VerifyList[j].StockNo;
+                    if (StockNo == StockNo0) {
+                        ErrorList.push(StockNo);
+                        validate = 'Same';
+                    }
+                }
+            }
+
+            if (validate == 'Same') {
+                $.toast({
+                    heading: "Error",
+                    text: ErrorList + " is the duplicated.",
+                    showHideTransition: 'slide',
+                    icon: 'error',
+                    autoHideDelay: 3000,
+
+                    position: 'top-right',
+                    bgColor: '#FF4859'
+                });
+                return false;
+            }
+
+            var action = $(".Requestform").attr("action");
+
+            bootbox.confirm({
+                title: "Are you sure you want to save?",
+                message: "This request will be sent.",
+                size: "small",
+                buttons: {
+                    confirm: {
+                        label: 'Yes',
+                        className: 'btn-success'
+                    },
+                    cancel: {
+                        label: 'No',
+                        className: 'btn-danger'
+                    }
+                },
+                callback: function (result) {
+
+                    if (result) {
+                        $.ajax({
+                            url: action,
+                            type: "POST",
+                            contentType: "application/json",
+                            data: JSON.stringify({
+                                ItemRequestList,
+                                Purpose: Purpose,
+                                Type: Type,
+                                ApproverID: ApproverID,
+                            }),
+                            dataType: "json",
+                            success: function (data) {
+                                if (data == 0) {
+                                    $.toast({
+                                        heading: "System Error",
+                                        text: "Please contact our administrator for assistance.",
+                                        showHideTransition: 'slide',
+                                        icon: 'error',
+                                        autoHideDelay: 3000,
+                                        position: 'top-right',
+                                        bgColor: '#FF4859'
+                                    });
+                                    return false;
+                                }
+                                else {
+
+                                    $.toast({
+                                        heading: 'Request Item.',
+                                        text: "Successfully sent.",
+                                        showHideTransition: 'slide',
+                                        icon: 'success',
+                                        autoHideDelay: 3000,
+
+                                        position: 'top-right',
+                                        bgColor: '#7EC857'
+                                    });
+
+                                    var $this = $("#btnSave");
+                                    var btnClear = $("#btnClear");
+
+                                    $this.button('loading');
+                                    setTimeout(function () {
+                                        $this.button('reset');
+                                        btnClear.button('reset');
+
+                                        window.location.reload();
+                                    }, 3000);
+                                }
+                            }
+                        });
+                    }
+                    else {
+                        return;
+                    }
+                }
+            })
+        })
+    </script>
+
+    <script>
+        $("#TableRequestItem").on('click', "#tbnadd", function () {
+            var validate = 0;
+            $("#TableRequestItem tbody tr").each(function (){
+                var row = $(this);
+
+                var StockNo = $("#Satellite_StockNo",row).val()
+                var qty = $("#Satellite_Qty",row).val()
+
+                if (StockNo == null || qty == null || StockNo == "" || qty == "") {
+                    validate++;
+                    $.toast({
+                        heading: "Error",
+                        text: "Please, fill out required fields.",
+                        showHideTransition: 'slide',
+                        icon: 'error',
+                        autoHideDelay: 3000,
+
+                        position: 'top-right',
+                        bgColor: '#FF4859'
+
+                    });
+
+                    return false;
+                }
+            })
+            if (validate == 0) {
+                $("select#Satellite_StockNo").select2("destroy");
+
+                var $newRow = $('#RowRequestItem').clone(true).appendTo('#TableRequestItem'); // CLONE MAINROW UNDER TABLE ID
+
+                $('#Satellite_StockNo', $newRow).val();// GET VALUE OF DROPDOWNLIST (THIS CODE IS FOR DROPDOWNLIST ONLY)
+                $('#Satellite_Qty', $newRow).val("");
+
+                $('#Satellite_StockNo,#Satellite_Qty', $newRow);
+
+
+                //$('#Satellite_StockNo').val('')
+                //$('#Satellite_ItemName').val("")
+
+                var firstEmptySelect = true;
+
+                function getResult(result) {
+                    if (!result.id) {
+                        if (firstEmptySelect) {
+                            console.log('showing row');
+                            firstEmptySelect = false;
+                            return false;
+                        } else {
+                            console.log('skipping row');
+                            var $result = $(
+                                '<div class="row" style="font-weight: bolder ;display: block">' +
+                                    '<div class="col-md-2" style="display: block; ">' + 'Item Code' + '</div>' +
+                                    '<div class="col-md-6" style="display: block">' + 'Part Name' + '</div>' +
+                                    '<div class="col-md-4" style="display: block">' + 'Specification' + '</div>' +
+                                '</div>'
+                            );
+                            return $result;
+                        }
+                        console.log('result');
+                        console.log($result);
+                    }
+                    var r = result.text.split('|');
+                    var $result = $(
+                        '<div class="row">' +
+                            '<div class="wraptext col-md-2">' + r[0] + '</div>' + //split all value
+                            '<div class="wraptext col-md-6">' + r[1] + '</div>' +
+                            '<div class="wraptext col-md-4">' + r[2] + '</div>' +
+                        '</div>'
+                    );
+                    return $result;
+                }
+
+                function permute(input, permArr, usedChars) {
+                    var i, ch;
+                    for (i = 0; i < input.length; i++) {
+                        ch = input.splice(i, 1)[0];
+                        usedChars.push(ch);
+                        if (input.length == 0) {
+                            permArr.push(usedChars.slice());
+                        }
+                        permute(input, permArr, usedChars);
+                        input.splice(i, 0, ch);
+                        usedChars.pop();
+                    }
+                    return permArr
+                };
+
+                $("select#Satellite_StockNo").select2({
+                    escapeMarkup: function(m) { return m; },
+                    templateResult: getResult,
+                    templateSelection: getResult,
+                    matcher: function (params, data) {
+                        // If there are no search terms, return all of the data
+                        if ($.trim(params.term) === '') {
+                            return data;
+                        }
+                        // `params.term` should be the term that is used for searching
+                        // split by " " to get keywords
+                        keywords=(params.term).split(" ");
+                        // `data.text` is the text that is displayed for the data object
+                        // check if data.text contains all of keywords, if some is missing, return null
+                        for (var i = 0; i < keywords.length; i++) {
+
+                            if (((data.text).toUpperCase()).indexOf((keywords[i]).toUpperCase()) == -1)
+                                // Return `null` if the term should not be displayed
+                                return null;
+
+                        }
+                        // If here, data.text contains all keywords, so return it.
+                        return data;
+                    }
+                });
+            }
+
+        });
+
+        $('#TableRequestItem').on('click', '#btndelete', function () {
+
+            var count = $('#TableRequestItem tbody tr').length;
+
+            if (count > 1) {
+                $(this).closest("tr").remove();
+            } else {
+
+                $.toast({
+                    heading: "Error",
+                    text: "Sorry. Row can't be empty.",
+                    showHideTransition: 'slide',
+                    icon: 'error',
+                    autoHideDelay: 3000,
+                    position: 'top-right',
+                    bgColor: '#FF4859'
+
+                });
+                //alert("File Shouldn't Be Empty!!");
+                return false;
+
+            }
+        });
+
+    </script>
+
+
+}
+
+

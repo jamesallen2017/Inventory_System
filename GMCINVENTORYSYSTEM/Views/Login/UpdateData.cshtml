@@ -1,0 +1,467 @@
+﻿@model GMCINVENTORYSYSTEM.Models.AllModels
+
+@{
+    Layout = null;
+}
+
+@{
+    List<SelectListItem>
+        ProcessType = new List<SelectListItem>();
+    ProcessType.Add(new SelectListItem
+    {
+        Text = "Item Releasing Quantity",
+        Value = "1"
+    });
+    ProcessType.Add(new SelectListItem
+    {
+        Text = "PR Receiving Quantity",
+        Value = "2"
+    });
+
+    List<SelectListItem>
+        MainList = new List<SelectListItem>();
+
+    MainList.Add(new SelectListItem
+    {
+        Text = "Select Item Type",
+        Value = ""
+    });
+    MainList.Add(new SelectListItem
+    {
+        Text = "Common",
+        Value = "1"
+    });
+    MainList.Add(new SelectListItem
+    {
+        Text = "Unique",
+        Value = "2"
+    });
+
+    List<SelectListItem>
+        Request = new List<SelectListItem>();
+
+    Request.Add(new SelectListItem
+    {
+        Text = "Select Request Status",
+        Value = ""
+    });
+    Request.Add(new SelectListItem
+    {
+        Text = "FOR RELEASING",
+        Value = "1"
+    });
+    Request.Add(new SelectListItem
+    {
+        Text = "INCOMPLETE",
+        Value = "2"
+    });
+    Request.Add(new SelectListItem
+    {
+        Text = "COMPLETED",
+        Value = "3"
+    });
+
+    List<SelectListItem>
+        PR = new List<SelectListItem>();
+
+    PR.Add(new SelectListItem
+    {
+        Text = "Select PR Status",
+        Value = ""
+    });
+    PR.Add(new SelectListItem
+    {
+        Text = "FOR RECEIVING",
+        Value = "1"
+    });
+    PR.Add(new SelectListItem
+    {
+        Text = "INCOMPLETE",
+        Value = "2"
+    });
+    PR.Add(new SelectListItem
+    {
+        Text = "COMPLETED",
+        Value = "3"
+    });
+
+    List<SelectListItem>
+        Item = new List<SelectListItem>();
+
+    Item.Add(new SelectListItem
+    {
+        Text = "Select Item Status",
+        Value = ""
+    });
+    Item.Add(new SelectListItem
+    {
+        Text = "FOR RELEASING",
+        Value = "1"
+    });
+    Item.Add(new SelectListItem
+    {
+        Text = "INCOMPLETE",
+        Value = "2"
+    });
+    Item.Add(new SelectListItem
+    {
+        Text = "COMPLETED",
+        Value = "3"
+    });
+
+}
+
+<title>Update Data</title>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    @Scripts.Render("~/ContentJS/Modernizr")
+    @Styles.Render("~/Content/css")
+    <link href="~/assets/fonts/sli-icons/simple-line-icons.css" rel="stylesheet" />
+    <link href="~/assets/fonts/ff-din-pro/ff-din-pro.css" rel="stylesheet" />
+    <link href="~/assets/fonts/dashicons/css/dashicons.css" rel="stylesheet" />
+    <link href="~/assets/fonts/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/assets/fonts/fsquere/style.css" rel="stylesheet" />
+    <link href="~/assets/fonts/weather-icons/css/weather-icons.min.css" rel="stylesheet" />
+    <link href="~/assets/fonts/weather-icons/css/weather-icons-wind.min.css" rel="stylesheet" />
+</head>
+<body>
+    <style>
+        .header-top .navbar-brand img {
+            width: 150px;
+            height: 30px;
+        }
+
+        .header-top .navbar-brand {
+            line-height: 45px;
+        }
+
+        .header-top .navbar-nav > li.user-profile > a .user-name {
+            margin-left: 10px;
+        }
+    </style>
+    <div class="wrapper no-footer">
+        <header class="header-top navbar fixed-top">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle side-nav-toggle">
+                    <i class="ti-align-left"></i>
+                </button>
+
+                @*<a class="navbar-brand" href="@Url.Action("Dashboard","Home")">*@
+                <a class="navbar-brand clicktab" style="padding-left: 30px; padding-top:15px">
+                    @*<img src="~/assets/images/BITS.png" width="150%" height="150%" />*@
+                    @*<img src="~/assets/images/INVENTORY%20SYSTEM.png" width="150%" height="150%" />*@
+                    <img src="~/assets/images/GMC%20LOGO%20TRANSPARENT.png" width="150%" height="150%" />
+                    @*<span>Inventory</span>*@
+                </a>
+            </div>
+
+            <div class="collapse navbar-collapse" id="headerNavbarCollapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="user-profile dropdown">
+                        <a href="javascript:;" class="clearfix dropdown-toggle" data-toggle="dropdown">
+                            <div class="user-name">Maintenance <small class="fa fa-angle-down"></small></div>
+                        </a>
+                        <ul class="dropdown-menu dropdown-animated pop-effect" role="menu">
+                            <li><a><i class="sli-user"></i>Administrator </a></li>
+                            @*<li><a><i class="fa fa-users"></i>@Session["Department"].ToString() </a></li>
+                            <li><a><i class="di di-admin-multisite"></i>@Session["DesignationName"].ToString() </a></li>*@
+                            <li role="separator" class="divider"></li>
+                            <li><a href="@Url.Action("LogoutDatabase", "Login")" id="UserLogout"><i class="sli-logout"></i>Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <!-- END: Navbar-collapse -->
+        </header>
+
+        <div class="page-header">
+            <h1>Update Data</h1>
+            @*<ol class="breadcrumb">
+                <li><a href="#">Maintenance</a></li>
+                <li class="active">User Management</li>
+            </ol>*@
+        </div>
+        <div class="content-wrap">
+            @using (Html.BeginForm("UpdateDatabaseData", "Login", FormMethod.Post, new { @id = "formvalidationtooltip", @class = "updateFrom", role = "form" }))
+            {
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <span>Date: @DateTime.Now.ToShortDateString()</span>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="col-md-6">
+                            <div class="form-group input-group">
+                                <span class="input-group-addon">Process Type</span>
+                                @Html.DropDownListFor(maintenance => maintenance.Maintenance.ItemType, ProcessType, new { @id = "ProcessType", @class = "form-control" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="panel-body">
+                                <div class="col-md-6">
+                                    <div id="showhideitemtype" class="form-group input-group">
+                                        <span class="input-group-addon">Item Type</span>
+                                        @Html.DropDownListFor(maintenance => maintenance.Maintenance.ItemType, MainList, new { @id = "ItemType", @class = "form-control validate[required]" })
+                                    </div>
+
+                                    <div class="form-group input-group">
+                                        <span class="input-group-addon">Reference No</span>
+                                        @Html.TextBoxFor(maintenance => maintenance.Maintenance.UpdateReferenceNo, new { @id = "UpdateReferenceNo", @class = "form-control validate[required]", @placeholder = "Reference No", @autocomplete = "off" })
+                                    </div>
+
+                                    <div class="form-group input-group">
+                                        <span class="input-group-addon">Item Code</span>
+                                        @Html.TextBoxFor(maintenance => maintenance.Maintenance.UpdateItemCode, new { @id = "UpdateItemCode", @class = "form-control validate[required]", @placeholder = "Item Code", @autocomplete = "off" })
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div id="showhiderequeststatus" class="form-group input-group">
+                                        <span class="input-group-addon">Request Status</span>
+                                        @*@Html.TextBoxFor(maintenance => maintenance.Maintenance., new { @class = "form-control validate[required]", @placeholder = "Request Status", @autocomplete = "off" })*@
+                                        @Html.DropDownListFor(maintenance => maintenance.Maintenance.UpdateRequestStatus, Request, new { @id = "UpdateRequestStatus", @class = "form-control validate[required]" })
+                                    </div>
+
+                                    <div id="showhideprstatus" class="form-group input-group" style="display:none">
+                                        <span class="input-group-addon">PR Status</span>
+                                        @*@Html.TextBoxFor(maintenance => maintenance.Maintenance., new { @class = "form-control validate[required]", @placeholder = "Request Status", @autocomplete = "off" })*@
+                                        @Html.DropDownListFor(maintenance => maintenance.Maintenance.UpdatePRStatus, PR, new { @id = "UpdatePRStatus", @class = "form-control validate[required]" })
+                                    </div>
+
+                                    <div class="form-group input-group">
+                                        <span class="input-group-addon">Item Status</span>
+                                        @*@Html.TextBoxFor(maintenance => maintenance.Maintenance., new { @class = "form-control validate[required]", @placeholder = "Username", @autocomplete = "off" })*@
+                                        @Html.DropDownListFor(maintenance => maintenance.Maintenance.UpdateItemStatus, Item, new { @id = "UpdateItemStatus", @class = "form-control validate[required]" })
+                                    </div>
+
+                                    <div class="form-group input-group">
+                                        <span class="input-group-addon">Quantity</span>
+                                        @Html.TextBoxFor(maintenance => maintenance.Maintenance.UpdateQty, new { @id = "UpdateQty", @class = "form-control validate[required]", @placeholder = "Quantity", @autocomplete = "off", @oninput = "isNumber(this)" })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="panel-footer">
+                                <div class="row">
+                                    <div class="pull-right" style="margin-right:10px">
+                                        @*<a class="btn btn-danger" id="btnBack" href="@Url.Action("UserManagement", "Maintenance", new { @id = "table" })">Back</a>*@
+                                        <input type="submit" id="btnSave" class="btn btn-primary" value="Update">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+</div>
+        
+        @Scripts.Render("~/bundles/jquery")
+</body>
+</html>
+<script>
+    jQuery(document).ready(function () {
+        DataTableBasic.init();
+        FormValidationInline.init();
+        FormValidationTooltip.init();
+    });
+</script>
+
+<script>
+    function isNumber(evt) {
+        evt.value = evt.value.replace(/[^0-9]/g, '');
+    }
+</script>
+
+<script>
+    $('#formvalidationtooltip').submit(function (event) {
+        var ProcessType = $('#ProcessType').val();
+        var ItemType = $('#ItemType').val();
+        var UpdateReferenceNo = $('#UpdateReferenceNo').val().trim();
+        var UpdateItemCode = $('#UpdateItemCode').val().trim();
+        var UpdateRequestStatus = $('#UpdateRequestStatus').val();
+        var UpdatePRStatus = $('#UpdatePRStatus').val();
+        var UpdateItemStatus = $('#UpdateItemStatus').val();
+        var UpdateQty = $('#UpdateQty').val().trim();
+
+        var UpdateRequestStatusText = $('#UpdateRequestStatus option:selected').text();
+        var UpdatePRStatusText = $('#UpdatePRStatus option:selected').text();
+        var UpdateItemStatusText = $('#UpdateItemStatus option:selected').text();
+
+        if (ProcessType == '1') {
+            if (ItemType == "" || UpdateReferenceNo == "" || UpdateItemCode == "" || UpdateRequestStatus == "" || UpdateItemStatus == "" || UpdateQty == "") {
+                return false;
+            }
+        }
+        else if (ProcessType == '2') {
+            if (UpdateReferenceNo == "" || UpdateItemCode == "" || UpdatePRStatus == "" || UpdateItemStatus == "" || UpdateQty == "") {
+                return false;
+            }
+        }
+        var action = $(".updateFrom").attr("action");
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        bootbox.confirm({
+            title: "Are you sure you want to update?",
+            message: "Database data will be updated.",
+            size: "small",
+            buttons: {
+                confirm: {
+                    label: 'Yes',
+                    className: 'btn-success'
+                },
+                cancel: {
+                    label: 'No',
+                    className: 'btn-danger'
+                }
+            },
+            callback: function (result) {
+                if (result) {
+                    $.ajax({
+                        url: action,
+                        type: "POST",
+                        contentType: "application/json",
+                        data: JSON.stringify({
+                            ProcessType: ProcessType,
+                            ItemType: ItemType,
+                            UpdateReferenceNo: UpdateReferenceNo,
+                            UpdateItemCode: UpdateItemCode,
+                            UpdateRequestStatus: UpdateRequestStatusText,
+                            UpdatePRStatus: UpdatePRStatusText,
+                            UpdateItemStatus: UpdateItemStatusText,
+                            UpdateQty: UpdateQty,
+                        }),
+                        dataType: "json",
+                        success: function (data) {
+                            if (data == '1') {
+                                $.toast({
+                                    heading: "Update Data",
+                                    text: UpdateReferenceNo + " successfully updated.",
+                                    showHideTransition: 'slide',
+                                    autoHideDelay: 3000,
+                                    icon: 'success',
+                                    position: 'top-right',
+                                    bgColor: '#7EC857'
+                                });
+                                var $this = $("#btnSave");
+                                $this.button('loading');
+                                setTimeout(function () {
+                                    $this.button('reset');
+                                    window.location.reload();
+                                }, 3000);
+                            }
+                            else if (data == '0') {
+                                $.toast({
+                                    heading: "System Error",
+                                    text: "Contact our administrator for assistance.",
+                                    showHideTransition: 'slide',
+                                    icon: 'error',
+                                    autoHideDelay: 3000,
+
+                                    position: 'top-right',
+                                    bgColor: '#FF4859'
+                                });
+                                return false;
+                            }
+                        }
+                    })
+                }
+            }
+        })
+        
+    })
+</script>
+<script>
+    $(document).ready(function () {
+        $('#ProcessType').change(function () {
+            var ptype = $(this).val();
+            if (ptype == '1') {
+                $('#showhideitemtype').css("display", "");
+                $('#showhiderequeststatus').css("display", "");
+                $('#showhideprstatus').css("display", "none");
+
+                $('#ItemType').val('');
+                $('#UpdateReferenceNo').val('');
+                $('#UpdateItemCode').val('');
+                $('#UpdateRequestStatus').val('');
+                $('#UpdatePRStatus').val('');
+                $('#UpdateItemStatus').val('');
+                $('#UpdateQty').val('');
+            }
+            else if (ptype == '2') {
+                $('#showhideitemtype').css("display", "none");
+                $('#showhiderequeststatus').css("display", "none");
+                $('#showhideprstatus').css("display", "");
+
+                $('#ItemType').val('');
+                $('#UpdateReferenceNo').val('');
+                $('#UpdateItemCode').val('');
+                $('#UpdateRequestStatus').val('');
+                $('#UpdatePRStatus').val('');
+                $('#UpdateItemStatus').val('');
+                $('#UpdateQty').val('');
+            }
+        })
+
+        $('#UpdateRequestStatus,#UpdatePRStatus').change(function () {
+            var ptype = $('#ProcessType').val();
+            var rstatus = $('#UpdateRequestStatus').val();
+            var prstatus = $('#UpdatePRStatus').val();
+            if (ptype == '1') {
+                if (rstatus == '3'){
+                    $('#UpdateItemStatus').val('3').change();
+                }
+                else {
+                    $('#UpdateItemStatus').val('').change();
+                }
+            }
+            else if (ptype == '2') {
+                if (prstatus == '3') {
+                    $('#UpdateItemStatus').val('3').change();
+                }
+                else {
+                    $('#UpdateItemStatus').val('').change();
+                }
+            }
+        })
+    })
+</script>
+
+<script>
+    $("#UserLogout").on("click", function (e) {
+        e.preventDefault();
+        var link = $(this).attr('href');
+
+        bootbox.confirm({
+            title: "Are you sure you want to logout?",
+            message: "You will returned to the login page.",
+            size: "small",
+            buttons: {
+                confirm: {
+                    label: 'Yes',
+                    className: 'btn-primary'
+                },
+                cancel: {
+                    label: 'No',
+                    className: 'btn-danger'
+                }
+            },
+            callback: function (result) {
+
+                if (result) {
+                    var backlen = history.length;
+                    history.go(-backlen);
+                    window.location.href = link;
+                }
+                else {
+                    return;
+                }
+            }
+        })
+    })
+</script>

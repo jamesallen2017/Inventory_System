@@ -1,0 +1,649 @@
+﻿@model GMCINVENTORYSYSTEM.Models.AllModels
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .form-control[readonly] {
+        background-color: white;
+    }
+
+    td {
+        word-break: break-word;
+    }
+
+    .table > thead > tr > th, .table > thead > tr > td {
+        vertical-align: bottom;
+    }
+</style>
+
+<title>Release Item</title>
+
+<div class="page-header">
+    <h1>Release Item</h1>
+    <ol class="breadcrumb">
+        <li><a>Item Request</a></li>
+        <li class="active">Release Item</li>
+    </ol>
+</div>
+
+<div class="content-wrap">
+    <!--START: Content Wrap-->
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <span>Date: @DateTime.Now.ToShortDateString()</span>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel-body">
+                    <table class="table table-hover table-striped" id="TableItemReleasing">
+                        <thead>
+                            <tr>
+                                <th class="col-md-2">Reference No</th>
+                                <th class="col-md-2">Responsible</th>
+                                <th class="col-md-2">Requested By</th>
+                                <th class="col-md-2">Date Requested</th>
+                                <th class="col-md-2">Request Status</th>
+                                <th class="col-md-2">Notify Requester</th>
+                                <th style="display:none"></th>
+                                <th style="display:none"></th>
+                                <th style="display:none"></th>
+                                <th style="display:none"></th>
+                                <th style="display:none"></th>
+                                <th style="display:none"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Central.dtReleasing)
+                            {
+                                <tr>
+                                    <td class="text-left"><a id="ItemReleasing" href="#">@Html.DisplayFor(modelitem => item.ReferenceNo)</a></td>
+                                    <td>@Html.DisplayFor(modelitem => item.Responsible)</td>
+                                    <td>@Html.DisplayFor(modelitem => item.ApproverID)</td>
+                                    <td>@Html.DisplayFor(modelitem => item.DateRequested)</td>
+                                    @if (item.NotifItemStatus == "FOR RELEASING")
+                                    {
+                                        <td><span><i class="label label-danger">@Html.DisplayFor(modelitem => item.NotifItemStatus)</i></span></td>
+                                    }
+                                    else if (item.NotifItemStatus == "FOR PICKUP")
+                                    {
+                                        <td><span><i class="label label-success">@Html.DisplayFor(modelitem => item.NotifItemStatus)</i></span></td>
+                                    }
+                                    else
+                                    {
+                                        <td><span><i class="label label-warning">@Html.DisplayFor(modelitem => item.NotifItemStatus)</i></span></td>
+                                    }
+                                    @if (item.UserRole == "2" || item.UserRole == "3" || item.UserRole == "5")
+                                    {
+                                        <td><button type="button" class="btn btn-primary" disabled style="display:none"><span class="di di-megaphone"></span></button></td>
+                                    }
+                                    else if (item.NotifItemStatus == "FOR PICKUP" || item.NotifRequestStatus == "APPROVED")
+                                    {
+                                        <td><button type="button" class="btn btn-primary" disabled><span class="di di-megaphone"></span></button></td>
+                                    }
+                                    else
+                                    {
+                                        <td><a href="#" class="btn btn-primary" id="NotifyRequester"><span class="di di-megaphone"></span></a></td>
+                                    }
+
+                                    <td style="display:none">@Html.HiddenFor(modelitem => item.CompanyID)</td>
+                                    <td style="display:none">@Html.HiddenFor(modelitem => item.ReferenceNo)</td>
+                                    <td style="display:none">@Html.HiddenFor(modelitem => item.Purpose)</td>
+                                    <td style="display:none">@Html.HiddenFor(modelitem => item.DateRequested)</td>
+                                    <td style="display:none">@Html.HiddenFor(modelitem => item.GroupName)</td>
+                                    <td style="display:none">@Html.HiddenFor(modelitem => item.Designation)</td>
+                                    @Html.HiddenFor(modelitem => item.Requester)
+                                    @Html.HiddenFor(modelitem => item.UserRole)
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal modal-secondary fade" id="myModal8" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        @using (Html.BeginForm("UpdateItemRequestForReleasing", "Home", FormMethod.Post, new { @id = "formvalidationtooltip", @class = "ItemReleasingForm", @role = "form" }))
+        {
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Item for Releasing</h4>
+                </div>
+                <div class="modal-body">
+
+                    <div class="panel panel-default">
+                        <div class="row">
+                            <div class="panel-body">
+                                <div class="col-md-12">
+                                    @Html.HiddenFor(central => central.Central.Requester)
+                                    @Html.HiddenFor(central => central.Central.DisplayReferenceNo)
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Group:</label>  <span id="GroupName"></span>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Designation:</label>  <span id="Designation"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group input-group">
+                                            <span class="input-group-addon">Date Released</span>
+                                            @Html.TextBoxFor(central => central.Central.DateReleased, new { @class = "form-control js-datepicker validate[required]", autocomplete = "off", @placeholder = "Required", @readonly = "readonly" })
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label>Purpose:</label>  <span id="Purpose"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <table class="table" id="TableItemRequestForReleasing">
+                                        <thead>
+                                            <tr>
+                                                <th class="col-md-2">Item Code</th>
+                                                <th class="col-md-3">Part Name</th>
+                                                <th class="col-md-1 text-center">Remaining Stock</th>
+                                                <th class="col-md-1 text-center">Requested Quantity</th>
+                                                <th class="col-md-1 text-center">Delivered</th>
+                                                <th class="col-md-1 text-center">Release</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" id="btnItemLocate">Item/s Location</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" id="btnUpdate">Release</button>
+                </div>
+            </div>
+        }
+
+    </div>
+</div>
+@section scripts {
+
+    <script>
+        $('#TableItemReleasing').DataTable({
+            order: [[3, "desc"]],
+            lengthMenu: [[5, 10, 15, 20, 50, -1], [5, 10, 15, 20, 50, "All"]],
+            //dom: "<'row'<'col-md-3'l><'col-md-3'f>>" + //set column size
+            //     "<'row'<'col-md-12'tr>>" +
+            //     "<'row'<'col-md-5'i><'col-md-7'p>>",
+        }).rows().iterator('row', function (context, index) {
+            var node = $(this.row(index).node());
+            //node.context is element of tr generated by jQuery DataTables.
+        });
+    </script>
+
+    <script>
+        $(document).ready(function (){
+            $('.js-datepicker').datepicker({
+                endDate: new Date(),
+                todayHighlight: true,
+            });
+        })
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $("#TableItemReleasing").on('click', "#ItemReleasing", function () {
+
+                var row = $(this).closest("tr");
+
+                var ReferenceNo = $("#item_ReferenceNo", row).val();
+                var GroupName = $("#item_GroupName", row).val();
+                var Designation = $("#item_Designation", row).val();
+                var Purpose = $("#item_Purpose", row).val();
+                var Requester = $("#item_Requester", row).val();
+                var UserRole = $("#item_UserRole", row).val();
+
+                $("#Central_DisplayReferenceNo").val(ReferenceNo);
+                $("#Purpose").html(Purpose);
+                $("#Designation").html(Designation);
+                $("#GroupName").html(GroupName);
+                $("#Central_Requester").val(Requester);
+                $("#Central_UserRole").val(UserRole);
+
+                $("#Central_DateReleased").datepicker('setDate',new Date().toString('MM/dd/yyyy'));
+                var DisplayReferenceNo = $("#Central_DisplayReferenceNo").val();
+                $.ajax({
+                    url: '/Home/RetreiveItemCommonForReleasing/',
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        DisplayReferenceNo: DisplayReferenceNo
+                    }),
+                    dataType: "json",
+                    success: function (data) {
+                        var TableItemForReleasing = $('#TableItemRequestForReleasing tbody');
+                        TableItemForReleasing.empty();
+
+                        $(data).each(function (index, data) {
+
+                            TableItemForReleasing.append('<tr><td>' + data.StockNo + '</td><td>' + data.ItemName + '</td><td class="text-center">' + data.StockOnHand + '</td><td class="text-center">' + data.qty + '</td><td class="text-center">' + data.Delivered + '</td>'+
+                                '<td><input type="text" class="form-control text-center" id="ItemCount" oninput="isNumber(this)"></td><td style="display:none;"><input type="text" class="form-control" value="' + data.StockNo
+                                + '" id="HiddenStockNo"></td><td style="display:none;"><input type="text" class="form-control" value="' + data.ItemName
+                                + '" id="HiddenItemName"></td><td style="display:none;"><input type="text" class="form-control" value="' + data.qty
+                                + '" id="HiddenQty"></td><td style="display:none;"><input type="text" class="form-control" value="' + data.Delivered
+                                + '" id="HiddenDelivered"></td><td style="display:none;"><input type="text" class="form-control" value="' + data.StockOnHand
+                                + '" id="HiddenRemainingStock"></td></tr>');
+
+                        });
+
+                        $("#TableItemRequestForReleasing tbody tr").each(function () { //Loop through the Table rows
+                            var row = $(this);
+
+                            var qty = parseFloat($("#HiddenQty", row).val());
+                            var collected = parseFloat($("#HiddenDelivered", row).val());
+                            if (collected == qty) {
+                                $('#ItemCount',row).attr('disabled','disabled');
+                                //$('#ItemCount', row).attr('placeholder',"Released");
+                            }
+                            else {
+                                $('#ItemCount', row).attr('placeholder', qty - collected);
+                            }
+
+                        });
+                    }
+                });
+
+                $('#myModal8').modal({
+                    show: 'false',
+                    backdrop: 'static',
+                });
+            })
+
+        })
+
+    </script>
+
+    <script>
+        $("#formvalidationtooltip").submit("#btnUpdate", function () {
+
+            var DateReleased = $("#Central_DateReleased").val()
+            var DisplayReferenceNo = $("#Central_DisplayReferenceNo").val()
+            var Requester = $("#Central_Requester").val()
+            var UserRole = $("#item_UserRole").val()
+
+            var validation = false;
+            var count = 0;
+
+            if (DateReleased == "") { return false; }
+
+            var ItemRequestList = new Array();
+            $("#TableItemRequestForReleasing tbody tr").each(function () { //Loop through the Table rows
+                var row = $(this);
+
+                var qty = $("#ItemCount", row).val();
+                var a = 0;
+                var b = 0;
+                var c = 0;
+                var d = 0;
+
+                a = parseFloat($("#HiddenDelivered", row).val());
+                b = parseFloat($("#HiddenQty", row).val());
+                c = parseFloat($("#ItemCount", row).val());
+                d = a + c;
+
+                if (d > b) {
+
+                    $.toast({
+                        heading: "Quantity Limit.",
+                        text: "Release item/s Exceeds the Requested Quantity Limit.",
+                        showHideTransition: 'slide',
+                        icon: 'error',
+                        autoHideDelay: 3000,
+
+                        position: 'top-right',
+                        bgColor: '#FF4859'
+                    });
+                    validation = true;
+                    return false;
+                }
+                else if (c <= 0) {
+
+                    $.toast({
+                        heading: "Invalid.",
+                        text: "0 is not allowed.",
+                        showHideTransition: 'slide',
+                        icon: 'error',
+                        autoHideDelay: 3000,
+
+                        position: 'top-right',
+                        bgColor: '#FF4859'
+                    });
+                    validation = true;
+                    return false;
+                }
+
+                if (qty != "" && qty != null) {
+                    count++
+                }
+
+                var RequestItem = {}; // SET DATA ARRAY TO STORED ALL DATA INSIDE OF TABLE
+
+                RequestItem.StockNo = $("#HiddenStockNo", row).val();
+                RequestItem.ItemName = $("#HiddenItemName", row).val();
+                RequestItem.qty = $("#HiddenQty", row).val();
+                RequestItem.collected = $("#HiddenDelivered", row).val();
+                RequestItem.itemReleased = $("#ItemCount", row).val();
+                ItemRequestList.push(RequestItem); // RENDER DATA ARRAY TO JSON ARRAY
+            });
+
+            if (validation == true) {
+                return false;
+            }
+
+            if (count == 0) {
+                $.toast({
+                    heading: "Information.",
+                    text: "Please, release at least one item.",
+                    showHideTransition: 'slide',
+                    icon: 'error',
+                    autoHideDelay: 3000,
+
+                    position: 'top-right',
+                    bgColor: '#FF4859'
+                });
+                return false;
+            }
+
+            var TransactionDetailList = new Array(); // For transaction code
+            $("#TableItemRequestForReleasing tbody tr").each(function () { //Loop through the Table rows
+                var row = $(this);
+
+                var Items = {}; // SET DATA ARRAY TO STORED ALL DATA INSIDE OF TABLE
+
+                var Release = parseFloat($("#ItemCount", row).val());
+                var Qty = parseFloat($("#HiddenQty", row).val());
+                var RemainingStock = parseFloat($("#HiddenRemainingStock", row).val());
+                var Stock = RemainingStock - Release;
+
+                Items.TransactionType = "1";
+                Items.Item = $("#HiddenStockNo", row).val();
+                Items.TransStockOnHand = RemainingStock;
+                Items.RemainingStock = Stock;
+                Items.Quantity = $("#ItemCount", row).val();
+                TransactionDetailList.push(Items); // RENDER DATA ARRAY TO JSON ARRAY
+            });
+
+            event.preventDefault();
+            event.stopImmediatePropagation();
+
+            bootbox.confirm({
+                title: "Are you sure you want to release?",
+                message: "Item Inventory will be updated.",
+                size: "small",
+                buttons: {
+                    confirm: {
+                        label: 'Yes',
+                        className: 'btn-success'
+                    },
+                    cancel: {
+                        label: 'No',
+                        className: 'btn-danger'
+                    }
+                },
+                callback: function (result) {
+
+                    if (result) {
+                        var action = $("#formvalidationtooltip").attr("action");
+
+                        $.ajax({
+                            url: action,
+                            type: "POST",
+                            contentType: "application/json",
+                            data: JSON.stringify({
+                                ItemRequestList,
+                                TransactionDetailList,
+                                DateReleased: DateReleased,
+                                DisplayReferenceNo: DisplayReferenceNo,
+                                Requester:Requester,
+                                UserRole: UserRole,
+                            }),
+                            dataType: "json",
+                            success: function (data) {
+
+                                if (data == 0) {
+                                    $.toast({
+                                        heading: "Error",
+                                        text: "Fill out Release item at least one.",
+                                        showHideTransition: 'slide',
+                                        icon: 'error',
+                                        autoHideDelay: 3000,
+
+                                        position: 'top-right',
+                                        bgColor: '#FF4859'
+                                    });
+                                    return false;
+                                }
+
+                                else if (data == "outofstock") {
+                                    $.toast({
+                                        heading: "Out of Stock",
+                                        text: "Insufficient Stock.",
+                                        showHideTransition: 'slide',
+                                        icon: 'error',
+                                        autoHideDelay: 3000,
+
+                                        position: 'top-right',
+                                        bgColor: '#FF4859'
+                                    });
+                                    return false;
+                                }
+
+
+                                else if (data == "system_error") {
+                                    $.toast({
+                                        heading: "System Error",
+                                        text: "Contact our administrator for assistance.",
+                                        showHideTransition: 'slide',
+                                        icon: 'error',
+                                        autoHideDelay: 3000,
+
+                                        position: 'top-right',
+                                        bgColor: '#FF4859'
+                                    });
+                                    return false;
+                                }
+
+                                else if (data == "Cannot") {
+                                    $.toast({
+                                        heading: "Item Releasing",
+                                        text: "Already released.",
+                                        showHideTransition: 'slide',
+                                        icon: 'error',
+                                        autoHideDelay: 3000,
+
+                                        position: 'top-right',
+                                        bgColor: '#FF4859'
+                                    });
+                                    return false;
+                                }
+                                else {
+
+                                    $.toast({
+                                        heading: 'Item Released.',
+                                        text: data.itemCount + " Item/s successfully Released.",
+                                        showHideTransition: 'slide',
+                                        icon: 'success',
+                                        autoHideDelay: 3000,
+                                        position: 'top-right',
+                                        bgColor: '#7EC857'
+                                    });
+                                    var $this = $("#btnUpdate");
+                                    $this.button('loading');
+                                    setTimeout(function () {
+                                        $this.button('reset');
+                                        window.location.reload();
+                                    }, 3000);
+
+
+                                    if (data.ItemOutStock != 0) {
+
+                                        $.toast({
+                                            heading: "Warning.",
+                                            text: data.ItemOutStock + " Item/s reached the safety stock.",
+                                            showHideTransition: 'slide',
+                                            icon: 'warning',
+                                            autoHideDelay: 3000,
+                                            position: 'top-right',
+                                            bgColor: '#FF4859'
+                                        });
+
+                                    }
+
+                                    return false;
+                                }
+
+                            }
+                        });
+
+                    }
+
+                    else {
+                        return;
+                    }
+                }
+            })
+        })
+
+        $("#TableItemReleasing tbody").on('click', '#NotifyRequester', function () {
+            var row = $(this).closest('tr');
+
+            var ReferenceNo = $("#item_ReferenceNo", row).val()
+            var Requester = $("#item_Requester", row).val()
+            var UserRole = $("#item_UserRole", row).val()
+
+            bootbox.confirm({
+                title: "Notify the requester?",
+                message: "This will be changed status to 'FOR PICKUP'.",
+                size: "small",
+                buttons: {
+                    confirm: {
+                        label: 'Yes',
+                        className: 'btn-success'
+                    },
+                    cancel: {
+                        label: 'No',
+                        className: 'btn-danger'
+                    }
+                },
+                callback: function (result) {
+
+                    if (result) {
+
+                        $.ajax({
+                            url: "/Home/NotifyRequester",
+                            type: "POST",
+                            contentType: "application/json",
+                            data: JSON.stringify({
+                                ReferenceNo: ReferenceNo,
+                                Requester: Requester,
+                                UserRole: UserRole,
+                            }),
+                            dataType: "json",
+                            success: function (data) {
+
+                                if (data == 0) {
+                                    $.toast({
+                                        heading: "Error",
+                                        text: "Contact our Administrator for assistance.",
+                                        showHideTransition: 'slide',
+                                        icon: 'error',
+                                        autoHideDelay: 3000,
+
+                                        position: 'top-right',
+                                        bgColor: '#FF4859'
+                                    });
+                                    return false;
+                                }
+
+                                else {
+
+                                    $.toast({
+                                        heading: 'Item Released.',
+                                        text: ReferenceNo + " Successfully Notified.",
+                                        showHideTransition: 'slide',
+                                        icon: 'success',
+                                        autoHideDelay: 3000,
+                                        position: 'top-right',
+                                        bgColor: '#7EC857'
+                                    });
+                                    var $this = $("#NotifyRequester");
+                                    $this.button('loading');
+                                    setTimeout(function () {
+                                        $this.button('reset');
+                                        window.location.reload();
+                                    }, 3000);
+
+
+                                    return false;
+                                }
+
+                            }
+                        });
+
+                    }
+
+                    else {
+                        return;
+                    }
+                }
+            })
+
+        })
+    </script>
+
+    <script>
+        $("#btnItemLocate").on("click", function () {
+            var all = "";
+            $("#TableItemRequestForReleasing tbody tr").each(function () {
+                var row = $(this);
+                var x = $("#HiddenStockNo", row).val();
+                if (all == "") {
+                    all = x;
+                }
+                else {
+                    all = all + "," + x
+                }
+            })
+            event.preventDefault();
+            event.stopImmediatePropagation();
+
+            $.ajax({
+                url: '/Home/GetItemLocation',
+                type: "post",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    StockNo: all
+                }),
+                dataType: "json",
+                success: function (resultData) {
+                    window.open("/Report/ItemLocationReports/");
+                }
+            });
+
+        })
+    </script>
+
+
+}

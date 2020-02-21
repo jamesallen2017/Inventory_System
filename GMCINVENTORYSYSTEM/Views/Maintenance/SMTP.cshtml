@@ -1,0 +1,336 @@
+﻿@model GMCINVENTORYSYSTEM.Models.AllModels
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    List<SelectListItem> listItems = new List<SelectListItem>();
+    listItems.Add(new SelectListItem
+    {
+        Text = "ENABLED",
+        Value = "1",
+    });
+    listItems.Add(new SelectListItem
+    {
+        Text = "DISABLED",
+        Value = "2",
+    });
+}
+
+<title>SMTP</title>
+
+<div class="page-header">
+    <h1>SMTP</h1>
+    <ol class="breadcrumb">
+        <li><a href="#">Maintenance</a></li>
+        <li class="active">SMTP</li>
+    </ol>
+</div>
+
+<div class="content-wrap">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <span>Date: @DateTime.Now.ToShortDateString()</span>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                @using (Html.BeginForm("Update_SMTP", "Maintenance", FormMethod.Post, new { @id = "formvalidationtooltip", @class = "SMTPform", @role = "form" }))
+                {
+               
+                    @Html.HiddenFor(item => item.Maintenance.smtpID)
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group input-group">
+                                    <span class="input-group-addon">Status</span>
+                                    @Html.DropDownListFor(item => item.Maintenance.smtpStatus, listItems, new { @class = "form-control validate[required] select2Search", placeholder = "", autocomplete = "off", disabled = "disabled" })
+                                </div>
+                                <div class="form-group input-group">
+                                    <span class="input-group-addon">Port</span>
+                                    @Html.TextBoxFor(item => item.Maintenance.smtpPort, new { @class = "form-control validate[required]", placeholder = "", autocomplete = "off", disabled = "disabled" })
+                                </div>
+                                <div class="form-group input-group">
+                                    <span class="input-group-addon">Password</span>
+                                    @Html.TextBoxFor(item => item.Maintenance.smtpPassword, new { @class = "form-control validate[required]", placeholder = "", autocomplete = "off", disabled = "disabled", type = "password" })
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group input-group">
+                                    <span class="input-group-addon">Server</span>
+                                    @Html.TextBoxFor(item => item.Maintenance.smtpServer, new { @class = "form-control validate[required]", placeholder = "", autocomplete = "off", disabled = "disabled" })
+                                </div>
+                                <div class="form-group input-group">
+                                    <span class="input-group-addon">Email</span>
+                                    @Html.TextBoxFor(item => item.Maintenance.smtpEmail, new { @class = "form-control validate[required]", placeholder = "", autocomplete = "off", disabled = "disabled" })
+                                </div>
+                                <div class="form-group input-group">
+                                    <span class="input-group-addon">Confirm Password</span>
+                                    @Html.TextBoxFor(item => item.Maintenance.smtpConfirmPassword, new { @class = "form-control validate[required]", placeholder = "", autocomplete = "off", disabled = "disabled", type = "password" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        <div class="row">
+                            <div class="pull-right" style="margin-right:10px">
+
+                                <button type="button" id="BtnTestEmail" class="btn btn-primary"><span><i class="di di-plus"></i> Test Email</span></button>
+                                <button type="button" class="btn btn-default" id="BtnEdit"><span><i class="di di-plus"></i>Edit</span></button>
+                                <button type="submit" class="btn btn-success" id="BtnEditSave" style="display:none;"><span><i class="di di-plus"></i>Update</span></button>
+                                <a href="@Url.Action("SMTP","Maintenance")" class="btn btn-danger" id="BtnBack" hidden><span><i class="di di-arrow-left"></i>Back</span></a>
+
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script>
+        $("#BtnEdit").on('click', function () {
+            $("input").prop('disabled', false);
+            $("select").prop('disabled', false);
+            $("#BtnBack").show();
+            $("#BtnEditSave").show();
+            $("#BtnEdit").hide();
+
+
+        })
+
+     
+
+    </script>
+    <script>
+        $("#formvalidationtooltip").submit("#BtnEditSave", function (e) {
+
+            var smtpID = $("#Maintenance_smtpID").val().trim()
+            var smtpServer = $("#Maintenance_smtpServer").val().trim()
+            var smtpPort = $("#Maintenance_smtpPort").val().trim()
+            var smtpEmail = $("#Maintenance_smtpEmail").val().trim()
+            var smtpPassword = $("#Maintenance_smtpPassword").val().trim()
+            var smtpConfirmPassword = $("#Maintenance_smtpConfirmPassword").val().trim()
+            var smtpStatus = $("#Maintenance_smtpStatus").val().trim()
+
+
+            if (smtpServer == "" || smtpPort == "" || smtpEmail == "" || smtpPassword == "" || smtpConfirmPassword == "") {
+                return false;
+            }
+            else if (smtpPassword != smtpConfirmPassword) {
+
+                $.toast({
+                    heading: "Warning.",
+                    text: "Password and Confirm Password doesn't match.",
+                    showHideTransition: 'slide',
+                    autoHideDelay: 3000,
+                    icon: 'error',
+                    position: 'top-right',
+                    bgColor: '#FF4859'
+                });
+                return false;
+            }
+
+            e.preventDefault();
+            e.stopImmediatePropagation();
+
+
+            bootbox.confirm({
+                title: "Update SMTP?",
+                message: "This will be affect the Email Notification.",
+                size: "small",
+                buttons: {
+                    confirm: {
+                        label: 'Yes',
+                        className: 'btn-success'
+                    },
+                    cancel: {
+                        label: 'No',
+                        className: 'btn-danger'
+                    }
+                },
+                callback: function (result) {
+
+                    if (result) {
+
+                        var action = $("#formvalidationtooltip").attr("action");
+
+                        $.ajax({
+                            url: action,
+                            type: "POST",
+                            contentType: "application/json",
+                            data: JSON.stringify({
+                                smtpID: smtpID,
+                                smtpServer: smtpServer,
+                                smtpPort: smtpPort,
+                                smtpEmail: smtpEmail,
+                                smtpPassword: smtpPassword,
+                                smtpStatus: smtpStatus,
+                            }),
+                            dataType: "json",
+                            success: function (data) {
+                                if (data == "0") {
+
+                                    $.toast({
+                                        heading: "Warning.",
+                                        text: "Contact our administrator for assistance.",
+                                        showHideTransition: 'slide',
+                                        autoHideDelay: 3000,
+                                        icon: 'error',
+                                        position: 'top-right',
+                                        bgColor: '#FF4859'
+                                    });
+                                    return false;
+                                }
+                                else {
+                                    $.toast({
+                                        heading: 'SMTP',
+                                        text: "SMTP Successfully updated.",
+                                        showHideTransition: 'slide',
+                                        icon: 'success',
+                                        autoHideDelay: 3000,
+
+                                        position: 'top-right',
+                                        bgColor: '#7EC857'
+                                    });
+
+                                    var $this = $("#BtnEditSave");
+                                    $this.button('loading');
+                                    setTimeout(function () {
+                                        $this.button('reset');
+                                        window.location.reload();
+                                    }, 3000);
+                                }
+                            }
+
+                        })
+
+                    }
+
+                    else {
+                        return;
+                    }
+                }
+            })
+        })
+
+
+
+
+        $("#BtnTestEmail").on('click', function () {
+
+            var emailReg = /^([\w-\.]+@@([\w-]+\.)+[\w-]{2,4})?$/;
+
+            var locale = {
+                OK: 'I Suppose',
+                CONFIRM: 'Send',
+                CANCEL: 'Cancel'
+            };
+
+            bootbox.addLocale('custom', locale);
+
+            bootbox.prompt({
+                title: "Send test email To?",
+                locale: 'custom',
+                callback: function (result) {
+
+                    var EmailAddress = result;
+
+                    if (EmailAddress != null) {
+
+                        if (!emailReg.test(EmailAddress)) {
+                            $.toast({
+                                heading: "Invalid Format",
+                                text: "Please, Check your Email Address.",
+                                showHideTransition: 'slide',
+                                autoHideDelay: 3000,
+                                icon: 'error',
+                                position: 'top-right',
+                                bgColor: '#FF4859'
+                            });
+                            return false;
+                        }
+
+
+                        bootbox.confirm({
+                            title: "Test Email",
+                            message: "Are you sure you want to send?",
+                            size: "small",
+                            buttons: {
+                                confirm: {
+                                    label: 'Yes',
+                                    className: 'btn-success'
+                                },
+                                cancel: {
+                                    label: 'No',
+                                    className: 'btn-danger'
+                                }
+                            },
+                            callback: function (result) {
+
+                                if (result) {
+
+                                    $.ajax({
+                                        url: "/Maintenance/SMTP_TestEmail/",
+                                        type: "POST",
+                                        contentType: "application/json",
+                                        data: JSON.stringify({
+                                            EmailAddress: EmailAddress,
+                                        }),
+                                        dataType: "json",
+                                        success: function (data) {
+                                            if (data == "0") {
+
+                                                $.toast({
+                                                    heading: "Warning.",
+                                                    text: "Contact our administrator for assistance.",
+                                                    showHideTransition: 'slide',
+                                                    autoHideDelay: 3000,
+                                                    icon: 'error',
+                                                    position: 'top-right',
+                                                    bgColor: '#FF4859'
+                                                });
+                                                return false;
+                                            }
+
+                                            else {
+                                                $.toast({
+                                                    heading: 'SMTP',
+                                                    text: "Test Email Successfully sent.",
+                                                    showHideTransition: 'slide',
+                                                    icon: 'success',
+                                                    autoHideDelay: 3000,
+
+                                                    position: 'top-right',
+                                                    bgColor: '#7EC857'
+                                                });
+
+                                                var $this = $("#BtnTestEmail");
+                                                $this.button('loading');
+                                                setTimeout(function () {
+                                                    $this.button('reset');
+                                                    window.location.reload();
+                                                }, 3000);
+                                            }
+                                        }
+
+                                    })
+                                }
+
+                                else {
+                                    return;
+                                }
+                            }
+                        })
+                    }
+                }
+                
+            });
+
+        })
+    </script>
+}
+

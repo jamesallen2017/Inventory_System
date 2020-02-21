@@ -1,0 +1,343 @@
+﻿@model GMCINVENTORYSYSTEM.Models.AllModels
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .form-control[readonly] {
+        background-color: white;
+    }
+</style>
+
+<title>Created Item Request (Unique)</title>
+
+<div class="page-header">
+    <h1>Created Item Request</h1>
+    <ol class="breadcrumb">
+        <li><a>Inquiry</a></li>
+        <li class="active"> Created Item Request (Unique)</li>
+    </ol>
+</div>
+
+<div class="content-wrap">
+    <!--START: Content Wrap-->
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <span>Date: @DateTime.Now.ToShortDateString()</span>
+        </div>
+        <div class="col-md-5">
+            <div class="form-group input-group" style="width:100%">
+                <div class="input-daterange input-group">
+                    <span class="input-group-addon">Date Requested</span>
+                    <input id="DateFrom" class="form-control js-datepicker" readonly name="start" placeholder="from" autocomplete="off" style="width:100%" />
+                    <span class="input-group-addon"><i class="di di-calendar"></i></span>
+                    <input id="DateTo" class="form-control" readonly name="end" placeholder="to" autocomplete="off" style="width:100%" />
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel-body">
+                    <table class="table table-hover table-striped" id="TableUniqueRequest">
+                        <thead>
+                            <tr>
+                                <th class="text-left">Reference No</th>
+                                <th>Requested By</th>
+                                <th>Responsible</th>
+                                <th>Date Requested</th>
+                                <th>Request Status</th>
+                                <th style="display:none">Request Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @foreach (var item in Model.Satellite.dtUniqueRequest)
+                            {
+                                <tr>
+                                    <td class="text-left"><a id="UniqueRequest" href="#">@Html.DisplayFor(modelitem => item.ReferenceNo)</a></td>
+                                    <td>@Html.DisplayFor(modelitem => item.Requester)</td>
+                                    <td>@Html.DisplayFor(modelitem => item.Responsible)</td>
+                                    <td>@Html.DisplayFor(modelitem => item.DateRequested)</td>
+                                    @*@if (item.RequestStatus == "FOR APPROVAL")
+                                        {
+                                            <td><span><i class="label label-warning">@Html.DisplayFor(modelitem => item.RequestStatus)</i></span></td>
+                                        }
+                                        else if (item.RequestStatus == "FOR PICKUP")
+                                        {
+                                            <td><span><i class="label label-warning">@Html.DisplayFor(modelitem => item.RequestStatus)</i></span></td>
+                                        }
+                                        else if (item.RequestStatus == "APPROVED")
+                                        {
+                                            <td><span><i class="label label-success">@Html.DisplayFor(modelitem => item.RequestStatus)</i></span></td>
+                                        }
+                                        else if (item.RequestStatus == "REJECTED")
+                                        {
+                                            <td><span><i class="label label-danger">@Html.DisplayFor(modelitem => item.RequestStatus)</i></span></td>
+                                        }
+                                        else if (item.RequestStatus == "COMPLETED")
+                                        {
+                                            <td><span><i class="label label-success">@Html.DisplayFor(modelitem => item.RequestStatus)</i></span></td>
+                                        }*@
+                                    @if (item.RequestStatus == "APPROVED" || item.RequestStatus == "COMPLETED")
+                                    {
+                                        <td><span><i class="label label-success">@Html.DisplayFor(modelitem => item.RequestStatus)</i></span></td>
+                                    }
+                                    else if (item.RequestStatus == "REJECTED")
+                                    {
+                                        <td><span><i class="label label-danger">@Html.DisplayFor(modelitem => item.RequestStatus)</i></span></td>
+                                    }
+                                    else if (item.RequestStatus == "FOR PICKUP" || item.RequestStatus == "INCOMPLETE" || item.RequestStatus == "FOR APPROVAL")
+                                    {
+                                        <td><span><i class="label label-warning">@Html.DisplayFor(modelitem => item.RequestStatus)</i></span></td>
+                                    }
+                                    <td style="display:none">@Html.HiddenFor(modelitem => item.ReferenceNo)</td>
+
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal modal-secondary fade" id="myModal8" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Item for Releasing</h4>
+            </div>
+            <div class="modal-body">
+
+                <div class="panel panel-default">
+                    <div class="row">
+                        <div class="panel-body">
+
+                            <div class="col-md-12">
+                                <table class="table" id="TableItemRequestForReleasing">
+                                    <thead>
+                                        <tr>
+                                            <th class="col-md-2">Item Code</th>
+                                            <th class="col-md-3">Part Name</th>
+                                            <th class="col-md-1">Requested Quantity</th>
+                                            <th class="col-md-1">Received</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+            var date = new Date();
+            var today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+            var end = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
+            $('.js-datepicker').datepicker({
+                formatDate: "mm/dd/yyyy",
+                //todayHighlight: true,
+                //startDate: new Date(),
+                //autoclose: true
+            });
+
+            $('.input-group.date').datepicker({
+                formatDate: "mm/dd/yyyy",
+                //todayHighlight: true,
+                //startDate: new Date(),
+                //autoclose: true
+            });
+
+            $('.input-daterange').datepicker({
+                formatDate: "mm/dd/yyyy",
+                //todayHighlight: true,
+                //startDate: new Date(),
+                //autoclose: true
+            });
+
+        });
+    </script>
+
+    <script>
+        $(function () {
+            //$.fn.dataTable.ext.search.push(
+            //    function (settings, data, dataIndex) {
+            //        var min = $('#DateFrom').datepicker('getDate');
+            //        var max = $('#DateTo').datepicker('getDate');
+
+            //        var date = data[3].split(' ')
+            //        if (date[1] == "") {
+            //            var startDate = date[0] + "/" + date[2] + "/" + date[3];
+            //        }
+            //        else {
+            //            var startDate = date[0] + "/" + date[1] + "/" + date[2];
+            //        }
+
+            //        startDate = new Date(startDate);
+
+            //        if (min == null && max == null) return true;
+            //        if (min == null && startDate <= max) return true;
+            //        if (max == null && startDate >= min) return true;
+            //        if (startDate <= max && startDate >= min) return true;
+            //        return false;
+            //    }
+            //);
+
+            var table = $('#TableUniqueRequest').DataTable({
+                order: [[3, "desc"]],
+                lengthMenu: [[5, 10, 15, 20, 50, -1], [5, 10, 15, 20, 50, "All"]],
+                //dom: "<'row'<'col-md-3'l><'col-md-3'f>>" + //set column size
+                //     "<'row'<'col-md-12'tr>>" +
+                //     "<'row'<'col-md-5'i><'col-md-7'p>>",
+            }).rows().iterator('row', function (context, index) {
+                var node = $(this.row(index).node());
+                //node.context is element of tr generated by jQuery DataTables.
+            });
+            //// Event listener to the two range filtering inputs to redraw on input
+
+            //$('#DateFrom, #DateTo').change(function () {
+            //    table.draw();
+            //});
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            //$("#DateFrom").datepicker({
+            //    formatDate: "mm/dd/yyyy",
+            //    //todayBtn: 1,
+            //    autoclose: true,
+            //    //todayHighlight: true,
+            //}).on('changeDate', function (selected) {
+            //    var minDate = new Date(selected.date.valueOf());
+            //    $('#DateTo').datepicker('setStartDate', minDate);
+            //});
+
+            //$("#DateTo").datepicker({
+            //    formatDate: "mm/dd/yyyy",
+            //    autoclose: true,
+            //    todayHighlight: true
+            //}).on('changeDate', function (selected) {
+            //    var maxDate = new Date(selected.date.valueOf());
+            //    //$('#DateFrom').datepicker('setEndDate', maxDate);
+            //});
+
+            $('#DateFrom').datepicker('setDate', '@ViewBag.Week');
+            $('#DateTo').datepicker('setDate', '@ViewBag.Date');
+            $('#DateTo,#DateFrom').datepicker('setEndDate', '@ViewBag.Date');
+        });
+
+        $('#DateFrom, #DateTo').change(function () {
+            var Date = $('#DateTo').val();
+            var Week = $('#DateFrom').val();
+
+            if (Date == "" || Week == "") {
+                return false;
+            }
+
+            $.ajax({
+                url: '/Home/CreatedItemRequest/',
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    Date: Date,
+                    Week: Week,
+                    Request: 'Unique'
+                }),
+                dataType: "json",
+                success: function (data) {
+                    $('#TableUniqueRequest').DataTable().clear();
+                    $('#TableUniqueRequest').DataTable().destroy();
+                    $('#TableUniqueRequest').dataTable({
+                        destroy: true,
+                        order: [[3, "desc"]],
+                        lengthMenu: [[5, 10, 15, 20, 50, -1], [5, 10, 15, 20, 50, "All"]],
+                        data: data,
+                        columns: [
+                            {
+                                data: 'ReferenceNo',
+                                render: function (data, type, row) {
+                                    return '<td class="text-center"><a id="UniqueRequest" href="#">' + data + '</a>' +
+                                    '<input id="item_ReferenceNo" type="hidden" value="' + row.ReferenceNo + '"></td>'
+                                }
+                            },
+                            { data: 'Requester' },
+                            { data: 'Responsible' },
+                            { data: 'DateRequested' },
+                            {
+                                data: 'RequestStatus',
+                                render: function (data, type, row) {
+                                    if (data == "APPROVED" || data == "COMPLETED") {
+                                        return '<td><span><i class="label label-success">' + data + '</i></span></td>'
+                                    }
+                                    else if (data == "REJECTED") {
+                                        return '<td><span><i class="label label-danger">' + data + '</i></span></td>'
+                                    }
+                                    else if (data == "FOR PICKUP" || data == "INCOMPLETE" || data == "FOR APPROVAL") {
+                                        return '<td><span><i class="label label-warning">' + data + '</i></span></td>'
+                                    }
+                                }
+                            }],
+                    })
+                }
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $("#TableUniqueRequest").on('click', "#UniqueRequest", function () {
+
+                var row = $(this).closest("tr");
+
+                var ReferenceNo = $("#item_ReferenceNo", row).val();
+
+                $.ajax({
+                    url: '/Home/RetreiveItemUniqueForReleasing/',
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        ReferenceNo: ReferenceNo
+                    }),
+                    dataType: "json",
+                    success: function (data) {
+                        var TableItemForReleasing = $('#TableItemRequestForReleasing tbody');
+                        TableItemForReleasing.empty();
+
+                        $(data).each(function (index, data) {
+                            TableItemForReleasing.append('<tr><td>' + data.StockNo + '</td><td>' + data.ItemName + '</td><td>' + data.Qty + '</td><td>' + data.Delivered + '</td><td style="display:none;"><input type="text" class="form-control" value="' + data.StockNo
+                                + '" id="HiddenStockNo"></td><td style="display:none;"><input type="text" class="form-control" value="' + data.ItemName
+                                + '" id="HiddenItemName"></td><td style="display:none;"><input type="text" class="form-control" value="' + data.Qty
+                                + '" id="HiddenQty"></td><td style="display:none;"><input type="text" class="form-control" value="' + data.Delivered
+                                + '" id="HiddenDelivered"></td><td style="display:none;"><input type="text" class="form-control" value="' + data.StockOnHand
+                                + '" id="HiddenRemainingStock"></td></tr>');
+                        });
+                    }
+                });
+
+                $('#myModal8').modal({
+                    show: 'false',
+                    backdrop: 'static',
+                });
+            })
+
+        })
+    </script>
+}

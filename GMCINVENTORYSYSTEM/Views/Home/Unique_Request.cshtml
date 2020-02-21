@@ -1,0 +1,352 @@
+﻿@model GMCINVENTORYSYSTEM.Models.AllModels
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="page-header">
+    <h1>List of Common Request</h1>
+    <ol class="breadcrumb">
+        <li><a>List of Common Request</a></li>
+        <li class="active">View</li>
+    </ol>
+</div>
+
+<div class="content-wrap">
+    <!--START: Content Wrap-->
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <span>Date: @DateTime.Now.ToShortDateString()</span>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <table class="table table-striped table-hover table-dataTable" id="RequestList">
+                            <thead>
+                                <tr>
+                                    <th>Company ID</th>
+                                    <th>Requestor</th>
+                                    <th>Deparment</th>
+                                    <th>Designation</th>
+                                    <th>Date Requested</th>
+                                    <th style="display:none;"></th>
+                                    <th style="display:none;"></th>
+                                    <th style="display:none;"></th>
+                                    <th style="display:none;"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Satellite.dtRoutingUniqueApproval)
+                                {
+                                    <tr>
+                                        <td><a id="ItemRequest" href="#">@Html.DisplayFor(modelitem => item.CompanyID)</a></td>
+                                        <td>@Html.DisplayFor(modelitem => item.Responsible)</td>
+                                        <td>@Html.DisplayFor(modelitem => item.Department)</td>
+                                        <td>@Html.DisplayFor(modelitem => item.Designation)</td>
+                                        <td>@Html.DisplayFor(modelitem => item.DateRequested)</td>
+                                        <td style="display:none;">@Html.HiddenFor(modelitem => item.Purpose)</td>
+                                        <td style="display:none;">@Html.HiddenFor(modelitem => item.ReferenceNo)</td>
+                                        <td style="display:none;">@Html.HiddenFor(modelitem => item.CompanyID)</td>
+                                        <td style="display:none;">@Html.HiddenFor(modelitem => item.RequestStatus)</td>
+                                    </tr>
+                                }
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal modal-secondary fade" id="myModal8" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Request Item</h4>
+            </div>
+            <div class="modal-body">
+                <div class="panel panel-default">
+                    <div class="row">
+                        <div class="col-md-12">
+                            @Html.HiddenFor(sat => sat.Satellite.ReferenceNo)
+                            @Html.HiddenFor(sat => sat.Satellite.CompanyID)
+                            @Html.HiddenFor(sat => sat.Satellite.RequestStatus)
+                            <div class="form-group">
+                                <label>Purpose:</label>  <span id="Purpose"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <table class="table" id="ItemRequestlist">
+                                <thead>
+                                    <tr>
+                                        <th class="col-md-2">Item Code</th>
+                                        <th class="col-md-5">Part Name</th>
+                                        <th class="col-md-2">Stock Item</th>
+                                        <th class="col-md-2">Qty</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="form-group input-group">
+                                <span class="input-group-addon">Reject Remarks</span>
+                                <textarea name="RejectRemarks" id="RejectRemarks" rows="2" style="resize:vertical;" type="text" class="form-control" placeholder="Reject Remarks....."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" id="btnReject" class="btn btn-danger" disabled="disabled">Reject</button>
+                <button type="button" id="btnConfirm" class="btn btn-primary">Approve</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section scripts {
+
+    <script>
+        $(document).ready(function () {
+            $("#RequestList").on('click', "#ItemRequest", function () {
+
+                var row = $(this).closest("tr");
+
+                var Purpose = $("#item_Purpose", row).val();
+                var CompanyID = $("#item_CompanyID", row).val();
+                var ReferenceNo = $("#item_ReferenceNo", row).val();
+                var RequestStatus = $("#item_RequestStatus", row).val();
+
+                $("#Purpose").html(Purpose);
+                $("#Satellite_CompanyID").val(CompanyID);
+                $("#Satellite_ReferenceNo").val(ReferenceNo);
+                $("#Satellite_RequestStatus").val(RequestStatus);
+
+                $.ajax({
+                    url: '/Home/RetrieveAllItemRequestUnique/',
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        ReferenceNo: ReferenceNo
+                    }),
+                    dataType: "json",
+                    success: function (data) {
+                        var ItemRequestlist = $('#ItemRequestlist tbody');
+                        ItemRequestlist.empty();
+
+                        $(data).each(function (index, data) {
+                            ItemRequestlist.append('<tr><td>' + data.StockNo + '</td><td>' + data.ItemName + '</td><td>' + data.StockOnHand + '</td><td>' + data.Qty + '</td><td style="display:none;"><input type="text" class="form-control" value="' + data.StockNo
+                                + '" id="HiddenStockNo"></td><td style="display:none;"><input type="text" class="form-control" value="' + data.ItemName
+                                + '" id="HiddenItemName"></td><td style="display:none;"><input type="text" class="form-control" value="' + data.qty
+                                + '" id="HiddenQty"></td></tr>');
+                        });
+                    }
+                });
+
+                $('#myModal8').modal({
+                    show: 'false',
+                    backdrop: 'static',
+                });
+            })
+
+
+            $("#RejectRemarks").on("keyup",function () {
+
+                if ($(this).val() == "" || $(this).val() == null) {
+
+                    $("#btnConfirm").prop('disabled', false);
+                    $("#btnReject").prop('disabled', true);
+                }
+                else {
+
+                    $("#btnConfirm").prop('disabled', true);
+                    $("#btnReject").prop('disabled', false);
+                }
+            })
+
+            $("#btnReject").on('click', function () {
+
+                var ReferenceNo = $("#Satellite_ReferenceNo").val()
+                var RejectRemarks = $("#RejectRemarks").val()
+                var TypeRequest = "REJECTED"
+
+                bootbox.confirm({
+                    title: "Are you sure you want to reject this request?",
+                    message: "The request will be permanent reject.",
+                    size: "small",
+                    buttons: {
+                        confirm: {
+                            label: 'Reject',
+                            className: 'btn-success'
+                        },
+                        cancel: {
+                            label: 'No',
+                            className: 'btn-danger'
+                        }
+                    },
+                    callback: function (result) {
+
+                        if (result) {
+
+                            $.ajax({
+                                url: "/Home/UpdateRoutingApprovalUnique",
+                                type: "POST",
+                                contentType: "application/json",
+                                data: JSON.stringify({
+                                    RejectRemarks: RejectRemarks,
+                                    TypeRequest: TypeRequest,
+                                    ReferenceNo: ReferenceNo,
+                                }),
+                                dataType: "json",
+                                success: function (data) {
+
+                                    if (data == 0) {
+                                        $.toast({
+                                            heading: "System error",
+                                            text: "Contact our administrator for assistance.",
+                                            showHideTransition: 'slide',
+                                            icon: 'error',
+                                            autoHideDelay: 3000,
+
+                                            position: 'top-right',
+                                            bgColor: '#FF4859'
+                                        });
+                                        return false;
+                                    }
+                                    else {
+                                        $.toast({
+                                            heading: 'Rejected Rquest.',
+                                            text: "The request has been rejected.",
+                                            showHideTransition: 'slide',
+                                            icon: 'success',
+                                            autoHideDelay: 3000,
+
+                                            position: 'top-right',
+                                            bgColor: '#7EC857'
+                                        });
+                                        var $this = $("#btnReject");
+                                        $this.button('loading');
+                                        setTimeout(function () {
+                                            $this.button('reset');
+                                            $('#myModal8').modal('hide');
+                                        }, 3000);
+                                    }
+
+                                }
+                            });
+
+                        }
+
+                        else {
+                            return;
+                        }
+                    }
+                })
+
+            })
+
+            $("#btnConfirm").on('click', function () {
+
+                var ReferenceNo = $("#Satellite_ReferenceNo").val()
+                var RequestStatus = $("#Satellite_RequestStatus").val()
+                var bodymessages;
+                var TypeRequest;
+                if (RequestStatus == "FOR APPROVAL") {
+
+                     TypeRequest = "APPROVED"
+                    bodymessages = "The request will be approve and notify the requester."
+
+                }
+                else {
+                     TypeRequest = "FOR APPROVAL"
+                    bodymessages = "The request will be send to central admin."
+
+                }
+
+                bootbox.confirm({
+                    title: "Approve this request?",
+                    message: bodymessages,
+                    size: "small",
+                    buttons: {
+                        confirm: {
+                            label: 'Approve',
+                            className: 'btn-success'
+                        },
+                        cancel: {
+                            label: 'No',
+                            className: 'btn-danger'
+                        }
+                    },
+                    callback: function (result) {
+
+                        if (result) {
+
+                            $.ajax({
+                                url: "/Home/UpdateRoutingApprovalUnique",
+                                type: "POST",
+                                contentType: "application/json",
+                                data: JSON.stringify({
+                                    TypeRequest: TypeRequest,
+                                    ReferenceNo: ReferenceNo,
+                                }),
+                                dataType: "json",
+                                success: function (data) {
+
+                                    if (data == 0) {
+                                        $.toast({
+                                            heading: "System error",
+                                            text: "Contact our administrator for assistance.",
+                                            showHideTransition: 'slide',
+                                            icon: 'error',
+                                            autoHideDelay: 3000,
+
+                                            position: 'top-right',
+                                            bgColor: '#FF4859'
+                                        });
+                                        return false;
+                                    }
+                                    else {
+                                        $.toast({
+                                            heading: 'Approved Rquest.',
+                                            text: "The request successfully approved.",
+                                            showHideTransition: 'slide',
+                                            icon: 'success',
+                                            autoHideDelay: 3000,
+
+                                            position: 'top-right',
+                                            bgColor: '#7EC857'
+                                        });
+                                        var $this = $("#btnConfirm");
+                                        $this.button('loading');
+                                        setTimeout(function () {
+                                            $this.button('reset');
+                                            window.location.reload();
+                                        }, 3000);
+                                    }
+
+                                }
+                            });
+
+                        }
+
+                        else {
+                            return;
+                        }
+                    }
+                })
+
+            })
+
+        })
+    </script>
+}

@@ -1,0 +1,1158 @@
+﻿@model GMCINVENTORYSYSTEM.Models.AllModels
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    List<SelectListItem> MainList = new List<SelectListItem>();
+    MainList.Add(new SelectListItem
+    {
+
+        Text = "No Record",
+        Value = ""
+    });
+}
+
+<title>Item Location - Create</title>
+
+<div class="page-header">
+    <h1>Item Location</h1>
+    <ol class="breadcrumb">
+        <li><a>Maintenance</a></li>
+        <li><a>Item Location</a></li>
+        <li class="active">Create</li>
+    </ol>
+</div>
+
+<div class="content-wrap">
+    <!--START: Content Wrap-->
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <span>Date: @DateTime.Now.ToShortDateString()</span>
+        </div>
+        <div class="panel-body no-padding">
+
+            <ul class="nav nav-tabs" id="AllTabs">
+                <li class="active"><a href="#tab_1_1" data-toggle="tab" aria-expanded="true"> Rack</a></li>
+                <li><a href="#tab_1_2" data-toggle="tab" aria-expanded="true"> Drawer</a></li>
+                <li><a href="#tab_1_3" data-toggle="tab" aria-expanded="true"> Bin</a></li>
+            </ul>
+            <label id="liClass" hidden="hidden"></label>
+
+            <div class="tab-content">
+                <div class="tab-pane fade active in" id="tab_1_1">
+
+                    @using (Html.BeginForm("InsertRackInformation", "Maintenance", FormMethod.Post, new { @id = "RackForm", @class = "ItemLocation", role = "form" }))
+                    {
+                        <div class="table table-responsive">
+                            <table class="table table-condensed" id="ItemLocationRackTable">
+                                <thead>
+                                    <tr>
+                                        <th> </th>
+                                        <th> </th>
+                                        <th> </th>
+                                        <th> </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr id="ItemLocationBody">
+                                        <td>
+                                            <label id="rackRow">1</label>
+                                        </td>
+                                        <td class="col-md-1 text-center">
+                                            <div class="form-group">
+                                                <a href="#" name="btnadd" id="btnadd" class="btn btn-link"><i class="di di-plus"></i></a>
+                                                <a href="#" name="btndelete" id="btndelete" class="btn btn-link"><i class="di di-minus"></i></a>
+                                            </div>
+                                        </td>
+
+                                        <td class="col-md-5">
+                                            <div class="form-group input-group">
+                                                <span class="input-group-addon">Rack #</span>
+                                                @Html.TextBoxFor(Maintenance => Maintenance.Maintenance.RackNo, new { @class = "form-control validate[required]", @placeholder = "Rack No.", onfocusout = "validateRackNo(this)" })
+                                            </div>
+                                        </td>
+
+                                        <td class="col-md-6">
+                                            <div class="form-group input-group">
+                                                <span class="input-group-addon">Rack Description</span>
+                                                @Html.TextBoxFor(Maintenance => Maintenance.Maintenance.RackDescription, new { @class = "form-control", @placeholder = "Rack Description" })
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <button class="btn btn-primary pull-right" type="submit" id="btnRackSave">Save</button>
+                        </div>
+
+                    }
+
+                </div>
+                <div class="tab-pane fade" id="tab_1_2">
+                    @using (Html.BeginForm("InsertDrawerInformation", "Maintenance", FormMethod.Post, new { @id = "DrawerForm", @class = "ItemLocation", role = "form" }))
+                    {
+
+                        <div class="table table-responsive">
+                            <table class="table table-condensed" id="ItemLocationDrawerTable">
+                                <thead>
+                                    <tr>
+                                        <th> </th>
+                                        <th> </th>
+                                        <th> </th>
+                                        <th> </th>
+                                        <th> </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr id="ItemLocationDrawerBody">
+                                        <td>
+                                            <label id="drawerRow">1</label>
+                                        </td>
+                                        <td class="col-md-1 text-center">
+                                            <div class="form-group">
+                                                <a href="#" name="btnadd" id="btnadd" class="btn btn-link"><i class="di di-plus"></i></a>
+                                                <a href="#" name="btndelete" id="btndelete" class="btn btn-link"><i class="di di-minus"></i></a>
+                                            </div>
+                                        </td>
+
+                                        <td class="col-md-5">
+                                            <div class="form-group input-group">
+                                                <span class="input-group-addon">Main #</span>
+                                                @Html.DropDownListFor(Maintenance => Maintenance.Maintenance.MainNo, Model.Maintenance.ddlMain, "Select Main No.", new { @class = "form-control select2Search  validate[required]", @style = "width:100%" })
+                                            </div>
+                                        </td>
+
+                                        <td class="col-md-6">
+                                            <div class="form-group input-group">
+                                                <span class="input-group-addon">Drawer #</span>
+                                                @Html.TextBoxFor(Maintenance => Maintenance.Maintenance.DrawerNo, new { @class = "form-control validate[required]", @placeholder = "Drawer No.", onfocusout = "validateDrawerNo(this)" })
+
+                                            </div>
+                                        </td>
+
+                                        @*<td class="col-md-3">
+                                                <div class="form-group input-group">
+                                                    <span class="input-group-addon">Drawer Description</span>
+                                                    @Html.TextBoxFor(Maintenance => Maintenance.Maintenance.DrawerDescription, new { @class = "form-control", @placeholder = "Drawer Description." })
+                                                </div>
+                                            </td>*@
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <button class="btn btn-primary pull-right" type="submit" id="btnDrawerSave">Save</button>
+                        </div>
+
+                    }
+                </div>
+
+                <div class="tab-pane fade" id="tab_1_3">
+                    @using (Html.BeginForm("InsertBinInformation", "Maintenance", FormMethod.Post, new { @id = "BinForm", @class = "ItemLocation", role = "form" }))
+                    {
+                        <div class="table table-responsive">
+                            <table class="table table-condensed" id="ItemLocationBinTable">
+                                <thead>
+                                    <tr>
+                                        <th> </th>
+                                        <th> </th>
+                                        <th> </th>
+                                        <th> </th>
+                                        <th> </th>
+                                        <th> </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr id="ItemLocationBinBody">
+                                        <td>
+                                            <label id="binRow">1</label>
+                                        </td>
+                                        <td class="col-md-1 text-center">
+                                            <div class="form-group">
+                                                <a href="#" name="btnadd" id="btnadd" class="btn btn-link"><i class="di di-plus"></i></a>
+                                                <a href="#" name="btndelete" id="btndelete" class="btn btn-link"><i class="di di-minus"></i></a>
+                                            </div>
+                                        </td>
+
+                                        <td class="col-md-3">
+                                            <div class="form-group input-group">
+                                                <span class="input-group-addon">Main #</span>
+                                                @Html.DropDownListFor(Maintenance => Maintenance.Maintenance.ddlMain, Model.Maintenance.ddlMain, "Select Main No.", new { @class = "form-control select2Search  validate[required]", @style = "width:100%" })
+
+                                            </div>
+                                        </td>
+
+                                        <td class="col-md-3">
+                                            <div class="form-group input-group">
+                                                <span class="input-group-addon">Drawer #</span>
+                                                @Html.DropDownListFor(Maintenance => Maintenance.Maintenance.ddlDrawerNo, MainList, new { @class = "form-control select2Search", @style = "width:100%" })
+
+                                            </div>
+                                        </td>
+                                        <td class="col-md-4" style="width:auto">
+                                            <div class="form-group input-group">
+                                                <span class="input-group-addon">Bin #</span>
+                                                @Html.TextBoxFor(Maintenance => Maintenance.Maintenance.BinNo, new { @class = "form-control validate[required]", @placeholder = "Bin No.", onfocusout = "validateBinNo(this)" })
+                                            </div>
+                                        </td>
+                                        @*<td>
+                                                <div class="form-group input-group">
+                                                    <span class="input-group-addon">Bin Description</span>
+                                                    @Html.TextBoxFor(Maintenance => Maintenance.Maintenance.BinDescription, new { @class = "form-control", @placeholder = "Bin Description." })
+                                                </div>
+                                            </td>*@
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <button class="btn btn-primary pull-right" type="submit" id="btnBinSave">Save</button>
+                        </div>
+                    }
+
+                </div>
+
+                @*<div class="tab-pane fade" id="tab_1_4">
+                        <div class="col-md-4">
+                            <div class="form-group input-group">
+                                <span class="input-group-addon">Cabinet No.</span>
+                                <input name="StockNo" type="text" id="StockNo" class="form-control" placeholder="Cabinet No." />
+                            </div>
+                        </div>
+
+                        <div class="col-md-8">
+                            <div class="form-group input-group">
+                                <span class="input-group-addon">Description</span>
+                                <input name="UOM" type="text" id="UOM" class="form-control" placeholder="Description" />
+                            </div>
+                        </div>
+                        <button class="btn btn-primary">Save</button>
+
+                    </div>*@
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+</div>
+
+@section scripts
+{
+    <script>
+        $('#AllTabs a').click(function (e) {
+            e.preventDefault();
+            $(this).tab('show');
+        });
+
+        // store the currently selected tab in the hash value
+        $("ul.nav.nav-tabs > li > a").on("shown.bs.tab", function (e) {
+            var id = $(e.target).attr("href").substr(1);
+            window.location.hash = id;
+        });
+
+        // on load of the page: switch to the currently selected tab
+        var hash = window.location.hash;
+        $('#AllTabs a[href="' + hash + '"]').tab('show');
+    </script>
+
+    @* Save Form *@
+    <script>
+        $("body").on('change', '#Maintenance_ddlMain', function () {
+            var row = $(this).closest("tr");
+            var MainNo = $("#Maintenance_ddlMain", row).val();
+            var DrawerNo = $("#Maintenance_ddlDrawerNo", row).val();
+            var DrawerList = [];
+
+            $.ajax({
+                url: '/Maintenance/RetreiveDrawerItemLocation',
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    MainNo: MainNo,
+                }),
+
+                dataType: "json",
+                success: function (data) {
+                    DrawerList = data;
+
+                    var $ele = $("#Maintenance_ddlDrawerNo", row);
+                    $ele.empty();
+
+                    if (DrawerList.length != 0) {
+                        $ele.append($('<option/>').val('').text('Select Drawer No.'));
+                        $.each(DrawerList, function (i, val) {
+                            $ele.append($('<option/>').val(this['Value']).html(this['Text']));
+                        })
+                    }
+                    else {
+                        $ele.append($('<option/>').val('').text('No Record.'));
+                    }
+
+                }
+
+            })
+        })
+    </script>
+
+    <script>
+        $("#ItemLocationRackTable").on('click', "#btnadd", function (event) {
+            var row = $(this).closest('tr');
+            var MainNo = $("#Maintenance_RackNo", row).val()
+
+
+            //if (MainNo == null || MainNo == "") {
+            //    $.toast({
+            //        heading: "Error",
+            //        text: "Sorry. Row can't be empty.",
+            //        showHideTransition: 'slide',
+            //        icon: 'error',
+            //        autoHideDelay: 3000,
+
+            //        position: 'top-right',
+            //        bgColor: '#FF4859'
+
+            //    });
+            //    return false;
+            //}
+
+            var $newRow = $('#ItemLocationBody').clone(true).appendTo('#ItemLocationRackTable'); // CLONE MAINROW UNDER TABLE ID
+
+            $('#Maintenance_RackNo', $newRow).val(MainNo)
+            $('#Maintenance_RackDescription', $newRow).val("")
+
+            var count = 0;
+
+            $("#ItemLocationRackTable tbody tr").each(function () {
+
+                var row = $(this);
+
+
+                count++;
+
+                $("#rackRow", row).html(count);
+
+            })
+
+
+            $('#rackRow,#Maintenance_RackNo,#Maintenance_RackDescription', $newRow);
+
+
+            event.preventDefault()
+
+
+
+        });
+
+        $('#ItemLocationRackTable').on('click', '#btndelete', function (event) {
+
+            var count2 = 0;
+
+            var count = $('#ItemLocationRackTable tbody tr').length;
+
+            var test = $(this).closest("tr").index()
+
+
+            if (count > 1) {
+                $(this).closest("tr").remove();
+
+                $("#ItemLocationRackTable tbody tr").each(function () {
+
+                    var row = $(this);
+
+
+                    count2++;
+
+                    $("#rackRow", row).html(count2);
+                })
+
+            } else {
+
+                $.toast({
+                    heading: "Error",
+                    text: "Sorry. Row can't be empty.",
+                    showHideTransition: 'slide',
+                    icon: 'error',
+                    autoHideDelay: 3000,
+
+                    position: 'top-right',
+                    bgColor: '#FF4859'
+
+                });
+
+                //alert("File Shouldn't Be Empty!!");
+                return false;
+
+            }
+            event.preventDefault()
+
+        });
+    </script>
+
+    <script>
+        $("#ItemLocationDrawerTable").on('click', "#btnadd", function (event) {
+            var row = $(this).closest('tr');
+            var MainNo = $("#Maintenance_MainNo", row).val()
+            var DrawerNo = $("#Maintenance_DrawerNo", row).val()
+
+
+            //if (MainNo == null || MainNo == "" || DrawerNo == "" || DrawerNo == null) {
+            //    $.toast({
+            //        heading: "Error",
+            //        text: "Sorry. Row can't be empty.",
+            //        showHideTransition: 'slide',
+            //        icon: 'error',
+            //        autoHideDelay: 3000,
+
+            //        position: 'top-right',
+            //        bgColor: '#FF4859'
+
+            //    });
+            //    return false;
+            //}
+
+            $("select#Maintenance_MainNo").select2("destroy");
+
+            var $newRow = $('#ItemLocationDrawerBody').clone(true).appendTo('#ItemLocationDrawerTable'); // CLONE MAINROW UNDER TABLE ID
+
+            var count = 0;
+
+            $("#ItemLocationDrawerTable tbody tr").each(function () {
+
+                var row = $(this);
+
+
+                count++;
+
+                $("#drawerRow", row).html(count);
+
+            })
+
+            $('#Maintenance_MainNo', $newRow).val(MainNo);// GET VALUE OF DROPDOWNLIST (THIS CODE IS FOR DROPDOWNLIST ONLY)
+            $('#Maintenance_DrawerNo', $newRow).val("")
+
+            $('#drawerRow,#Maintenance_MainNo,#Maintenance_DrawerNo', $newRow);
+
+
+
+            $('select#Maintenance_MainNo').select2(); // SET AGAIN SELECT2 JAVASCRIPT TO DROPDOWNLIST
+
+            event.preventDefault()
+        });
+
+        $('#ItemLocationDrawerTable').on('click', '#btndelete', function (event) {
+
+            var count2 = 0;
+            var count = $('#ItemLocationDrawerTable tbody tr').length;
+            var test = $(this).closest("tr").index()
+
+            if (count > 1) {
+                $(this).closest("tr").remove();
+
+
+
+                $("#ItemLocationDrawerTable tbody tr").each(function () {
+
+                    var row = $(this);
+
+
+                    count2++;
+
+                    $("#drawerRow", row).html(count2);
+
+                })
+
+            } else {
+
+                $.toast({
+                    heading: "Error",
+                    text: "Sorry. Row can't be empty.",
+                    showHideTransition: 'slide',
+                    icon: 'error',
+                    autoHideDelay: 3000,
+
+                    position: 'top-right',
+                    bgColor: '#FF4859'
+
+                });
+                //alert("File Shouldn't Be Empty!!");
+                return false;
+
+            }
+
+            event.preventDefault();
+        });
+    </script>
+
+    <script>
+        $("#ItemLocationBinTable").on('click', "#btnadd", function (event) {
+            var row = $(this).closest('tr');
+            var MainNo = $("#Maintenance_ddlMain", row).val()
+            var DrawerNo = $("#Maintenance_ddlDrawerNo", row).val()
+            var BinNo = $("#Maintenance_BinNo", row).val()
+
+
+            //if (MainNo == null || MainNo == "" || DrawerNo == "" || DrawerNo == null || BinNo == "" || BinNo == null) {
+            //    $.toast({
+            //        heading: "Error",
+            //        text: "Sorry. Row can't be empty.",
+            //        showHideTransition: 'slide',
+            //        icon: 'error',
+            //        autoHideDelay: 3000,
+
+            //        position: 'top-right',
+            //        bgColor: '#FF4859'
+
+            //    });
+            //    return false;
+            //}
+
+            $("select#Maintenance_ddlMain").select2("destroy");
+            $("select#Maintenance_ddlDrawerNo").select2("destroy");
+
+            var $tr = $(this).closest('#ItemLocationBinBody');
+            var $newRow = $('#ItemLocationBinBody').clone(true).appendTo('#ItemLocationBinTable'); // CLONE MAINROW UNDER TABLE ID
+
+            var count = 0;
+
+            $("#ItemLocationBinTable tbody tr").each(function () {
+
+                var row = $(this);
+
+
+                count++;
+
+                $("#binRow", row).html(count);
+
+            })
+
+            $('#Maintenance_ddlMain', $newRow).val(MainNo);// GET VALUE OF DROPDOWNLIST (THIS CODE IS FOR DROPDOWNLIST ONLY)
+            $('#Maintenance_ddlDrawerNo', $newRow).val(DrawerNo);// GET VALUE OF DROPDOWNLIST (THIS CODE IS FOR DROPDOWNLIST ONLY)
+            $('#Maintenance_BinNo', $newRow).val("")
+
+            $('#binRow,#Maintenance_ddlMain,#Maintenance_ddlDrawerNo,#Maintenance_BinNo', $newRow);
+
+
+
+            $('select#Maintenance_ddlDrawerNo').select2(); // SET AGAIN SELECT2 JAVASCRIPT TO DROPDOWNLIST
+            $('select#Maintenance_ddlMain').select2(); // SET AGAIN SELECT2 JAVASCRIPT TO DROPDOWNLIST
+
+
+            event.preventDefault();
+        });
+
+        $('#ItemLocationBinTable').on('click', '#btndelete', function (event) {
+            var count2 = 0;
+
+            var count = $('#ItemLocationBinTable tbody tr').length;
+
+            var test = $(this).closest("tr").index()
+
+            if (count > 1) {
+                $(this).closest("tr").remove();
+
+                $("#ItemLocationBinTable tbody tr").each(function () {
+
+                    var row = $(this);
+
+
+                    count2++;
+
+                    $("#binRow", row).html(count2);
+
+                })
+            } else {
+
+                $.toast({
+                    heading: "Error",
+                    text: "Sorry. Row can't be empty.",
+                    showHideTransition: 'slide',
+                    icon: 'error',
+                    autoHideDelay: 3000,
+
+                    position: 'top-right',
+                    bgColor: '#FF4859'
+
+                });
+                //alert("File Shouldn't Be Empty!!");
+                return false;
+
+            }
+            event.preventDefault();
+        });
+    </script>
+
+    <script>
+        $("#RackForm").submit(function (event) {
+
+            var validate = false;
+            var ItemLocationList = new Array();
+            var ItemLocationList2 = new Array();
+            var ItemLocationList3 = new Array();
+
+            $("#ItemLocationRackTable tbody tr").each(function () { //Loop through the Table rows
+                var row = $(this);
+
+                var Location = {}; // SET DATA ARRAY TO STORED ALL DATA INSIDE OF TABLE
+
+                var RackNo = $("#Maintenance_RackNo", row).val().trim();
+
+                if (RackNo == "" || RackNo == null) {
+                    //$("#Maintenance_RackNo", row).css("border-color", "red");
+                    validate = true;
+                }
+                //else {
+                //    $("#Maintenance_RackNo", row).css("border-color", "");
+                //}
+
+                Location.RackNo = $("#Maintenance_RackNo", row).val();
+                Location.RackDescription = $("#Maintenance_RackDescription", row).val();
+                Location.Rows = $('#rackRow', row).html();
+                ItemLocationList.push(Location); // RENDER DATA ARRAY TO JSON ARRAY
+                ItemLocationList2.push(Location);
+
+            });
+
+            if (validate == true) {
+                $.toast({
+                    heading: "Error",
+                    text: "Please, fill out required fields.",
+                    showHideTransition: 'slide',
+                    icon: 'error',
+                    autoHideDelay: 3000,
+
+                    position: 'top-right',
+                    bgColor: '#FF4859'
+
+                });
+                return false;
+
+            }
+
+            var RackNo = "";
+            var RackNo0 = "";
+            var Row = "";
+            var Row0 = "";
+            var rack = "";
+
+            //ItemLocationList.sort(function (a,b) {return a.RackNo - b.RackNo })
+
+            for (var i = 0; i < ItemLocationList.length; i++) {
+
+                RackNo = ItemLocationList[i].RackNo;
+                Row = ItemLocationList[i].Rows;
+
+                ItemLocationList2.splice(0, 1);
+
+                for (var j = 0; j < ItemLocationList2.length; j++) {
+                    Row0 = ItemLocationList2[j].Rows;
+                    RackNo0 = ItemLocationList2[j].RackNo;
+                    if (RackNo.toUpperCase().trim() == RackNo0.toUpperCase().trim()) {
+                        if (ItemLocationList3.length == 0) {
+                            ItemLocationList3.push(Row);
+                        }
+                        ItemLocationList3.push(Row0);
+
+                        break;
+                    }
+                }
+            }
+            if (ItemLocationList3.length > 0) {
+                $.toast({
+                    heading: "Error",
+                    text: "Row " + ItemLocationList3 + " data is duplicated.",
+                    showHideTransition: 'slide',
+                    icon: 'error',
+                    autoHideDelay: 3000,
+
+                    position: 'top-right',
+                    bgColor: '#FF4859'
+
+                });
+                return false;
+            }
+
+            
+            var action = $("#RackForm").attr("action");
+            event.preventDefault();
+            event.stopImmediatePropagation();
+
+            bootbox.confirm({
+                title: "Add Rack/s?",
+                message: "Are you sure you want to save?",
+                size: "small",
+                buttons: {
+                    confirm: {
+                        label: 'Yes',
+                        className: 'btn-success'
+                    },
+                    cancel: {
+                        label: 'No',
+                        className: 'btn-danger'
+                    }
+                },
+                callback: function (result) {
+                    if (result) {
+                        $.ajax({
+                            type: "POST",
+                            url: action,
+                            data: JSON.stringify({
+                                ItemLocationList: ItemLocationList,
+                            }),
+                            contentType: "application/json",
+                            dataType: "json",
+                            success: function (data) {
+                                var newData = [];
+                                if (data > 0) {
+                                    newData[0] = "Insert";
+                                }
+                                else {
+                                    newData = data.split('-');
+
+                                }
+                                if (data == 0) {
+                                    $.toast({
+                                        heading: "System Error",
+                                        text: "Please contact our administrator for assistance.",
+                                        showHideTransition: 'slide',
+                                        icon: 'error',
+                                        autoHideDelay: 3000,
+                                        position: 'top-right',
+                                        bgColor: '#FF4859'
+                                    });
+                                    return false;
+                                }
+                                else if (newData[0] == "Exist") {
+                                    $.toast({
+                                        heading: "Error",
+                                        text: "Row " + newData[1] + " data is already exist.",
+                                        showHideTransition: 'slide',
+                                        icon: 'error',
+                                        autoHideDelay: 3000,
+                                        position: 'top-right',
+                                        bgColor: '#FF4859'
+                                    });
+                                    return false;
+
+                                }
+                                else {
+                                    $("#Maintenance_RackNo").val("")
+                                    $("#Maintenance_RackDescription").val("")
+
+                                    $.toast({
+                                        heading: 'Item Location.',
+                                        text: data + " Rack/s Successfully added.",
+                                        showHideTransition: 'slide',
+                                        icon: 'success',
+                                        autoHideDelay: 3000,
+                                        position: 'top-right',
+                                        bgColor: '#7EC857'
+                                    });
+
+                                    var $this = $("#btnRackSave");
+                                    $this.button('loading');
+                                    setTimeout(function () {
+                                        $this.button('reset');
+                                        window.location.reload();
+                                    }, 3000);
+
+                                }
+
+                            }
+                        });
+                    }
+                }
+            })
+        })
+    </script>
+
+    <script>
+        $("#DrawerForm").submit(function (event) {
+
+            var validate = false;
+            var ItemLocationList = new Array();
+            var ItemLocationList2 = new Array();
+            var ItemLocationList3 = new Array();
+
+            $("#ItemLocationDrawerTable tbody tr").each(function () { //Loop through the Table rows
+                var row = $(this);
+
+                var Location = {}; // SET DATA ARRAY TO STORED ALL DATA INSIDE OF TABLE
+
+                var RackNo = $("#Maintenance_MainNo", row).val();
+                var DrawerNo = $("#Maintenance_DrawerNo", row).val().trim();
+                if (RackNo == "" || RackNo == null || DrawerNo == null || DrawerNo == "") {
+
+                    validate = true;
+                    return false;
+                }
+
+                Location.MainNo = $("#Maintenance_MainNo", row).val();
+                Location.DrawerNo = $("#Maintenance_DrawerNo", row).val();
+                Location.DrawerDescription = $("#Maintenance_DrawerDescription", row).val();
+                Location.Rows = $('#drawerRow', row).html();
+                ItemLocationList.push(Location); // RENDER DATA ARRAY TO JSON ARRAY
+                ItemLocationList2.push(Location);
+
+            });
+
+            if (validate == true) {
+                $.toast({
+                    heading: "Error",
+                    text: "Please, fill out required fields.",
+                    showHideTransition: 'slide',
+                    icon: 'error',
+                    autoHideDelay: 3000,
+
+                    position: 'top-right',
+                    bgColor: '#FF4859'
+
+                });
+                return false;
+
+            }
+
+            var MainNo = "";
+            var MainNo0 = "";
+            var DrawerNo = "";
+            var DrawerNo0 = "";
+            var Row = "";
+            var Row0 = "";
+            var main = "";
+
+            //ItemLocationList.sort(function (a, b) { return a.MainNo - b.MainNo });
+
+            for (var i = 0; i < ItemLocationList.length; i++) {
+
+                MainNo = ItemLocationList[i].MainNo;
+                DrawerNo = ItemLocationList[i].DrawerNo;
+                Row = ItemLocationList[i].Rows;
+
+                ItemLocationList2.splice(0, 1);
+
+                for (var j = 0; j < ItemLocationList2.length; j++) {
+                    MainNo0 = ItemLocationList2[j].MainNo;
+                    DrawerNo0 = ItemLocationList2[j].DrawerNo;
+                    Row0 = ItemLocationList2[j].Rows;
+                    if (DrawerNo.toUpperCase().trim() == DrawerNo0.toUpperCase().trim() && MainNo == MainNo0) {
+                        if (ItemLocationList3.length == 0) {
+                            ItemLocationList3.push(Row);
+                        }
+                        ItemLocationList3.push(Row0);
+
+                        break;
+                    }
+                }
+            }
+
+            if (ItemLocationList3.length > 0) {
+                $.toast({
+                    heading: "Error",
+                    text: "Row " + ItemLocationList3 + " data is duplicated.",
+                    showHideTransition: 'slide',
+                    icon: 'error',
+                    autoHideDelay: 3000,
+
+                    position: 'top-right',
+                    bgColor: '#FF4859'
+
+                });
+                return false;
+            }
+
+            event.preventDefault();
+            event.stopImmediatePropagation();
+
+
+            var action = $("#DrawerForm").attr("action");
+            bootbox.confirm({
+                title: "Add Drawer/s?",
+                message: "Are you sure you want to save?",
+                size: "small",
+                buttons: {
+                    confirm: {
+                        label: 'Yes',
+                        className: 'btn-success'
+                    },
+                    cancel: {
+                        label: 'No',
+                        className: 'btn-danger'
+                    }
+                },
+                callback: function (result) {
+                    if (result) {
+                        $.ajax({
+                            type: "POST",
+                            url: action,
+                            data: JSON.stringify({
+                                ItemLocationList: ItemLocationList,
+                            }),
+                            contentType: "application/json",
+                            dataType: "json",
+                            success: function (data) {
+                                var newData = [];
+                                if (data > 0) {
+                                    newData[0] = "Insert";
+                                }
+                                else {
+                                    newData = data.split('-');
+                                }
+
+                                if (data == 0) {
+                                    $.toast({
+                                        heading: "System Error",
+                                        text: "Please contact our administrator for assistance.",
+                                        showHideTransition: 'slide',
+                                        icon: 'error',
+                                        hideAfter: true,
+                                        position: 'top-right',
+                                        bgColor: '#FF4859'
+                                    });
+                                    return false;
+                                }
+                                else if (newData[0] == "Exist") {
+                                    $.toast({
+                                        heading: "Error",
+                                        text: "Row " + newData[1] + " data is already exist.",
+                                        showHideTransition: 'slide',
+                                        icon: 'error',
+                                        autoHideDelay: 3000,
+                                        position: 'top-right',
+                                        bgColor: '#FF4859'
+                                    });
+                                    return false;
+
+                                }
+
+                                else {
+                                    $('#Maintenance_MainNo').val("").change();
+                                    $("#Maintenance_DrawerDescription").val("")
+                                    $("#Maintenance_DrawerNo").val("")
+
+                                    $.toast({
+                                        heading: 'Item Location',
+                                        text: data + " Drawer/s Successfully added.",
+                                        showHideTransition: 'slide',
+                                        icon: 'success',
+                                        hideAfter: false,
+                                        position: 'top-right',
+                                        bgColor: '#7EC857'
+                                    });
+
+
+                                    var $this = $("#btnDrawerSave");
+                                    $this.button('loading');
+                                    setTimeout(function () {
+                                        $this.button('reset');
+                                        window.location.reload();
+                                    }, 3000);
+                                }
+
+                            }
+                        });
+                    }
+                }
+            })
+        })
+    </script>
+
+    <script>
+        $("#BinForm").submit(function (event) {
+
+
+
+            var validate = false;
+            var ItemLocationList = new Array();
+            var ItemLocationList2 = new Array();
+            var ItemLocationList3 = new Array();
+
+            $("#ItemLocationBinTable tbody tr").each(function () { //Loop through the Table rows
+                var row = $(this);
+
+                var Location = {}; // SET DATA ARRAY TO STORED ALL DATA INSIDE OF TABLE
+
+                var RackNo = $("#Maintenance_ddlMain", row).val();
+                var DrawerNo = $("#Maintenance_ddlDrawerNo", row).val();
+                var BinNo = $("#Maintenance_BinNo", row).val().trim();
+                if (RackNo == "" || RackNo == null || DrawerNo == null || DrawerNo == "" || BinNo == "" || BinNo == null) {
+
+                    validate = true;
+                    return false;
+                }
+
+                Location.MainNo = $("#Maintenance_ddlMain", row).val();
+                Location.DrawerNo = $("#Maintenance_ddlDrawerNo", row).val();
+                Location.BinNo = $("#Maintenance_BinNo", row).val();
+                Location.BinDescription = $("#Maintenance_BinDescription", row).val();
+                Location.Rows = $("#binRow", row).html();
+                ItemLocationList.push(Location); // RENDER DATA ARRAY TO JSON ARRAY
+                ItemLocationList2.push(Location);
+
+            });
+
+            if (validate == true) {
+                $.toast({
+                    heading: "Error",
+                    text: "Please, fill out required fields.",
+                    showHideTransition: 'slide',
+                    icon: 'error',
+                    autoHideDelay: 3000,
+
+                    position: 'top-right',
+                    bgColor: '#FF4859'
+
+                });
+                return false;
+
+            }
+
+            var MainNo = "";
+            var MainNo0 = "";
+            var DrawerNo = "";
+            var DrawerNo0 = "";
+            var BinNo = "";
+            var BinNo0 = "";
+            var Row = "";
+            var Row0 = "";
+            var main = "";
+
+            //ItemLocationList.sort(function (a, b) { return a.MainNo - b.MainNo });
+
+            for (var i = 0; i < ItemLocationList.length; i++) {
+
+                MainNo = ItemLocationList[i].MainNo;
+                DrawerNo = ItemLocationList[i].DrawerNo;
+                BinNo = ItemLocationList[i].BinNo;
+                Row = ItemLocationList[i].Rows;
+
+                ItemLocationList2.splice(0, 1);
+
+                for (var j = 0; j < ItemLocationList2.length; j++) {
+                    MainNo0 = ItemLocationList2[j].MainNo;
+                    DrawerNo0 = ItemLocationList2[j].DrawerNo;
+                    BinNo0 = ItemLocationList2[j].BinNo;
+                    Row0 = ItemLocationList2[j].Rows;
+                    if (DrawerNo == DrawerNo0 && MainNo == MainNo0 && BinNo.toUpperCase().trim() == BinNo0.toUpperCase().trim()) {
+                        if (ItemLocationList3.length == 0) {
+                            ItemLocationList3.push(Row);
+                        }
+                        ItemLocationList3.push(Row0);
+
+                        break;
+                    }
+                }
+            }
+
+            if (ItemLocationList3.length > 0) {
+                $.toast({
+                    heading: "Error",
+                    text: "Row " + ItemLocationList3 + " data is duplicated.",
+                    showHideTransition: 'slide',
+                    icon: 'error',
+                    autoHideDelay: 3000,
+
+                    position: 'top-right',
+                    bgColor: '#FF4859'
+
+                });
+                return false;
+            }
+
+            event.preventDefault();
+            event.stopImmediatePropagation();
+
+
+            var action = $("#BinForm").attr("action");
+            bootbox.confirm({
+                title: "Add Bin/s?",
+                message: "Are you sure you want to save?",
+                size: "small",
+                buttons: {
+                    confirm: {
+                        label: 'Yes',
+                        className: 'btn-success'
+                    },
+                    cancel: {
+                        label: 'No',
+                        className: 'btn-danger'
+                    }
+                },
+                callback: function (result) {
+                    if (result) {
+                        $.ajax({
+                            type: "POST",
+                            url: action,
+                            data: JSON.stringify({
+                                ItemLocationList: ItemLocationList,
+                            }),
+                            contentType: "application/json",
+                            dataType: "json",
+                            success: function (data) {
+                                var newData = [];
+                                if (data > 0) {
+                                    newData[0] = "Insert";
+                                }
+                                else {
+                                    newData = data.split('-');
+                                }
+
+                                if (data == 0) {
+                                    $.toast({
+                                        heading: "System Error",
+                                        text: "Please contact our administrator for assistance.",
+                                        showHideTransition: 'slide',
+                                        icon: 'error',
+                                        hideAfter: true,
+                                        position: 'top-right',
+                                        bgColor: '#FF4859'
+                                    });
+                                    return false;
+                                }
+                                else if (newData[0] == "Exist") {
+                                    $.toast({
+                                        heading: "Error",
+                                        text: "Row " + newData[1] + " data is already exist.",
+                                        showHideTransition: 'slide',
+                                        icon: 'error',
+                                        autoHideDelay: 3000,
+                                        position: 'top-right',
+                                        bgColor: '#FF4859'
+                                    });
+                                    return false;
+
+                                }
+                                else {
+                                    $('#Maintenance_ddlMain').val("").change();
+                                    $('#Maintenance_ddlDrawerNo').val("").change();
+                                    $("#Maintenance_BinDescription").val("")
+                                    $("#Maintenance_BinNo").val("")
+
+                                    $.toast({
+                                        heading: 'Item Location',
+                                        text: data + " Bin/s Successfully added.",
+                                        showHideTransition: 'slide',
+                                        icon: 'success',
+                                        hideAfter: false,
+                                        position: 'top-right',
+                                        bgColor: '#7EC857'
+                                    });
+
+                                    var $this = $("#btnBinSave");
+                                    $this.button('loading');
+                                    setTimeout(function () {
+                                        $this.button('reset');
+                                        window.location.reload();
+                                    }, 3000);
+
+                                }
+
+                            }
+                        });
+                    }
+                }
+            })
+        })
+    </script>
+}
+

@@ -1,0 +1,1376 @@
+﻿@model GMCINVENTORYSYSTEM.Models.AllModels
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    List<SelectListItem> MainList = new List<SelectListItem>();
+
+    MainList.Add(new SelectListItem
+    {
+
+        Text = "No Record",
+        Value = ""
+    });
+
+}
+
+<style>
+    .form-control[readonly] {
+        background-color: white;
+    }
+
+    td {
+        word-break: break-word;
+    }
+</style>
+
+<title>Create PR</title>
+
+<style>
+    .mytext {
+        width: 280px;
+        height: 150px;
+        /*text-align: center;*/
+        vertical-align: middle;
+        display: inline-block;
+        box-sizing: border-box;
+    }
+
+    .select2-container .select2-selection--single {
+        height: auto !important;
+        padding: 5px 0;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: normal !important;
+    }
+
+    .select2-container .select2-selection--single .select2-selection__rendered {
+        white-space: normal !important;
+    }
+
+    div.wraptext {
+        word-break: break-word;
+    }
+
+    .table > thead > tr > th, .table > thead > tr > td {
+        vertical-align: bottom;
+    }
+</style>
+<div class="page-header">
+    <h1>Create PR</h1>
+    <ol class="breadcrumb">
+        <li><a>Purchase Request</a></li>
+        <li class="active">Create PR</li>
+    </ol>
+</div>
+
+<div class="content-wrap">
+    @if (ViewBag.PRContent == "table")
+    {<!--START: Content Wrap-->
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <span>Date: @DateTime.Now.ToShortDateString()</span>
+            </div>
+            @if (Session["GroupID"].ToString() == "1")
+            {
+                @*using (Html.BeginForm("RequestPR", "Home", FormMethod.Post, new { @id = "formvalidationtooltip", @class = "ItemReleasingForm", @role = "form" }))
+                    {
+
+                        <div class="col-md-3">
+                            <div class="form-group input-group">
+                                <span class="input-group-addon">Designation</span>
+                                @Html.DropDownListFor(Monitoring => Monitoring.Maintenance.DesignationID, Model.Maintenance.ddlDesignation, "Select All", new { @class = "form-control select2Search", @placeholder = "Required" })
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-primary">Filter</button>
+                            </div>
+                        </div>
+                    }*@
+                <div class="col-md-3">
+                    <div class="form-group input-group">
+                        <span class="input-group-addon">Designation</span>
+                        @Html.DropDownListFor(Monitoring => Monitoring.Maintenance.DesignationID, Model.Maintenance.ddlDesignation, "Select All", new { @class = "form-control select2Search", @placeholder = "Required" })
+                    </div>
+                </div>
+            }
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel-body">
+                        <table class="display table table-striped table-hover" id="TableCheckItem">
+                            <thead>
+                                <tr>
+                                    <th class="col-md-1" id="tableCheckAllButton"></th>
+                                    <th class="col-md-1">Item Code</th>
+                                    <th class="col-md-3 hidden-xs">Part Name</th>
+                                    <th class="col-md-2 hidden-xs">Specification</th>
+                                    <th class="col-md-1 hidden-sm text-center" style="padding: 0 20px">Stock On Hand</th>
+                                    <th class="col-md-1 hidden-xs">Group</th>
+                                    <th>Designation</th>
+                                    <th class="col-md-1">Type</th>
+                                    <th class="col-md-1">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var row in Model.Maintenance.dtItemMonitoring)
+                                {
+                                    <tr>
+                                        <td></td>
+                                        <td>
+                                            @Html.DisplayFor(Modelitem => row.StockNo)
+                                            @Html.HiddenFor(Modelitem => row.StockNo)
+                                        </td>
+                                        <td class="hidden-xs">
+                                            @Html.DisplayFor(Modelitem => row.ItemName)
+                                            @Html.HiddenFor(Modelitem => row.ItemName)
+                                        </td>
+                                        <td class="hidden-xs">
+                                            @Html.DisplayFor(Modelitem => row.Specification)
+                                            @Html.HiddenFor(Modelitem => row.Specification)
+                                        </td>
+                                        @if (row.StockOnHand == row.SafetyStock)
+                                        {
+                                            <td class="hidden-sm text-center">
+                                                <span class="label label-warning">@Html.DisplayFor(Modelitem => row.StockOnHand)</span>
+                                                @Html.HiddenFor(Modelitem => row.StockOnHand)
+                                            </td>
+
+                                        }
+                                        else if (Convert.ToInt32(row.StockOnHand) < Convert.ToInt32(row.SafetyStock))
+                                        {
+                                            if (Convert.ToInt32(row.StockOnHand) == 0)
+                                            {
+                                                <td class="hidden-sm text-center">
+                                                    @*<span class="label label-danger">@Html.DisplayFor(Modelitem => row.StockOnHand)</span>*@
+                                                    <span class="label label-danger">Out of stock</span>
+                                                    @Html.HiddenFor(Modelitem => row.StockOnHand)
+                                                </td>
+
+                                            }
+                                            else if (Convert.ToInt32(row.StockOnHand) <= Convert.ToInt32(row.CriticalOrder))
+                                            {
+                                                <td class="hidden-sm text-center">
+                                                    <span class="label label-danger">@Html.DisplayFor(Modelitem => row.StockOnHand)</span>
+                                                    @Html.HiddenFor(Modelitem => row.StockOnHand)
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                <td class="hidden-sm text-center">
+                                                    <span class="label label-warning">@Html.DisplayFor(Modelitem => row.StockOnHand)</span>
+                                                    @Html.HiddenFor(Modelitem => row.StockOnHand)
+                                                </td>
+                                            }
+
+
+                                        }
+                                        else
+                                        {
+                                            <td class="hidden-sm text-center">
+                                                <span class="label label-success">@Html.DisplayFor(Modelitem => row.StockOnHand)</span>
+                                                @Html.HiddenFor(Modelitem => row.StockOnHand)
+                                            </td>
+
+                                        }
+
+
+                                        <td>
+                                            @Html.DisplayFor(Modelitem => row.Group)
+                                            @Html.HiddenFor(Modelitem => row.Group)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(Modelitem => row.Designation)
+                                            @Html.HiddenFor(Modelitem => row.Designation)
+                                            @Html.HiddenFor(Modelitem => row.DesignationID)
+                                        </td>
+                                        <td>
+                                            @Html.DisplayFor(Modelitem => row.TypeID)
+                                            @Html.HiddenFor(Modelitem => row.TypeID)
+                                        </td>
+                                        @if (row.PRStatus == "CREATED")
+                                        {
+                                            <td class="hidden-sm">
+                                                <span class="label label-danger">
+                                                    @Html.DisplayFor(Modelitem => row.PRStatus)
+                                                </span>
+                                                @Html.HiddenFor(Modelitem => row.PRStatus)
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td class="hidden-sm"><span class="label label-success">OPEN</span></td>
+                                        }
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-footer">
+                <div class="row">
+                    <div class="tool pull-right" style="margin-right:10px">
+                        <a class="btn btn-primary" href="@Url.Action("CreatePR", "Home", new { @id = "create" })" id="btnCreatePR">Create PR</a>
+                        <button class="btn btn-primary" id="btnPR" type="button" style="display:none">PR Item/s</button>
+                        <button class="btn btn-primary" id="btnPrint" type="button">Print</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        using (Html.BeginForm("InsertRequestPR", "Home", FormMethod.Post, new { @id = "formvalidationtooltip", @class = "RequestPRform", @role = "form" }))
+        {
+        <!--START: Content Wrap-->
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <span>Date: @DateTime.Now.ToShortDateString()</span>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="panel-body">
+
+                            <div class="col-md-6">
+                                <div class="form-group input-group">
+                                    <span class="input-group-addon">PR No.</span>
+                                    @Html.HiddenFor(central => central.Central.ReferenceNo)
+                                    @Html.TextBoxFor(central => central.Central.PRNo, new { @class = "form-control validate[required]", @placeholder = "Required", @autocomplete = "off" })
+                                </div>
+                                <div class="form-group input-group">
+                                    <span class="input-group-addon">Purpose</span>
+                                    @Html.TextAreaFor(central => central.Central.Purpose, new { @class = "form-control validate[required] mytext", @style = "    resize: vertical;margin - top: 0px;margin - bottom: 0px;height: 33px;", @row = "2", @placeholder = "Required" })
+                                </div>
+                            </div>
+                            @*<div class="col-md-6">
+                                </div>*@
+
+                            <div class="col-md-6">
+                                <div class="form-group input-group">
+                                    <span class="input-group-addon">Date Approved.</span>
+                                    @Html.TextBoxFor(central => central.Central.DateApprovedPR, new { @class = "form-control js-datepicker validate[required]", @placeholder = "Required", @autocomplete = "off" , @readonly = "readonly"})
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="row">
+                    <div class="panel-body">
+                        <div class="col-md-12">
+                            <table class="table" id="TableRequestItem">
+                                <thead>
+                                    <tr>
+                                        <th class="col-md-1">Action</th>
+                                        <th class="col-md-9">Items</th>
+                                        @*<th class="col-md-2">Stock On Hand</th>*@
+                                        <th class="col-md-2">Request Quantity</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr id="RowRequestItem">
+                                        <td class="col-md-1">
+                                            <div class="form-group">
+                                                <a href="#" name="tbnadd" id="tbnadd" class="btn btn-link"><i class="di di-plus"></i></a>
+                                                <a href="#" name="btndelete" id="btndelete" class="btn btn-link"><i class="di di-minus"></i></a>
+                                            </div>
+                                        </td>
+                                        <td class="col-md-9">
+                                            <div class="form-group">
+                                                @Html.DropDownListFor(central => central.Central.StockNo, Model.Central.ddItemlist, "Select Item Code", new { @class = "form-control validate[required]", @style = "width:100%" })
+                                            </div>
+                                            <input type="hidden" id="hiddenDesignationID" />
+                                        </td>
+                                        @*<td class="col-md-2">
+                                                <div class="form-group">
+                                                    @Html.TextBoxFor(central => central.Central.StockOnHand, new { @class = "form-control", @placeholder = "Stock On Hand", @autocomplete = "off", @disabled = "disabled" })
+                                                </div>
+                                            </td>*@
+                                        @*<td class="col-md-2">
+                                                <div class="form-group">
+                                                    @Html.DropDownListFor(central => central.Central.StockNo, MainList, new { @class = "form-control select2Search validate[required]", @style = "width:100%" })
+                                                </div>
+                                            </td>
+                                            <td class="col-md-7">
+                                                <div class="form-group">
+                                                    @Html.TextBoxFor(central => central.Central.ItemName, new { @class = "form-control", @placeholder = "Item Name", @autocomplete = "off", @disabled = "disabled" })
+                                                </div>
+                                            </td>*@
+                                        <td class="col-md-2">
+                                            <div class="form-group input-group">
+                                                @Html.TextBoxFor(central => central.Central.qty, new { @class = "form-control validate[required]", @placeholder = "Required", @autocomplete = "off", @style = "width:100%", @oninput = "isNumber(this)" })
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-footer">
+
+                    <div class="row">
+                        <div class="pull-right" style="margin-right:10px">
+                            <a class="btn btn-warning" id="btnClear" href="@Url.Action("CreatePR", "Home", new { @id = "table" })">Back</a>
+                            <a class="btn btn-danger" id="btnClear" href="@Url.Action("CreatePR", "Home")">Clear</a>
+                            <button class="btn btn-primary " id="btnSave" type="submit">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+<div class="modal modal-secondary fade" id="myCheckModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        @using (Html.BeginForm("InsertRequestPR", "Home", FormMethod.Post, new { @id = "formvalidationtooltip", @class = "ItemRequestForPRForm", @role = "form" }))
+        {
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Item Request For PR</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="panel panel-default">
+                        <div class="row">
+                            <div class="panel-body">
+                                <div class="col-md-12">
+                                    <div class="col-md-6">
+                                        <div class="form-group input-group">
+                                            <span class="input-group-addon">PR No.</span>
+                                            @Html.HiddenFor(central => central.Central.ReferenceNo)
+                                            @Html.TextBoxFor(central => central.Central.PRNo, new { @class = "form-control validate[required]", @placeholder = "Required", @autocomplete = "off" })
+                                        </div>
+                                        <div class="form-group input-group">
+                                            <span class="input-group-addon">Purpose</span>
+                                            @Html.TextAreaFor(central => central.Central.Purpose, new { @class = "form-control validate[required] mytext", @style = "    resize: vertical;margin - top: 0px;margin - bottom: 0px;height: 33px;", @row = "2", @placeholder = "Required" })
+                                        </div>
+                                    </div>
+                                    @*<div class="col-md-6">
+                                        </div>*@
+
+                                    <div class="col-md-6">
+                                        <div class="form-group input-group">
+                                            <span class="input-group-addon">Date Approved.</span>
+                                            @Html.TextBoxFor(central => central.Central.DateApprovedPR, new { @class = "form-control js-datepicker validate[required]", @placeholder = "Required", @autocomplete = "off" , @readonly = "readonly"})
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12">
+                                    <table class="table" id="TableItemRequestForReceiving">
+                                        <thead>
+                                            <tr>
+                                                <th class="col-md-2">Item Code</th>
+                                                <th class="col-md-4">Part Name</th>
+                                                <th class="col-md-2 text-center">Remaining Stock</th>
+                                                <th class="col-md-2 text-center">Request Quantity</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" id="btnSave">Save</button>
+                </div>
+            </div>
+        }
+
+    </div>
+</div>
+@section scripts
+{
+    <script>
+        $(document).ready(function (){
+            $('.js-datepicker').datepicker({
+                endDate: new Date(),
+                orientation: "bottom left",
+                todayHighlight: true
+            });
+        })
+    </script>
+
+    <script>
+        $(".mytext").on({
+            mouseenter: function () {
+                var h = this.offsetHeight;
+                $(this).css({
+                    paddingTop: 0,
+                    height: 0
+                });
+
+                $(this).css({
+                    paddingTop: Math.max(0, h / 2 - this.scrollHeight / 2),
+                    height: h
+                });
+            },
+            mouseleave: function () {
+                var h = this.offsetHeight;
+                $(this).css({
+                    paddingTop: 0,
+                    height: 0
+                });
+
+                $(this).css({
+                    paddingTop: Math.max(0, h / 2 - this.scrollHeight / 2),
+                    height: h
+                });
+            },
+            click: function () {
+                var h = this.offsetHeight;
+                $(this).css({
+                    paddingTop: 0,
+                    height: 0
+                });
+
+                $(this).css({
+                    paddingTop: Math.max(0, h / 2 - this.scrollHeight / 2),
+                    height: h
+                });
+            },
+            focus: function () {
+                var h = this.offsetHeight;
+                $(this).css({
+                    paddingTop: 0,
+                    height: 0
+                });
+
+                $(this).css({
+                    paddingTop: Math.max(0, h / 2 - this.scrollHeight / 2),
+                    height: h
+                });
+            }
+        });
+    </script>
+
+    <script>
+        $("#TableRequestItem").on("change", "#Central_StockNo", function () {
+
+            var row = $(this).closest("tr");
+            var StockNo = $("#Central_StockNo", row).val();
+
+            $.ajax({
+                url: '/Maintenance/RetreiveDetails',
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    StockNo: StockNo,
+                }),
+
+                dataType: "json",
+                success: function (data) {
+                    d = data.split("|-|");
+                    $("#Central_StockOnHand", row).val(d[1]);
+                }
+
+            })
+        })
+    </script>
+
+    <script>
+        $('#btnPrint').on('click', function () {
+            var Designation = $('#Maintenance_DesignationID').val();
+
+            $.ajax({
+                url: '/Home/SetFilterData',
+                type: "post",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    Designation: Designation,
+                    Type: 'PRList',
+                }),
+                dataType: 'json',
+                success: function (data) {
+                    window.open("/Report/PRListReports/");
+                }
+            })
+        })
+    </script>
+
+    <script>
+        $(function () {
+            $.fn.dataTable.ext.search.push(
+                function (settings, data, dataIndex) {
+                    //var DesignationID = $('#Maintenance_DesignationID').text();
+                    var DesignationID = $('#Maintenance_DesignationID').children("option:selected").text();
+
+                    var Designation = data[6];
+                    Designation = Designation.trim();
+                    if (DesignationID == 'Select All') return true;
+                    if (Designation == DesignationID) return true;
+                    return false;
+                }
+            );
+
+            var table = $('#TableCheckItem').DataTable({
+                columnDefs: [ {
+                    orderable: false,
+                    className: 'select-checkbox',
+                    targets:   0,
+                    checkbox:{
+                        selectRow: false
+                    }
+                } ],
+                select: {
+                    style:    'multi',
+                    selector: 'td:first-child'
+                },
+                order: [[ 1, 'asc' ]],
+                lengthMenu: [[5, 10, 15, 20, 50, -1], [5, 10, 15, 20, 50, "All"]],
+                //drawCallback: function(){
+                //    $('.paginate_button.next:not(.disabled),.paginate_button.previous:not(.disabled)', this.api().table().container())
+                //       .on('click', function(){
+                //           var i = 0;
+                //           var chelength;
+                //           $("#TableCheckItem tbody tr input[type=checkbox]").each(function () {
+                //               chelength = $('td input[type=checkbox]').length; //get how many checkboxes are checked
+                //               if ($(this).is(':checked') == true) {
+                //                   i++;
+                //               }
+                //               if (i > 0) {
+                //                   $('#btnPR').show();
+                //                   $('#btnCreatePR').removeAttr("style").hide();
+                //               }
+                //               else {
+                //                   $('#btnPR').removeAttr("style").hide();
+                //                   $('#btnCreatePR').show();
+                //               }
+                //           });
+                //           if (i == 0) {
+                //               $("#checkall").prop('checked', false);
+                //           }
+                //           else if (i == chelength) {
+                //               $("#checkall").prop('checked', true);
+                //           }
+                //           else {
+                //               $("#checkall").prop('checked', false);
+                //           }
+
+                //       });
+                //},
+            }).on( 'select.dt deselect.dt',  function (evtObj) {
+                var all = table.rows({order:'index', search:'applied'}).nodes().length;
+                var sel = table.rows(".selected").nodes().length;
+                var filsel = table.rows({search:'applied', selected:true}).nodes().length;
+                var fildes = table.rows({search:'applied', selected:false}).nodes().length;
+
+                if(all === sel || sel > 0){
+                    if (all == filsel) {
+                        $("#tableCheckAllButton").closest("tr").addClass("selected");
+                    }
+                    else if (all == fildes) {
+                        $("#tableCheckAllButton").closest("tr").removeClass("selected");
+                    }
+                    else {
+                        $("#tableCheckAllButton").closest("tr").removeClass("selected");
+                    }
+                    $('#btnPR').show();
+                    $('#btnCreatePR').removeAttr("style").hide();
+                }
+                else{
+                    $("#tableCheckAllButton").closest("tr").removeClass("selected");
+                    $('#btnPR').removeAttr("style").hide();
+                    $('#btnCreatePR').show();
+                }
+            });
+
+            $('#tableCheckAllButton').on('click', function() {
+                $(this).closest("tr").toggleClass("selected");
+                if($(this).closest("tr").hasClass("selected")){
+                    table.rows({order:'index', search:'applied'}).select();
+                }
+                else {
+                    table.rows({order:'index', search:'applied'}).deselect();
+                }
+
+            });
+
+            //table.on('search.dt',function(){
+            //    var all = table.rows().nodes().length;
+            //    var sel = table.rows(".selected").nodes().length;
+            //    var filall = table.rows({order:'index', search:'applied'}).nodes().length;
+            //    var filsel = table.rows({search:'applied', selected:true}).nodes().length;
+
+            //    if(all == filall && all === sel && sel != 0 || all != filall && filall === filsel && filsel != 0){
+            //        $("#tableCheckAllButton").closest("tr").addClass("selected");
+            //        $('#btnPR').show();
+            //        $('#btnCreatePR').removeAttr("style").hide();
+            //    }
+            //    else if (sel > 0) {
+            //        $("#tableCheckAllButton").closest("tr").removeClass("selected");
+            //        $('#btnPR').show();
+            //        $('#btnCreatePR').removeAttr("style").hide();
+            //    }
+            //    else {
+            //        $("#tableCheckAllButton").closest("tr").removeClass("selected");
+            //        $('#btnPR').removeAttr("style").hide();
+            //        $('#btnCreatePR').show();
+            //    }
+            //})
+
+            //$('input[type=search]').on('input',function(){
+            //    table.rows({order:'index', search:'applied'}).select();
+            //    var all = table.rows().nodes().length;
+            //    var sel = table.rows(".selected").nodes().length;
+            //    var filall = table.rows({order:'index', search:'applied'}).nodes().length;
+            //    var filsel = table.rows({search:'applied', selected:true}).nodes().length;
+
+            //    if(all == filall && all === sel && sel != 0 || all != filall && filall === filsel && filsel != 0){
+            //        $("#tableCheckAllButton").closest("tr").addClass("selected");
+            //        $('#btnPR').show();
+            //        $('#btnCreatePR').removeAttr("style").hide();
+            //    }
+            //    else if (sel > 0) {
+            //        $("#tableCheckAllButton").closest("tr").removeClass("selected");
+            //        $('#btnPR').show();
+            //        $('#btnCreatePR').removeAttr("style").hide();
+            //    }
+            //    else {
+            //        $("#tableCheckAllButton").closest("tr").removeClass("selected");
+            //        $('#btnPR').removeAttr("style").hide();
+            //        $('#btnCreatePR').show();
+            //    }
+            //})
+
+            $('#Maintenance_DesignationID').on('change', function () {
+                table.draw();
+                var all = table.rows().nodes().length;
+                var sel = table.rows(".selected").nodes().length;
+                var filall = table.rows({order:'index', search:'applied'}).nodes().length;
+                var filsel = table.rows({search:'applied', selected:true}).nodes().length;
+
+                if(all == filall && all === sel && sel != 0 || all != filall && filall === filsel && filsel != 0){
+                    $("#tableCheckAllButton").closest("tr").addClass("selected");
+                    $('#btnPR').show();
+                    $('#btnCreatePR').removeAttr("style").hide();
+                }
+                else if (sel > 0) {
+                    $("#tableCheckAllButton").closest("tr").removeClass("selected");
+                    $('#btnPR').show();
+                    $('#btnCreatePR').removeAttr("style").hide();
+                }
+                else {
+                    $("#tableCheckAllButton").closest("tr").removeClass("selected");
+                    $('#btnPR').removeAttr("style").hide();
+                    $('#btnCreatePR').show();
+                }
+            })
+
+            $("#btnPR").on('click',function(){
+                var checkedItems = [];
+
+                $.ajax({
+                    url: '/Home/RetrievePRNo',
+                    type: 'post',
+                    contentType: 'application/json',
+                    dataType : 'json',
+                    success: function(data){
+                        if (data != null) {
+                            //$('#Central_PRNo').val(data);
+                            $('#Central_ReferenceNo').val(data);
+                        }
+                    }
+                })
+
+                $.each(table.rows('.selected').nodes(), function(i, item) {
+                    var data = table.row(this).data();
+                    var stockNo = data[1].split('"')
+                    var itemName = data[2].split('"')
+                    var stockOnHand = data[4].split('"')
+                    var designation = data[6].split('"')
+
+                    checkedItems.push({
+                        StockNo: stockNo[7],
+                        ItemName: itemName[7],
+                        StockOnhand: stockOnHand[9],
+                        Designation: designation[15],
+                    })
+                });
+
+                var TableItemReceiving = $('#TableItemRequestForReceiving tbody');
+                TableItemReceiving.empty();
+
+                $(checkedItems).each(function (index, checkedItems) {
+                    TableItemReceiving.append('<tr><td>' + checkedItems.StockNo + '</td><td>' + checkedItems.ItemName + '</td><td class="text-center">' + checkedItems.StockOnhand + '</td>'
+                        + '<td><input type="text" placeholder="Required" class="form-control text-center" id="Qty" oninput="isNumber(this)"></td>'
+                        +'<td style="display:none;"><input type="text" class="form-control" value="' + checkedItems.StockNo
+                        + '" id="HiddenStockNo"></td><td style="display:none;"><input type="text" class="form-control" value="' + checkedItems.ItemName
+                        + '" id="HiddenItemName"></td><td style="display:none;"><input type="text" class="form-control" value="' + checkedItems.StockOnhand
+                        + '" id="HiddenStockOnHand"></td><td style="display:none;"><input type="text" class="form-control" value="' + checkedItems.Designation
+                        + '" id="HiddenDesignation"></td><td style="display:none;"><input type="text" class="form-control" value="' + checkedItems.qty
+                        + '" id="HiddenQty"></td></tr>');
+                });
+
+                $('#myCheckModal').modal({
+                    show: 'false',
+                    backdrop: 'static',
+                });
+            })
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            //$("#btnPR").on('click', function () {
+            //    var checkedItems = [];
+
+            //    $.ajax({
+            //        url: '/Home/RetrievePRNo',
+            //        type: 'post',
+            //        contentType: 'application/json',
+            //        dataType : 'json',
+            //        success: function(data){
+            //            if (data != null) {
+            //                $('#Central_PRNo').val(data);
+            //            }
+            //        }
+            //    })
+
+            //    $("#TableCheckItem tbody input[type=checkbox]:checked").each( function () {
+            //        var row = $(this).closest("tr");
+
+            //        checkedItems.push({
+            //            StockNo: $("#row_StockNo",row).val(),
+            //            ItemName: $("#row_ItemName", row).val(),
+            //            StockOnhand: $("#row_StockOnHand", row).val(),
+            //            Designation: $("#row_DesignationID",row).val()
+            //        })
+            //    });
+
+            //    var TableItemReceiving = $('#TableItemRequestForReceiving tbody');
+            //    TableItemReceiving.empty();
+
+            //    $(checkedItems).each(function (index, checkedItems) {
+            //        TableItemReceiving.append('<tr><td>' + checkedItems.StockNo + '</td><td>' + checkedItems.ItemName + '</td><td>' + checkedItems.StockOnhand + '</td>'
+            //            + '<td><input type="text" placeholder="Required" class="form-control" id="Qty" oninput="isNumber(this)"></td><td style="display:none;"><input type="text" class="form-control" value="' + checkedItems.StockNo
+            //            + '" id="HiddenStockNo"></td><td style="display:none;"><input type="text" class="form-control" value="' + checkedItems.ItemName
+            //            + '" id="HiddenItemName"></td><td style="display:none;"><input type="text" class="form-control" value="' + checkedItems.StockOnhand
+            //            + '" id="HiddenStockOnHand"></td><td style="display:none;"><input type="text" class="form-control" value="' + checkedItems.Designation
+            //            + '" id="HiddenDesignation"></td><td style="display:none;"><input type="text" class="form-control" value="' + checkedItems.qty
+            //            + '" id="HiddenQty"></td></tr>');
+            //    });
+
+            //    $('#myCheckModal').modal({
+            //        show: 'false',
+            //        backdrop: 'static',
+            //    });
+            //})
+        })
+
+        $(".ItemRequestForPRForm").submit(function () {
+            var validate = 0;
+            var ReferenceNo = $("#Central_ReferenceNo").val()
+            var PRNo = $("#Central_PRNo").val()
+            var Purpose = $("#Central_Purpose").val()
+            var DateApprovedPR = $("#Central_DateApprovedPR").val()
+
+            if (PRNo == null || Purpose == null || DateApprovedPR == null|| PRNo == "" || Purpose == "" || DateApprovedPR == "") {
+                return false;
+            }
+
+            event.preventDefault();
+            event.stopImmediatePropagation();
+
+            var ItemRequestList = [];
+            $("#TableItemRequestForReceiving tbody tr").each(function () {
+                var row = $(this);
+                var a = parseFloat($("#Qty", row).val());
+                var qty = $("#Qty", row).val();
+
+                if (qty == "" || qty == null) {
+                    validate++;
+                    $.toast({
+                        heading: "Invalid",
+                        text: "Please, fill out required fields.",
+                        showHideTransition: 'slide',
+                        icon: 'error',
+                        autoHideDelay: 3000,
+
+                        position: 'top-right',
+                        bgColor: '#FF4859'
+                    });
+                    return false;
+                }
+                if (a <= 0) {
+                    validate++;
+                    $.toast({
+                        heading: "Invalid",
+                        text: "0 is not allowed.",
+                        showHideTransition: 'slide',
+                        icon: 'error',
+                        autoHideDelay: 3000,
+
+                        position: 'top-right',
+                        bgColor: '#FF4859'
+                    });
+                    return false;
+                }
+
+                var items = {}; // SET DATA ARRAY TO STORED ALL DATA INSIDE OF TABLE
+
+                items.StockNo = $("#HiddenStockNo", row).val();
+                items.ItemName = $("#HiddenItemName", row).val();
+                items.qty = qty;
+                items.Designation = $("#HiddenDesignation",row).val();
+                ItemRequestList.push(items); // RENDER DATA ARRAY TO JSON ARRAY
+
+            });
+
+            if (validate == 0) {
+                var action = $(".ItemRequestForPRForm").attr("action");
+
+                bootbox.confirm({
+                    title: "Are you sure you want to save?",
+                    message: "This request will be saved.",
+                    size: "small",
+                    buttons: {
+                        confirm: {
+                            label: 'Yes',
+                            className: 'btn-success'
+                        },
+                        cancel: {
+                            label: 'No',
+                            className: 'btn-danger'
+                        }
+                    },
+                    callback: function (result) {
+
+                        if (result) {
+                            $.ajax({
+                                url: action,
+                                type: "POST",
+                                contentType: "application/json",
+                                data: JSON.stringify({
+                                    ItemRequestList,
+                                    ReferenceNo: ReferenceNo,
+                                    PRNo: PRNo,
+                                    DateApprovedPR: DateApprovedPR,
+                                    Purpose: Purpose,
+                                }),
+                                dataType: "json",
+                                success: function (data) {
+                                    if (data == 0) {
+                                        $.toast({
+                                            heading: "System Error",
+                                            text: "Please contact our administrator for assistance.",
+                                            showHideTransition: 'slide',
+                                            icon: 'error',
+                                            autoHideDelay: 3000,
+
+                                            position: 'top-right',
+                                            bgColor: '#FF4859'
+                                        });
+                                        return false;
+                                    }
+                                    else {
+
+                                        $.toast({
+                                            heading: 'Request PR.',
+                                            text: "Reference No. " + ReferenceNo + " Successfully saved.",
+                                            showHideTransition: 'slide',
+                                            icon: 'success',
+                                            autoHideDelay: 3000,
+
+                                            position: 'top-right',
+                                            bgColor: '#7EC857'
+                                        });
+
+                                        var $this = $("#btnSave");
+                                        var btnClear = $("#btnClear");
+
+                                        $this.button('loading');
+                                        setTimeout(function () {
+                                            $this.button('reset');
+                                            btnClear.button('reset');
+                                            window.location.reload();
+                                        }, 3000);
+                                    }
+
+                                }
+                            });
+                        }
+
+                        else {
+                            return;
+                        }
+                    }
+                })
+
+
+            }
+        })
+    </script>
+
+    <script>
+        $(function() { // TableSearchBox
+            var firstEmptySelect = true;
+
+            function getResult(result) {
+                if (!result.id) {
+                    if (firstEmptySelect) {
+                        console.log('showing row');
+                        firstEmptySelect = false;
+                        return false;
+                    } else {
+                        console.log('skipping row');
+                        var $result = $(
+                            '<div class="row" style="font-weight: bolder ;display: block">' +
+                                '<div class="col-md-2" style="display: block; ">' + 'Item Code' + '</div>' +
+                                '<div class="col-md-6" style="display: block">' + 'Part Name' + '</div>' +
+                                '<div class="col-md-4" style="display: block">' + 'Specification' + '</div>' +
+                            '</div>'
+                        );
+                        return $result;
+                    }
+                    console.log('result');
+                    console.log($result);
+                }
+                var r = result.text.split('|');
+                var $result = $(
+                    '<div class="row">' +
+                        '<div class="wraptext col-md-2">' + r[0] + '</div>' + //split all value
+                        '<div class="wraptext col-md-6">' + r[1] + '</div>' +
+                        '<div class="wraptext col-md-4">' + r[2] + '</div>' +
+                    '</div>'
+                );
+                return $result;
+            }
+
+            function permute(input, permArr, usedChars) {
+                var i, ch;
+                for (i = 0; i < input.length; i++) {
+                    ch = input.splice(i, 1)[0];
+                    usedChars.push(ch);
+                    if (input.length == 0) {
+                        permArr.push(usedChars.slice());
+                    }
+                    permute(input, permArr, usedChars);
+                    input.splice(i, 0, ch);
+                    usedChars.pop();
+                }
+                return permArr
+            };
+
+            $("#Central_StockNo").select2({
+                templateResult: getResult,
+                templateSelection: getResult,
+                escapeMarkup: function(m) { return m; },
+                matcher: function (params, data) {
+                    // If there are no search terms, return all of the data
+                    if ($.trim(params.term) === '') {
+                        return data;
+                    }
+                    // `params.term` should be the term that is used for searching
+                    // split by " " to get keywords
+                    keywords=(params.term).split(" ");
+                    // `data.text` is the text that is displayed for the data object
+                    // check if data.text contains all of keywords, if some is missing, return null
+                    for (var i = 0; i < keywords.length; i++) {
+
+                        if (((data.text).toUpperCase()).indexOf((keywords[i]).toUpperCase()) == -1)
+                            // Return `null` if the term should not be displayed
+                            return null;
+
+                    }
+                    // If here, data.text contains all keywords, so return it.
+                    return data;
+                }
+            });
+        });
+    </script>
+
+    <script>
+        var Grouplist = [];
+
+        $(document).ready(function () {
+
+            FetchStockNo($("#Central_StockNo"));
+        })
+
+        function FetchStockNo(element) {
+
+            if (Grouplist.length == 0) {
+
+                $.ajax({
+                    type: "GET",
+                    url: '/Home/RetrieveAllStockNo', //REDIRECT TO ACTION RESULT (HOME CONTROLLLER)
+                    contentType: "application/json",
+                    data: {
+                    },
+                    dataType: "json",
+                    success: function (data) { //RETURN DATA GALING SA CONTROLLER
+                        Grouplist = data; // RENDER DATA TO STRING ARRAY
+
+                        //render item category
+                        renderGroupCategory(element);
+                    }
+                })
+            }
+        }
+
+        function renderGroupCategory(element) {
+            var $ele = $(element);
+            $ele.empty();
+            $ele.append($('<option/>').val('').text('Select Item Code'));
+            $.each(Grouplist, function (i, val) {
+                $ele.append($('<option/>').val(this['Value']).html(this['Text']));
+            })
+        }
+
+        $("#TableRequestItem").on("change", "#Central_StockNo", function () {
+
+            var row = $(this).closest("tr");
+            var StockNo = $("#Central_StockNo", row).val();
+
+            $.ajax({
+                url: '/Home/RetreiveDesignationID',
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    StockNo: StockNo,
+                }),
+
+                dataType: "json",
+                success: function (data) {
+                    $("#hiddenDesignationID", row).val(data);
+                }
+
+            })
+
+        })
+
+        $(".RequestPRform").submit(function (event) {
+            var validate = 0;
+            var ReferenceNo = $("#Central_ReferenceNo").val()
+            var PRNo = $("#Central_PRNo").val().trim()
+            var Purpose = $("#Central_Purpose").val()
+            var StockNo = $("#Central_StockNo").val()
+            var DateApprovedPR = $("#Central_DateApprovedPR").val()
+
+            var qty = $("#Central_qty").val()
+
+
+            if (StockNo == null || PRNo == null || Purpose == null || qty == null || StockNo == "" || qty == "" || PRNo == "" || Purpose == "" || DateApprovedPR == "") {
+
+                return false;
+            }
+
+
+            event.preventDefault();
+            event.stopImmediatePropagation();
+
+            var ItemRequestList = new Array();
+            var VerifyList = new Array();
+            $("#TableRequestItem tbody tr").each(function () { //Loop through the Table rows
+                var row = $(this);
+                var a = parseFloat($("#Central_qty", row).val());
+                var qty = $("#Central_qty", row).val();
+                var stock = $("#Central_StockNo", row).val();
+                var designationID = $("#hiddenDesignationID", row).val();
+
+                if (qty == '' || qty == null || stock == '' || stock == null) {
+                    validate++;
+                    $.toast({
+                        heading: "Error",
+                        text: "Please, fill out required fields.",
+                        showHideTransition: 'slide',
+                        icon: 'error',
+                        autoHideDelay: 3000,
+
+                        position: 'top-right',
+                        bgColor: '#FF4859'
+
+                    });
+                    return false;
+                }
+                if (a <= 0) {
+                    validate++;
+                    $.toast({
+                        heading: "Invalid",
+                        text: "0 is not allowed.",
+                        showHideTransition: 'slide',
+                        icon: 'error',
+                        autoHideDelay: 3000,
+
+                        position: 'top-right',
+                        bgColor: '#FF4859'
+                    });
+                    return false;
+                }
+
+                var RequestItem = {}; // SET DATA ARRAY TO STORED ALL DATA INSIDE OF TABLE
+
+                RequestItem.StockNo = stock;
+                RequestItem.ItemName = $("#Central_StockNo option:selected", row).text();
+                RequestItem.qty = qty
+                RequestItem.Designation = designationID;
+                ItemRequestList.push(RequestItem); // RENDER DATA ARRAY TO JSON ARRAY
+                VerifyList.push(RequestItem); // RENDER DATA ARRAY TO JSON ARRAY
+            });
+
+            var StockNo = "";
+            var StockNo0 = "";
+
+            for (var i = 0; i < ItemRequestList.length; i++) {
+                StockNo = ItemRequestList[i].StockNo;
+                VerifyList.splice(0, 1);
+                for (var j = 0; j < VerifyList.length; j++) {
+                    StockNo0 = VerifyList[j].StockNo;
+                    if (StockNo == StockNo0) {
+                        validate++;
+                        $.toast({
+                            heading: "System Error",
+                            text: "PR Request the same item is not allowed.",
+                            showHideTransition: 'slide',
+                            icon: 'error',
+                            autoHideDelay: 3000,
+
+                            position: 'top-right',
+                            bgColor: '#FF4859'
+                        });
+                        return false;
+                    }
+                }
+            }
+
+            if (validate == 0) {
+                var action = $(".RequestPRform").attr("action");
+                bootbox.confirm({
+                    title: "Are you sure you want to save?",
+                    message: "This request will be saved.",
+                    size: "small",
+                    buttons: {
+                        confirm: {
+                            label: 'Yes',
+                            className: 'btn-success'
+                        },
+                        cancel: {
+                            label: 'No',
+                            className: 'btn-danger'
+                        }
+                    },
+                    callback: function (result) {
+
+                        if (result) {
+                            $.ajax({
+                                url: action,
+                                type: "POST",
+                                contentType: "application/json",
+                                data: JSON.stringify({
+                                    ItemRequestList,
+                                    ReferenceNo: ReferenceNo,
+                                    PRNo: PRNo,
+                                    DateApprovedPR: DateApprovedPR,
+                                    Purpose: Purpose,
+                                }),
+                                dataType: "json",
+                                success: function (data) {
+                                    if (data == 0) {
+                                        $.toast({
+                                            heading: "System Error",
+                                            text: "Please contact our administrator for assistance.",
+                                            showHideTransition: 'slide',
+                                            icon: 'error',
+                                            autoHideDelay: 3000,
+
+                                            position: 'top-right',
+                                            bgColor: '#FF4859'
+                                        });
+                                        return false;
+                                    }
+                                    else {
+
+                                        $.toast({
+                                            heading: 'Request PR.',
+                                            text: "Reference No. " + ReferenceNo + " Successfully saved.",
+                                            showHideTransition: 'slide',
+                                            icon: 'success',
+                                            autoHideDelay: 3000,
+
+                                            position: 'top-right',
+                                            bgColor: '#7EC857'
+                                        });
+
+                                        var $this = $("#btnSave");
+                                        var btnClear = $("#btnClear");
+
+                                        $this.button('loading');
+                                        setTimeout(function () {
+                                            $this.button('reset');
+                                            btnClear.button('reset');
+
+                                            window.location.reload();
+                                        }, 3000);
+                                    }
+
+                                }
+                            });
+
+                        }
+
+                        else {
+                            return;
+                        }
+                    }
+                })
+
+            }
+        })
+
+    </script>
+
+    <script>
+
+        $("#TableRequestItem").on('click', "#tbnadd", function () {
+            var StockNo = $("#Central_StockNo").val()
+            var qty = $("#Central_qty").val()
+
+
+            if (StockNo == null || qty == null || StockNo == "" || qty == "") {
+
+                $.toast({
+                    heading: "Error",
+                    text: "Please, fill out required fields.",
+                    showHideTransition: 'slide',
+                    icon: 'error',
+                    autoHideDelay: 3000,
+                    position: 'top-right',
+                    bgColor: '#FF4859'
+
+                });
+
+                return false;
+            }
+
+            $("select#Central_StockNo").select2("destroy");
+
+            var $newRow = $('#RowRequestItem').clone(true).appendTo('#TableRequestItem'); // CLONE MAINROW UNDER TABLE ID
+            $('#Central_StockNo', $newRow).val();// GET VALUE OF DROPDOWNLIST (THIS CODE IS FOR DROPDOWNLIST ONLY)
+            $('#Central_qty',$newRow).val("")
+
+            $('#Central_StockNo,#Central_ItemName,#Central_qty', $newRow);
+
+
+            //$('#Central_StockNo').val("")
+            //$('#Central_ItemName').val("")
+            //$('#Central_qty').val("")
+
+
+            //$('select#Central_StockNo').select2(); // SET AGAIN SELECT2 JAVASCRIPT TO DROPDOWNLIST
+            var firstEmptySelect = true;
+
+            function getResult(result) {
+                if (!result.id) {
+                    if (firstEmptySelect) {
+                        console.log('showing row');
+                        firstEmptySelect = false;
+                        return false;
+                    } else {
+                        console.log('skipping row');
+                        var $result = $(
+                            '<div class="row" style="font-weight: bolder ;display: block">' +
+                                '<div class="col-md-2" style="display: block; ">' + 'Item Code' + '</div>' +
+                                '<div class="col-md-6" style="display: block">' + 'Part Name' + '</div>' +
+                                '<div class="col-md-4" style="display: block">' + 'Specification' + '</div>' +
+                            '</div>'
+                        );
+                        return $result;
+                    }
+                    console.log('result');
+                    console.log($result);
+                }
+                var r = result.text.split('|');
+                var $result = $(
+                    '<div class="row">' +
+                        '<div class="wraptext col-md-2">' + r[0] + '</div>' + //split all value
+                        '<div class="wraptext col-md-6">' + r[1] + '</div>' +
+                        '<div class="wraptext col-md-4">' + r[2] + '</div>' +
+                    '</div>'
+                );
+                return $result;
+            }
+
+            function permute(input, permArr, usedChars) {
+                var i, ch;
+                for (i = 0; i < input.length; i++) {
+                    ch = input.splice(i, 1)[0];
+                    usedChars.push(ch);
+                    if (input.length == 0) {
+                        permArr.push(usedChars.slice());
+                    }
+                    permute(input, permArr, usedChars);
+                    input.splice(i, 0, ch);
+                    usedChars.pop();
+                }
+                return permArr
+            };
+
+            $("select#Central_StockNo").select2({
+                templateResult: getResult,
+                templateSelection: getResult,
+                escapeMarkup: function(m) { return m; },
+                matcher: function (params, data) {
+                    // If there are no search terms, return all of the data
+                    if ($.trim(params.term) === '') {
+                        return data;
+                    }
+                    // `params.term` should be the term that is used for searching
+                    // split by " " to get keywords
+                    keywords=(params.term).split(" ");
+                    // `data.text` is the text that is displayed for the data object
+                    // check if data.text contains all of keywords, if some is missing, return null
+                    for (var i = 0; i < keywords.length; i++) {
+
+                        if (((data.text).toUpperCase()).indexOf((keywords[i]).toUpperCase()) == -1)
+                            // Return `null` if the term should not be displayed
+                            return null;
+
+                    }
+                    // If here, data.text contains all keywords, so return it.
+                    return data;
+                }
+            });
+
+        });
+
+        $('#TableRequestItem').on('click', '#btndelete', function () {
+
+            var count = $('#TableRequestItem tbody tr').length;
+
+            if (count > 1) {
+                $(this).closest("tr").remove();
+            } else {
+
+                $.toast({
+                    heading: "Error",
+                    text: "Sorry. Row can't be empty.",
+                    showHideTransition: 'slide',
+                    icon: 'error',
+                    autoHideDelay: 3000,
+                    position: 'top-right',
+                    bgColor: '#FF4859'
+
+                });
+                //alert("File Shouldn't Be Empty!!");
+                return false;
+
+            }
+        });
+
+    </script>
+}

@@ -1,0 +1,159 @@
+﻿@model GMCINVENTORYSYSTEM.Models.AllModels
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    List<SelectListItem> MainList = new List<SelectListItem>();
+    MainList.Add(new SelectListItem
+    {
+        Text = "Select Location",
+        Value = ""
+    });
+    MainList.Add(new SelectListItem
+    {
+        Text = "All Location",
+        Value = "1"
+    });
+    MainList.Add(new SelectListItem
+    {
+        Text = "Occupied Location",
+        Value = "2"
+    });
+    MainList.Add(new SelectListItem
+    {
+        Text = "Vacant Location",
+        Value = "3"
+    });
+}
+
+<title>Monitoring - Item Location</title>
+
+<div class="page-header">
+    <h1>Item Location</h1>
+    <ol class="breadcrumb">
+        <li><a>Monitoring</a></li>
+        <li class="active">Item Location</li>
+    </ol>
+</div>
+
+<div class="content-wrap">
+    <!--START: Content Wrap-->
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <span>Date: @DateTime.Now.ToShortDateString()</span>
+        </div>
+        @*<div class="col-md-3">
+                        <div class="form-group input-group">
+                            <span class="input-group-addon">Main #</span>
+                            @Html.DropDownListFor(Maintenance => Maintenance.Maintenance.MainNo, Model.Maintenance.ddlMain, "Select Main No.", new { @class = "form-control select2Search  validate[required]", @style = "width:100%" })
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group input-group">
+                            <span class="input-group-addon">Drawer #</span>
+                            @Html.DropDownListFor(Maintenance => Maintenance.Maintenance.DrawerNo, MainList, new { @class = "form-control select2Search", @style = "width:100%" })
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group input-group">
+                            <span class="input-group-addon">Bin #</span>
+                            @Html.DropDownListFor(Maintenance => Maintenance.Maintenance.BinNo, MainList, new { @class = "form-control select2Search", @style = "width:100%" })
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary" id="btnFilter">Filter</button>
+                        </div>
+                    </div>
+                    @using (Html.BeginForm("ItemLocationMonitoring", "Home", FormMethod.Post, new { @id = "formvalidationtooltip", @class = "ItemLocationForm", @role = "form" }))
+            {
+                <div class="col-md-3">
+                    <div class="form-group input-group">
+                        <span class="input-group-addon">Rack #</span>
+                        @Html.DropDownListFor(Monitoring => Monitoring.Maintenance.MainNo, Model.Maintenance.ddlMain, "Select All", new { @class = "form-control select2Search", @placeholder = "Required" })
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary" id="btnFilter">Filter</button>
+                    </div>
+                </div>
+            }
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel-body">
+                        <table class="table table-hover table-dataTable" id="TableItemReceiving">
+                            <thead>
+                                <tr>
+                                    <th class="sorting_asc">Rack</th>
+                                    <th>Drawer</th>
+                                    <th>Bin</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Maintenance.dtLocationMonitoring)
+                                {
+                                    <tr>
+                                        <td>@Html.DisplayFor(modelitem => item.RackNo)</td>
+                                        <td>@Html.DisplayFor(modelitem => item.DrawerNo)</td>
+                                        <td>@Html.DisplayFor(modelitem => item.BinNo)</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>*@
+        <div class="row">
+            <div class="col-md-12">
+                <div class="col-md-4"></div>
+                <div class="col-md-3">
+                    <div class="form-group input-group">
+                        <span class="input-group-addon">Item Location</span>
+                        @Html.DropDownListFor(Maintenance => Maintenance.Maintenance.LocationStatus, MainList, new { @class = "form-control select2Search validate[required]", @style = "width:100%" })
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    @*<a class="btn btn-primary pull-right" href="@Url.Action("InventoryReports", "Report")" target="_blank" id="btnPrint">Print</a>*@
+                    <button class="btn btn-primary" type="button" id="btnPrintLocations">Print</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        $('#btnPrintLocations').on('click', function () {
+            var Locations = $('#Maintenance_LocationStatus').val();
+            if (Locations == "" || Locations == null) {
+                $.toast({
+                    heading: "Error",
+                    text: "Please, Select Item Location.",
+                    showHideTransition: 'slide',
+                    icon: 'error',
+                    autoHideDelay: 3000,
+
+                    position: 'top-right',
+                    bgColor: '#FF4859'
+
+                });
+                return false;
+            }
+            $.ajax({
+                url: '/Home/GetLocations/',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    LocationStatus: Locations,
+                }),
+                dataType: 'json',
+                success: function () {
+                    window.open("/Report/ItemLocationReports/");
+                }
+            })
+        })
+    </script>
+}

@@ -1,0 +1,299 @@
+﻿@model GMCINVENTORYSYSTEM.Models.AllModels
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .form-control[readonly] {
+        background-color: white;
+    }
+
+    td {
+        word-break: break-word;
+    }
+
+    .table > thead > tr > th, .table > thead > tr > td {
+        vertical-align: bottom;
+    }
+</style>
+
+<title>Monitoring - Item Movement</title>
+
+<div class="page-header">
+    <h1>Item Movement</h1>
+    <ol class="breadcrumb">
+        <li><a>Monitoring</a></li>
+        <li class="active">Item Movement</li>
+    </ol>
+</div>
+
+<div class="content-wrap">
+    <!--START: Content Wrap-->
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <span>Date: @DateTime.Now.ToShortDateString()</span>
+        </div>
+        <div class="col-md-5">
+            <div class="form-group input-group" style="width:100%">
+                <div class="input-daterange input-group">
+                    <span class="input-group-addon">Transaction Date</span>
+                    <input id="DateFrom" class="form-control js-datepicker" readonly name="start" placeholder="from" autocomplete="off" style="width:100%" />
+                    <span class="input-group-addon"><i class="di di-calendar"></i></span>
+                    <input id="DateTo" class="form-control" readonly name="end" placeholder="to" autocomplete="off" style="width:100%" />
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group input-group">
+                <span class="input-group-addon">Transaction</span>
+                @Html.DropDownListFor(maintenance => maintenance.Maintenance.TransactionType, Model.Maintenance.TransactionList, "Select All", new { @class = "form-control select2Search", @placeholder = "Required" })
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel-body">
+                    <table class="table table-striped table-hover" id="TableItemMovement">
+                        <thead>
+                            <tr>
+                                <th class="col-md-1">Transaction</th>
+                                <th class="col-md-4 hidden-xs">Items</th>
+                                <th class="col-md-1 text-center" style="padding-left:25px; padding-right:25px">Stock On Hand</th>
+                                <th class="col-md-1 text-center" style="padding-left:25px; padding-right:25px">Quantity</th>
+                                <th class="col-md-1 text-center" style="padding-left:25px; padding-right:25px">Updated Stock</th>
+                                <th class="col-md-2">Transaction Date</th>
+                                <th class="col-md-2  hidden-sm">Responsible</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var row in Model.Maintenance.PopulateTransactions)
+                            {
+                                <tr>
+                                    <td>@Html.DisplayFor(Modelitem => row.TransactionType)</td>
+                                    <td class="hidden-xs">@Html.DisplayFor(Modelitem => row.Item)</td>
+                                    <td class="text-center">@Html.DisplayFor(Modelitem => row.TransStockOnHand)</td>
+                                    @if (row.TransactionType == "Adjust")
+                                    {
+                                        <td class="text-center"><span class="label label-warning">@Html.DisplayFor(Modelitem => row.Quantity)</span></td>
+                                    }
+                                    else if (row.TransactionType == "Received")
+                                    {
+                                        <td class="text-center"><span class="label label-success">@Html.DisplayFor(Modelitem => row.Quantity)</span></td>
+                                    }
+                                    else
+                                    {
+                                        <td class="text-center"><span class="label label-danger">@Html.DisplayFor(Modelitem => row.Quantity)</span></td>
+                                    }
+                                    <td class="text-center">@Html.DisplayFor(Modelitem => row.RemainingStock)</td>
+                                    <td>@Html.DisplayFor(Modelitem => row.TransactionDate)</td>
+                                    <td class="hidden-sm">@Html.DisplayFor(Modelitem => row.Responsible)</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="panel-body">
+                    <div class="col-md-12">
+                        @*<a class="btn btn-primary pull-right" href="@Url.Action("TransactionReports", "Report")" target="_blank" id="btnPrint">Print</a>*@
+                        <input type="button" id="btnPrint" class="btn btn-primary pull-right" value="Print" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>@section scripts{
+    <script>
+        $('#btnPrint').on('click', function () {
+            var From = $('#DateFrom').val();
+            var To = $('#DateTo').val();
+            var Transaction = $('#Maintenance_TransactionType').val();
+
+            $.ajax({
+                url: '/Home/SetFilterData',
+                type: "post",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    From: From,
+                    To: To,
+                    TransactionType: Transaction,
+                    Type: 'ItemMovement',
+                }),
+                dataType: 'json',
+                success: function (data) {
+                    window.open("/Report/TransactionReports/");
+                }
+            })
+        })
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            var date = new Date();
+            var today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+            var end = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
+            $('.js-datepicker').datepicker({
+                formatDate: "mm/dd/yyyy",
+                //todayHighlight: true,
+                //startDate: new Date(),
+                //autoclose: true
+            });
+
+            $('.input-group.date').datepicker({
+                formatDate: "mm/dd/yyyy",
+                //todayHighlight: true,
+                //startDate: new Date(),
+                //autoclose: true
+            });
+
+            $('.input-daterange').datepicker({
+                formatDate: "mm/dd/yyyy",
+                //todayHighlight: true,
+                //startDate: new Date(),
+                //autoclose: true
+            });
+
+        });
+    </script>
+
+    <script>
+        $(function () {
+            //$.fn.dataTable.ext.search.push(
+            //    function (settings, data, dataIndex) {
+            //        var min = $('#DateFrom').datepicker('getDate');
+            //        var max = $('#DateTo').datepicker('getDate');
+            //        var transaction = $('#Maintenance_TransactionType option:selected').text();
+            //        if (transaction == "") {
+            //            transaction = "Select All";
+            //        }
+
+
+            //        var date = data[5].split(' ')
+            //        if (date[1] == "") {
+            //            var startDate = date[0] + "/" + date[2] + "/" + date[3];
+            //        }
+            //        else {
+            //            var startDate = date[0] + "/" + date[1] + "/" + date[2];
+            //        }
+
+            //        startDate = new Date(startDate);
+
+            //        var option = data[0];
+
+            //        if (min == null && max == null && transaction == "Select All") return true;
+            //        if (min == null && startDate <= max && transaction == "Select All") return true;
+            //        if (max == null && startDate >= min && transaction == "Select All") return true;
+            //        if (startDate <= max && startDate >= min && transaction == "Select All") return true;
+            //        if (min == null && max == null && transaction == option) return true;
+            //        if (min == null && startDate <= max && transaction == option) return true;
+            //        if (max == null && startDate >= min && transaction == option) return true;
+            //        if (startDate <= max && startDate >= min && transaction == option) return true;
+            //        return false;
+            //    }
+            //);
+
+            var table = $('#TableItemMovement').DataTable({
+                order: [[5, "desc"]],
+                lengthMenu: [[5, 10, 15, 20, 50, -1], [5, 10, 15, 20, 50, "All"]],
+                //dom: "<'row'<'col-md-3'l><'col-md-3'f>>" + //set column size
+                //     "<'row'<'col-md-12'tr>>" +
+                //     "<'row'<'col-md-5'i><'col-md-7'p>>",
+            }).rows().iterator('row', function (context, index) {
+                var node = $(this.row(index).node());
+                //node.context is element of tr generated by jQuery DataTables.
+            });
+
+            // Event listener to the two range filtering inputs to redraw on input
+
+            //$('#DateFrom, #DateTo, #Maintenance_TransactionType').change(function () {
+            //    table.draw();
+            //});
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            //$("#DateFrom").datepicker({
+            //    formatDate: "mm/dd/yyyy",
+            //    //todayBtn: 1,
+            //    autoclose: true,
+            //    //todayHighlight: true,
+            //}).on('changeDate', function (selected) {
+            //    var minDate = new Date(selected.date.valueOf());
+            //    $('#DateTo').datepicker('setStartDate', minDate);
+            //});
+
+            //$("#DateTo").datepicker({
+            //    formatDate: "mm/dd/yyyy",
+            //    autoclose: true,
+            //    todayHighlight: true
+            //}).on('changeDate', function (selected) {
+            //    var maxDate = new Date(selected.date.valueOf());
+            //    //$('#DateFrom').datepicker('setEndDate', maxDate);
+            //});
+
+            $('#DateFrom').datepicker('setDate', '@ViewBag.Week');
+            $('#DateTo').datepicker('setDate', '@ViewBag.Date');
+            $('#DateTo,#DateFrom').datepicker('setEndDate', '@ViewBag.Date');
+        });
+
+        $('#DateFrom, #DateTo, #Maintenance_TransactionType').change(function () {
+            var Date = $('#DateTo').val();
+            var Week = $('#DateFrom').val();
+            var Movement = $('#Maintenance_TransactionType').val();
+
+            if (Date == "" || Week == "") {
+                return false;
+            }
+
+            $.ajax({
+                url: '/Home/MonitoringItemMovement/',
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    Date: Date,
+                    Week: Week,
+                    Movement: Movement,
+                }),
+                dataType: "json",
+                success: function (data) {
+                    $('#TableItemMovement').dataTable({
+                        destroy: true,
+                        order: [[5, "desc"]],
+                        lengthMenu: [[5, 10, 15, 20, 50, -1], [5, 10, 15, 20, 50, "All"]],
+                        data: data,
+                        columns: [
+                            { data: 'TransactionType' },
+                            { data: 'Item' },
+                            {
+                                data: 'TransStockOnHand',
+                                className: "text-center",
+                            },
+                            {
+                                data: 'Quantity',
+                                className: "text-center",
+                                render: function (data, type, row) {
+                                    if (row.TransactionType == "Adjust") {
+                                        return '<td><span class="label label-warning">' + data + '</span></td>'
+                                    }
+                                    else if (row.TransactionType == "Received") {
+                                        return '<td><span class="label label-success">' + data + '</span></td>'
+                                    }
+                                    else {
+                                        return '<td><span class="label label-danger">' + data + '</span></td>'
+                                    }
+                                }
+                            },
+                            {
+                                data: 'RemainingStock',
+                                className: "text-center",
+                            },
+                            { data: 'TransactionDate' },
+                            { data: 'Responsible' }]
+                    })
+                }
+            });
+        });
+    </script>
+}

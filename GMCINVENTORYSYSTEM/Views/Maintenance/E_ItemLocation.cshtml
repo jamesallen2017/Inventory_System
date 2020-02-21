@@ -1,0 +1,1065 @@
+﻿@model GMCINVENTORYSYSTEM.Models.AllModels
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    List<SelectListItem> MainList = new List<SelectListItem>();
+    MainList.Add(new SelectListItem
+    {
+
+        Text = "No Record",
+        Value = ""
+    });
+
+    int row = 0;
+}
+
+<style>
+    td {
+        word-break: break-word;
+    }
+</style>
+
+<title>Item Location - Edit</title>
+
+<div class="page-header">
+    <h1>Item Location</h1>
+    <ol class="breadcrumb">
+        <li><a>Maintenance</a></li>
+        <li><a>Item Location</a></li>
+        <li class="active">Edit</li>
+    </ol>
+</div>
+
+<div class="content-wrap">
+    <!--START: Content Wrap-->
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <span>Date: @DateTime.Now.ToShortDateString()</span>
+        </div>
+        <div class="panel-body no-padding">
+
+            <ul class="nav nav-tabs" id="AllTabs">
+                <li class="active"><a href="#tab_1_1" data-toggle="tab" aria-expanded="true"> Rack</a></li>
+                <li><a href="#tab_1_2" data-toggle="tab" aria-expanded="true"> Drawer</a></li>
+                <li><a href="#tab_1_3" data-toggle="tab" aria-expanded="true"> Bin</a></li>
+            </ul>
+
+            <div class="tab-content" id="AllContents">
+                <div class="tab-pane fade active in" id="tab_1_1">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="panel-body">
+                                <table class="table table-hover table-striped" id="RackTable" style="width: 100%">
+                                    <thead>
+                                        <tr>
+                                            <th class="col-md-1">Action</th>
+                                            <th class="col-md-4">Rack #</th>
+                                            <th class="col-md-5">Description</th>
+                                            <th class="col-md-2">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.Maintenance.dtRack)
+                                        {
+                                            <tr>
+                                                <td class="text-center">
+                                                    <a id="btnRackEdit" class="btn btn-default"><span class="di di-edit"></span></a>
+                                                    <a id="btnRackYes" class="btn btn-default" style="display:none"><span class="fa fa-check"></span></a>
+                                                    <a id="btnRackNo" class="btn btn-default" style="display:none"><span class="fa fa-times"></span></a>
+                                                </td>
+                                                <td>
+                                                    @Html.TextBoxFor(modelitem => item.RackNo, new { @class = "form-control validate[required]", @disabled = "disabled", @style = "width:100%" })
+                                                </td>
+                                                <td>@Html.TextBoxFor(modelitem => item.RackDescription, new { @class = "form-control", @disabled = "disabled", @style = "width:100%" })</td>
+                                                <td class="hidden-xs">
+                                                    @Html.DropDownListFor(modelitem => item.LocationStatus, new SelectList(Model.Maintenance.StatusList, "Value", "Text", item.LocationStatus)
+                                                        , new { @class = "form-control select2Search", @style = "border-radius: 0; width: 100%;" })
+                                                </td>
+                                                @Html.HiddenFor(modelitem => item.RackNo, new { @id = "HiddenRack" })
+                                                @Html.HiddenFor(modelitem => item.RackDescription, new { @id = "HiddenRackDes" })
+                                                @Html.HiddenFor(modelitem => item.LocationStatus, new { @id = "HiddenStatus"})
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="tab_1_2">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group input-group">
+                                <span class="input-group-addon">Main #</span>
+                                @Html.DropDownListFor(Maintenance => Maintenance.Maintenance.RackNo, Model.Maintenance.ddlMain, "Select Main No.", new { @class = "form-control select2Search validate[required]", @style = "width:100%" })
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="panel-body">
+                                <table class="table table-hover table-striped" id="DrawerTable" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th class="col-md-2">Action</th>
+                                            <th class="col-md-8">Drawer #</th>
+                                            <th class="col-md-2">Status</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane fade" id="tab_1_3">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group input-group">
+                                <span class="input-group-addon">Main #</span>
+                                @Html.DropDownListFor(Maintenance => Maintenance.Maintenance.MainNo, Model.Maintenance.ddlMain, "Select Main No.", new { @class = "form-control select2Search  validate[required]", @style = "width:100%" })
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group input-group">
+                                <span class="input-group-addon">Drawer #</span>
+                                @Html.DropDownListFor(Maintenance => Maintenance.Maintenance.DrawerNo, MainList, new { @class = "form-control select2Search", @style = "width:100%" })
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="panel-body">
+                                <table class="table table-hover table-striped" id="BinTable" style="width:100%">
+                                    <thead>
+                                        <tr>
+                                            <th class="col-md-2">Action</th>
+                                            <th class="col-md-8">Bin #</th>
+                                            <th class="col-md-2">Status</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    @* Sorting *@
+    <script>
+        /* Create an array with the values of all the input boxes in a column */
+        $.fn.dataTable.ext.order['dom-text'] = function (settings, col) {
+            return this.api().column(col, { order: 'index' }).nodes().map(function (td, i) {
+                return $('input', td).val();
+            });
+        }
+
+        /* Create an array with the values of all the input boxes in a column, parsed as numbers */
+        $.fn.dataTable.ext.order['dom-text-numeric'] = function (settings, col) {
+            return this.api().column(col, { order: 'index' }).nodes().map(function (td, i) {
+                return $('input', td).val() * 1;
+            });
+        }
+
+        /* Create an array with the values of all the select options in a column */
+        $.fn.dataTable.ext.order['dom-select'] = function (settings, col) {
+            return this.api().column(col, { order: 'index' }).nodes().map(function (td, i) {
+                return $('select', td).val();
+            });
+        }
+
+        /* Create an array with the values of all the checkboxes in a column */
+        $.fn.dataTable.ext.order['dom-checkbox'] = function (settings, col) {
+            return this.api().column(col, { order: 'index' }).nodes().map(function (td, i) {
+                return $('input', td).prop('checked') ? '1' : '0';
+            });
+        }
+
+        jQuery.extend(jQuery.fn.dataTableExt.oSort, {
+            "non-empty-string-asc": function (str1, str2) {
+                if (str1 == null || str1 == "")
+                    return 1;
+                if (str2 == null || str2 == "")
+                    return -1;
+                return ((str1 < str2) ? -1 : ((str1 > str2) ? 1 : 0));
+            },
+
+            "non-empty-string-desc": function (str1, str2) {
+                if (str1 == null || str1 == "")
+                    return 1;
+                if (str2 == null || str2 == "")
+                    return -1;
+                return ((str1 < str2) ? 1 : ((str1 > str2) ? -1 : 0));
+            }
+        });
+
+        // use sType: "mysort" for any columns you wish to use these routines
+        jQuery.fn.dataTableExt.oSort['mysort-asc'] = function (a, b) {
+            var re = new RegExp("^([a-zA-Z]*)(.*)");
+            var x = re.exec(a);
+            var y = re.exec(b);
+
+            // you might want to force the first portion to lowercase
+            // for case insensitive matching
+            // x[1] = x[1].toLowerCase();
+            // y[1] = y[1].toLowerCase();
+
+            if (x[1] > y[1]) return 1;
+            if (x[1] < y[1]) return -1;
+
+            // if you want to force the 2nd part to only be numeric:
+            x[2] = parseInt(x[2]);
+            y[2] = parseInt(y[2]);
+
+            return ((x[2] < y[2]) ? -1 : ((x[2] > y[2]) ? 1 : 0));
+        };
+
+        jQuery.fn.dataTableExt.oSort['mysort-desc'] = function (a, b) {
+            var re = new RegExp("^([a-zA-Z]*)(.*)");
+            var x = re.exec(a);
+            var y = re.exec(b);
+
+            // you might want to force the first portion to lowercase
+            // for case insensitive matching
+            // x[1] = x[1].toLowerCase();
+            // y[1] = y[1].toLowerCase();
+
+            if (x[1] > y[1]) return -1;
+            if (x[1] < y[1]) return 1;
+
+            // if you want to force the 2nd part to only be numeric:
+            x[2] = parseInt(x[2]);
+            y[2] = parseInt(y[2]);
+
+            return ((x[2] < y[2]) ? 1 : ((x[2] > y[2]) ? -1 : 0));
+        };
+
+        /* Initialise the table with the required column ordering data types */
+        $(document).ready(function () {
+            $('#RackTable').dataTable({
+                "columDefs": [{
+                    orderable: false,
+                    targets: 0,
+                }],
+                "columns": [
+                    null,
+                    { "orderDataType": "dom-text", type: 'mysort' },
+                    { "orderDataType": "dom-text", type: 'mysort' },
+                    { "orderDataType": "dom-select" }
+                ],
+                order: [[1, "asc"]],
+                lengthMenu: [[5, 10, 15, 20, 50, -1], [5, 10, 15, 20, 50, "All"]],
+            });
+        });
+    </script>
+
+    <script>
+        $('#AllTabs a').click(function (e) {
+            e.preventDefault();
+            $(this).tab('show');
+        });
+
+        // store the currently selected tab in the hash value
+        $("ul.nav.nav-tabs > li > a").on("shown.bs.tab", function (e) {
+            var id = $(e.target).attr("href").substr(1);
+            window.location.hash = id;
+        });
+
+        // on load of the page: switch to the currently selected tab
+        var hash = window.location.hash;
+        $('#AllTabs a[href="' + hash + '"]').tab('show');
+    </script>
+
+    @* Save Form *@
+    <script>
+        $(function () {
+            $('#DrawerTable,#BinTable').dataTable({
+                destroy: true,
+                order: [[1, "desc"]],
+                lengthMenu: [[5, 10, 15, 20, 50, -1], [5, 10, 15, 20, 50, "All"]],
+                data: null,
+                columns: [
+                {
+                    "data": null,
+
+                },
+                {
+                    "data": null,
+
+                },
+                {
+                    "data": null,
+                }
+                ]
+            })
+        })
+
+        $("body").on('change', '#Maintenance_RackNo', function () {
+            var MainNo = $("#Maintenance_RackNo").val();
+
+            var Status = [{ id: '1', name: 'ACTIVATE' }, { id: '2', name: 'DEACTIVATE' }];
+            var HiddenStatus = "";
+
+            $.ajax({
+                url: '/Maintenance/RetrieveDrawerTableData',
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    MainNo: MainNo,
+                }),
+                dataType: "json",
+                success: function (data) {
+                    $('#DrawerTable').dataTable({
+                        destroy: true,
+                        order: [[1, "asc"]],
+                        lengthMenu: [[5, 10, 15, 20, 50, -1], [5, 10, 15, 20, 50, "All"]],
+                        data: data,
+                        columns: [
+                        {
+                            "data": null,
+                            render: function (data, type, row) {
+                                return '<td><div class="text-center">' +
+                                            '<a id="btnDrawerEdit" class="btn btn-default"><span class="di di-edit"></span></a>' +
+                                            '<a id="btnDrawerYes" class="btn btn-default" style="display:none"><span class="fa fa-check"></span></a>' +
+                                            '<a id="btnDrawerNo" class="btn btn-default" style="display:none"><span class="fa fa-times"></span></a> </div></td>'
+                            },
+                        },
+                        {
+                            "data": "DrawerNo",
+                            orderDataType: "dom-text", type: 'mysort',
+                            render: function (data, type, row) {
+                                return '<td"><input class="form-control" disabled="disabled" id="DrawerNo" ' +
+                                    ' style="width:100%" type="text" value="' + data + '">' +
+                                    '<input id="HiddenDrawerNo" type="hidden" value="' + data + '"></td>';
+                            },
+                            targets: 1
+                        },
+                        {
+                            "data": "DrawerStatus",
+                            "orderDataType": "dom-select",
+                            render: function (data, type, row) {
+                                var $select = $('<select id="item_LocationStatus" class="form-control select2Search" style="width: 100%"></select>',
+                                    {
+                                        id: row.DrawerStatus,
+                                        value: row.name
+                                    });
+                                $.each(Status, function (k, v) {
+                                    var $option = $("<option></option>",
+                                        {
+                                            text: v.name,
+                                            value: v.id
+                                        });
+
+                                    //if selected_id = id then this is the selected value
+                                    if (row.DrawerStatus == v.id) {  //use == instead of ===
+                                        $option.attr("selected", "selected");
+                                        HiddenStatus = row.DrawerStatus;
+                                    }
+                                    $select.append($option);
+                                });
+                                //return $select.prop("outerHTML");
+                                return '<td">'+$select.prop("outerHTML")+'<input id="HiddenDrawerNo" type="hidden" value="' + data + '">'+
+                                    '<input id="HiddenStatus" type="hidden" value="' + HiddenStatus + '"></td>';
+                            },
+                        },
+
+                        ]
+                    })
+                }
+            })
+        })
+
+        $("body").on('change', '#Maintenance_MainNo', function () {
+            var MainNo = $("#Maintenance_MainNo").val();
+            var DrawerList = [];
+
+            $.ajax({
+                url: '/Maintenance/RetreiveDrawerItemLocationStatus',
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    MainNo: MainNo,
+                }),
+
+                dataType: "json",
+                success: function (data) {
+                    DrawerList = data;
+
+                    var $ele = $("#Maintenance_DrawerNo");
+                    $ele.empty();
+
+                    if (DrawerList.length != 0) {
+                        $ele.append($('<option/>').val('').text('Select Drawer No.'));
+                        $.each(DrawerList, function (i, val) {
+                            $ele.append($('<option/>').val(this['Value']).html(this['Text']));
+                        })
+                    }
+                    else {
+                        $ele.append($('<option/>').val('').text('No Record.'));
+                    }
+                    $('#BinTable').dataTable({
+                        destroy: true,
+                        order: [[1, "desc"]],
+                        lengthMenu: [[5, 10, 15, 20, 50, -1], [5, 10, 15, 20, 50, "All"]],
+                        data: [],
+                        columns: [
+                        {
+                            "data": null,
+
+                        },
+                        {
+                            "data": null,
+
+                        },
+                        {
+                            "data": null,
+                        }
+                        ]
+                    })
+                }
+            })
+        })
+
+        $("body").on('change', '#Maintenance_DrawerNo', function () {
+            var DrawerNo = $("#Maintenance_DrawerNo").val();
+            var MainNo = $("#Maintenance_MainNo").val();
+
+            var Status = [{ id: '1', name: 'ACTIVATE' }, { id: '2', name: 'DEACTIVATE' }];
+            var HiddenStatus = "";
+
+            $.ajax({
+                url: '/Maintenance/RetrieveBinTableData',
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    MainNo: MainNo,
+                    DrawerNo: DrawerNo,
+                }),
+                dataType: "json",
+                success: function (data) {
+
+                    $('#BinTable').dataTable({
+                        destroy: true,
+                        order: [[1, "asc"]],
+                        lengthMenu: [[5, 10, 15, 20, 50, -1], [5, 10, 15, 20, 50, "All"]],
+                        data: data,
+                        columns: [
+                        {
+                            "data": null,
+                            render: function (data, type, row) {
+                                return '<td><div class="text-center">' +
+                                            '<a id="btnBinEdit" class="btn btn-default"><span class="di di-edit"></span></a>' +
+                                            '<a id="btnBinYes" class="btn btn-default" style="display:none"><span class="fa fa-check"></span></a>' +
+                                            '<a id="btnBinNo" class="btn btn-default" style="display:none"><span class="fa fa-times"></span></a> </div></td>'
+                            },
+                        },
+                        {
+                            "data": "BinNo",
+                            "orderDataType": "dom-text", type: 'mysort',
+                            render: function (data, type, row) {
+                                return '<td"><input class="form-control" disabled="disabled" id="BinNo" ' +
+                                    ' style="width:100%" type="text" value="' + data + '">' +
+                                    '<input id="HiddenBinNo" type="hidden" value="' + data + '"></td>';
+                            },
+                            targets: 1
+                        },
+                        {
+                            "data": "BinStatus",
+                            "orderDataType": "dom-select",
+                            render: function (data, type, row) {
+                                var $select = $('<select id="item_LocationStatus" class="form-control select2Search" style="width: 100%"></select>',
+                                    {
+                                        id: row.BinStatus,
+                                        value: row.name
+                                    });
+                                $.each(Status, function (k, v) {
+                                    var $option = $("<option></option>",
+                                        {
+                                            text: v.name,
+                                            value: v.id
+                                        });
+
+                                    //if selected_id = id then this is the selected value
+                                    if (row.BinStatus == v.id) {  //use == instead of ===
+                                        $option.attr("selected", "selected");
+                                        HiddenStatus = row.BinStatus;
+                                    }
+                                    $select.append($option);
+                                });
+                                //return $select.prop("outerHTML");
+                                return '<td">' + $select.prop("outerHTML") + '<input id="HiddenDrawerNo" type="hidden" value="' + data + '"></td>' +
+                                    '<input id="HiddenStatus" type="hidden" value="' + HiddenStatus + '"></td>';
+                            },
+                        },
+                        ]
+                    })
+                }
+            })
+        })
+    </script>
+
+    <script>
+        $('#RackTable tbody').on('click', '#btnRackEdit', function () {
+            var row = $(this).closest('tr')
+
+            var HiddenRack = $('#HiddenRack', row).val();
+            var RackNo = $('#item_RackNo', row).val();
+            var RackName = $('#item_RackDescription', row).val();
+
+            $('#btnRackEdit', row).hide();
+            $('#btnRackYes', row).show();
+            $('#btnRackNo', row).show();
+            $('#item_RackNo', row).prop('disabled', false);
+            $('#item_RackDescription', row).prop('disabled', false);
+        })
+
+        $('#RackTable tbody').on('click', '#btnRackYes', function () {
+            var row = $(this).closest('tr')
+
+            var HiddenRack = $('#HiddenRack', row).val();
+            var RackNo = $('#item_RackNo', row).val().trim();
+            var RackName = $('#item_RackDescription', row).val();
+
+            if (RackNo == "" || RackNo == null) { 
+                $.toast({
+                    heading: "Error",
+                    text: "Please, fill out required fields.",
+                    showHideTransition: 'slide',
+                    icon: 'error',
+                    autoHideDelay: 3000,
+
+                    position: 'top-right',
+                    bgColor: '#FF4859'
+
+                });
+                return false;
+            }
+
+            event.preventDefault();
+            event.stopImmediatePropagation();
+
+            bootbox.confirm({
+                title: "Are you sure you want to save?",
+                message: "This Rack Information will be updated.",
+                size: "small",
+                buttons: {
+                    confirm: {
+                        label: 'Yes',
+                        className: 'btn-success'
+                    },
+                    cancel: {
+                        label: 'No',
+                        className: 'btn-danger'
+                    }
+                },
+                callback: function (result) {
+                    if (result) {
+                        $.ajax({
+                            type: "POST",
+                            url: '/Maintenance/UpdateRackInformation',
+                            data: JSON.stringify({
+                                MainNo: HiddenRack,
+                                ChangeNo: RackNo,
+                                RackDescription: RackName,
+                            }),
+                            contentType: "application/json",
+                            dataType: "json",
+                            success: function (data) {
+                                var newData = [];
+                                if (data > 0) {
+                                    newData[0] = "Update";
+                                }
+                                else {
+                                    newData = data.split('-');
+
+                                }
+                                if (data == 0) {
+                                    $.toast({
+                                        heading: "System Error",
+                                        text: "Please contact our administrator for assistance.",
+                                        showHideTransition: 'slide',
+                                        icon: 'error',
+                                        autoHideDelay: 3000,
+                                        position: 'top-right',
+                                        bgColor: '#FF4859'
+                                    });
+                                    return false;
+                                }
+                                else if (newData[0] == "Exist") {
+                                    $.toast({
+                                        heading: "Error",
+                                        //text: "Row " + newData[1] + " data is already exist.",
+                                        text: "Rack No. " + newData[1] + " is already exist.",
+                                        showHideTransition: 'slide',
+                                        icon: 'error',
+                                        autoHideDelay: 3000,
+                                        position: 'top-right',
+                                        bgColor: '#FF4859'
+                                    });
+                                    return false;
+
+                                }
+                                else {
+                                    $('#btnRackEdit', row).show();
+                                    $('#btnRackYes', row).hide();
+                                    $('#btnRackNo', row).hide();
+                                    $('#item_RackNo', row).prop('disabled', true);
+                                    $('#item_RackDescription', row).prop('disabled', true);
+
+                                    $.toast({
+                                        heading: 'Item Location',
+                                        text: "Rack No. " + HiddenRack + " Successfully Edited.",
+                                        showHideTransition: 'slide',
+                                        icon: 'success',
+                                        autoHideDelay: 3000,
+                                        position: 'top-right',
+                                        bgColor: '#7EC857'
+                                    });
+                                    var $this = $("#btnRackYes");
+                                    $this.button('loading');
+                                    setTimeout(function () {
+                                        $this.button('reset');
+                                        window.location.reload();
+                                    }, 3000);
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+
+        })
+
+        $('#RackTable tbody').on('click', '#btnRackNo', function () {
+            var row = $(this).closest('tr')
+
+            var HiddenRack = $('#HiddenRack', row).val();
+            var HiddenDes = $('#HiddenRackDes', row).val();
+
+            $('#item_RackNo', row).val(HiddenRack);
+            $('#item_RackDescription', row).val(HiddenDes);
+            $('#btnRackEdit', row).show();
+            $('#btnRackYes', row).hide();
+            $('#btnRackNo', row).hide();
+            $('#item_RackNo', row).prop('disabled', true);
+            $('#item_RackDescription', row).prop('disabled', true);
+        })
+
+        $('#DrawerTable').on('click', '#btnDrawerEdit', function () {
+            var row = $(this).closest('tr')
+
+            var HiddenDrawerNo = $('#HiddenDrawerNo', row).val();
+            var DrawerNo = $('#DrawerNo', row).val();
+
+            $('#btnDrawerEdit', row).hide();
+            $('#btnDrawerYes', row).show();
+            $('#btnDrawerNo', row).show();
+            $('#DrawerNo', row).prop('disabled', false);
+        })
+
+        $('#DrawerTable').on('click', '#btnDrawerYes', function () {
+            var row = $(this).closest('tr')
+
+            var RackNo = $('#Maintenance_RackNo').val();
+            var HiddenDrawerNo = $('#HiddenDrawerNo', row).val();
+            var DrawerNo = $('#DrawerNo', row).val().trim();
+
+            if (DrawerNo == "" || DrawerNo == null) {
+                $.toast({
+                    heading: "Error",
+                    text: "Please, fill out required fields.",
+                    showHideTransition: 'slide',
+                    icon: 'error',
+                    autoHideDelay: 3000,
+
+                    position: 'top-right',
+                    bgColor: '#FF4859'
+
+                });
+                return false;
+            }
+
+            event.preventDefault();
+            event.stopImmediatePropagation();
+
+            bootbox.confirm({
+                title: "Are you sure you want to save?",
+                message: "This Drawer No. will be updated.",
+                size: "small",
+                buttons: {
+                    confirm: {
+                        label: 'Yes',
+                        className: 'btn-success'
+                    },
+                    cancel: {
+                        label: 'No',
+                        className: 'btn-danger'
+                    }
+                },
+                callback: function (result) {
+                    if (result) {
+                        $.ajax({
+                            type: "POST",
+                            url: '/Maintenance/UpdateDrawerInformation',
+                            data: JSON.stringify({
+                                MainNo: RackNo,
+                                DrawerNo: HiddenDrawerNo,
+                                ChangeNo: DrawerNo,
+                            }),
+                            contentType: "application/json",
+                            dataType: "json",
+                            success: function (data) {
+                                var newData = [];
+                                if (data > 0) {
+                                    newData[0] = "Update";
+                                }
+                                else {
+                                    newData = data.split('-');
+
+                                }
+                                if (data == 0) {
+                                    $.toast({
+                                        heading: "System Error",
+                                        text: "Please contact our administrator for assistance.",
+                                        showHideTransition: 'slide',
+                                        icon: 'error',
+                                        autoHideDelay: 3000,
+                                        position: 'top-right',
+                                        bgColor: '#FF4859'
+                                    });
+                                    return false;
+                                }
+                                else if (newData[0] == "Exist") {
+                                    $.toast({
+                                        heading: "Error",
+                                        //text: "Row " + newData[1] + " data is already exist.",
+                                        text: "Drawer No. " + newData[1] + " is already exist.",
+                                        showHideTransition: 'slide',
+                                        icon: 'error',
+                                        autoHideDelay: 3000,
+                                        position: 'top-right',
+                                        bgColor: '#FF4859'
+                                    });
+                                    return false;
+
+                                }
+                                else {
+                                    $('#btnDrawerEdit', row).show();
+                                    $('#btnDrawerYes', row).hide();
+                                    $('#btnDrawerNo', row).hide();
+                                    $('#DrawerNo', row).prop('disabled', true);
+
+                                    $.toast({
+                                        heading: 'Item Location',
+                                        text: "Drawer No. " + HiddenDrawerNo + " Successfully Edited.",
+                                        showHideTransition: 'slide',
+                                        icon: 'success',
+                                        autoHideDelay: 3000,
+                                        position: 'top-right',
+                                        bgColor: '#7EC857'
+                                    });
+                                    var $this = $("#btnDrawerYes");
+                                    $this.button('loading');
+                                    setTimeout(function () {
+                                        $this.button('reset');
+                                        window.location.reload();
+                                    }, 3000);
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+
+        })
+
+        $('#DrawerTable').on('click', '#btnDrawerNo', function () {
+            var row = $(this).closest('tr')
+
+            var HiddenDrawerNo = $('#HiddenDrawerNo', row).val();
+
+            $('#DrawerNo', row).val(HiddenDrawerNo);
+            $('#btnDrawerEdit', row).show();
+            $('#btnDrawerYes', row).hide();
+            $('#btnDrawerNo', row).hide();
+            $('#DrawerNo', row).prop('disabled', true);
+        })
+
+        $('#BinTable').on('click', '#btnBinEdit', function () {
+            var row = $(this).closest('tr')
+
+            var HiddenBinNo = $('#HiddenBinNo', row).val();
+            var BinNo = $('#BinNo', row).val();
+
+            $('#btnBinEdit', row).hide();
+            $('#btnBinYes', row).show();
+            $('#btnBinNo', row).show();
+            $('#BinNo', row).prop('disabled', false);
+        })
+
+        $('#BinTable').on('click', '#btnBinYes', function () {
+            var row = $(this).closest('tr')
+
+            var RackNo = $('#Maintenance_MainNo').val();
+            var DrawerNo = $('#Maintenance_DrawerNo').val();
+            var BinNo = $('#BinNo', row).val().trim();
+            var HiddenBinNo = $('#HiddenBinNo', row).val();
+
+            if (BinNo == "" || BinNo == null) {
+                $.toast({
+                    heading: "Error",
+                    text: "Please, fill out required fields.",
+                    showHideTransition: 'slide',
+                    icon: 'error',
+                    autoHideDelay: 3000,
+
+                    position: 'top-right',
+                    bgColor: '#FF4859'
+
+                });
+                return false;
+            }
+
+            event.preventDefault();
+            event.stopImmediatePropagation();
+
+            bootbox.confirm({
+                title: "Are you sure you want to save?",
+                message: "This Bin No. will be updated.",
+                size: "small",
+                buttons: {
+                    confirm: {
+                        label: 'Yes',
+                        className: 'btn-success'
+                    },
+                    cancel: {
+                        label: 'No',
+                        className: 'btn-danger'
+                    }
+                },
+                callback: function (result) {
+                    if (result) {
+                        $.ajax({
+                            type: "POST",
+                            url: '/Maintenance/UpdateBinInformation',
+                            data: JSON.stringify({
+                                MainNo: RackNo,
+                                DrawerNo: DrawerNo,
+                                BinNo: HiddenBinNo,
+                                ChangeNo: BinNo,
+                            }),
+                            contentType: "application/json",
+                            dataType: "json",
+                            success: function (data) {
+                                var newData = [];
+                                if (data > 0) {
+                                    newData[0] = "Update";
+                                }
+                                else {
+                                    newData = data.split('-');
+
+                                }
+                                if (data == 0) {
+                                    $.toast({
+                                        heading: "System Error",
+                                        text: "Please contact our administrator for assistance.",
+                                        showHideTransition: 'slide',
+                                        icon: 'error',
+                                        autoHideDelay: 3000,
+                                        position: 'top-right',
+                                        bgColor: '#FF4859'
+                                    });
+                                    return false;
+                                }
+                                else if (newData[0] == "Exist") {
+                                    $.toast({
+                                        heading: "Error",
+                                        //text: "Row " + newData[1] + " data is already exist.",
+                                        text: "Bin No. " + newData[1] + " is already exist.",
+                                        showHideTransition: 'slide',
+                                        icon: 'error',
+                                        autoHideDelay: 3000,
+                                        position: 'top-right',
+                                        bgColor: '#FF4859'
+                                    });
+                                    return false;
+
+                                }
+                                else {
+                                    $('#btnBinEdit', row).show();
+                                    $('#btnBinYes', row).hide();
+                                    $('#btnBinNo', row).hide();
+                                    $('#BinNo', row).prop('disabled', true);
+
+                                    $.toast({
+                                        heading: 'Item Location',
+                                        text: "Bin No. " + HiddenBinNo + " Successfully Edited.",
+                                        showHideTransition: 'slide',
+                                        icon: 'success',
+                                        autoHideDelay: 3000,
+                                        position: 'top-right',
+                                        bgColor: '#7EC857'
+                                    });
+                                    var $this = $("#btnBinYes");
+                                    $this.button('loading');
+                                    setTimeout(function () {
+                                        $this.button('reset');
+                                        window.location.reload();
+                                    }, 3000);
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+
+        })
+
+        $('#BinTable').on('click', '#btnBinNo', function () {
+            var row = $(this).closest('tr')
+
+            var HiddenBinNo = $('#HiddenBinNo', row).val();
+
+            $('#BinNo', row).val(HiddenBinNo);
+            $('#btnBinEdit', row).show();
+            $('#btnBinYes', row).hide();
+            $('#btnBinNo', row).hide();
+            $('#BinNo', row).prop('disabled', true);
+        })
+    </script>
+
+    <script>
+        $("body").on("change", "#item_LocationStatus", function () {
+            var row = $(this).closest("tr");
+
+            var RackNo,DrawerNo;
+            var HiddenRack = $('#HiddenRack', row).val();
+            var HiddenDes = $('#HiddenRackDes', row).val();
+            var HiddenDrawerNo = $('#HiddenDrawerNo', row).val();
+            var HiddenBinNo = $('#HiddenBinNo', row).val();
+            if (HiddenBinNo != undefined) {
+                RackNo = $('#Maintenance_MainNo').val();
+                DrawerNo = $('#Maintenance_DrawerNo').val();
+                HiddenRack = "";
+                HiddenDrawerNo = "";
+            }
+            else if (HiddenDrawerNo != undefined) {
+                RackNo = $('#Maintenance_RackNo').val();
+                DrawerNo = "";
+                HiddenRack = "";
+                HiddenBinNo = "";
+            }
+            else {
+                RackNo = "";
+                DrawerNo = "";
+                HiddenDrawerNo = "";
+                HiddenBinNo = "";
+            }
+
+            var Status = $("#item_LocationStatus", row).val()
+            var HiddenStatus = $("#HiddenStatus", row).val()
+            var Status2 = $("#item_LocationStatus option:selected", row).html()
+
+            if (HiddenStatus == Status) {
+                return true;
+            }
+
+            bootbox.confirm({
+                title: "Item Location Status",
+                message: "Are you sure you want to " + Status2 + "?",
+                size: "small",
+                buttons: {
+                    confirm: {
+                        label: 'Yes',
+                        className: 'btn-success'
+                    },
+                    cancel: {
+                        label: 'No',
+                        className: 'btn-danger'
+                    }
+                },
+                callback: function (result) {
+
+                    if (result) {
+                        $.ajax({
+                            url: "/Maintenance/UpdateItemLocationStatus/",
+                            type: "POST",
+                            contentType: "application/json",
+                            data: JSON.stringify({
+                                MainNo: HiddenRack + RackNo,
+                                DrawerNo: HiddenDrawerNo + DrawerNo,
+                                BinNo: HiddenBinNo,
+                                LocationStatus: Status,
+                            }),
+                            dataType: "json",
+                            success: function (result) {
+
+                                if (result == 0) {
+                                    $.toast({
+                                        heading: "System Error",
+                                        text: "Contact our adminstrator for assistance",
+                                        showHideTransition: 'slide',
+                                        icon: 'error',
+                                        autoHideDelay: 3000,
+
+                                        position: 'top-right',
+                                        bgColor: '#FF4859'
+                                    });
+                                    $("#item_LocationStatus", row).val(HiddenStatus).change();
+                                }
+                                else if (result == "Exist") {
+                                    $.toast({
+                                        heading: "Error",
+                                        text: "This location is in used, deactivation is not allowed.",
+                                        showHideTransition: 'slide',
+                                        icon: 'error',
+                                        autoHideDelay: 3000,
+
+                                        position: 'top-right',
+                                        bgColor: '#FF4859'
+                                    });
+                                    $("#item_LocationStatus", row).val(HiddenStatus).change();
+                                }
+                                else {
+                                    //$('#item_RackNo', row).val(HiddenRack);
+                                    //$('#item_RackDescription', row).val(HiddenDes);
+                                    //$('#btnRackEdit', row).show();
+                                    //$('#btnRackYes', row).hide();
+                                    //$('#btnRackNo', row).hide();
+                                    //$('#item_RackNo', row).prop('disabled', true);
+                                    //$('#item_RackDescription', row).prop('disabled', true);
+
+                                    $("#HiddenStatus", row).val(Status)
+
+                                    $.toast({
+                                        heading: "Item Location",
+                                        text: HiddenRack + HiddenDrawerNo + HiddenBinNo + " is now " + Status2 + "D.",
+                                        showHideTransition: 'slide',
+                                        icon: 'success',
+                                        autoHideDelay: 3000,
+
+                                        position: 'top-right',
+                                        bgColor: '#7EC857'
+                                    });
+                                }
+
+                            }
+                        });
+                    }
+
+                    else {
+                        $("#item_LocationStatus", row).val(HiddenStatus).change();
+                    }
+                }
+            })
+
+
+
+        })
+    </script>
+}
+

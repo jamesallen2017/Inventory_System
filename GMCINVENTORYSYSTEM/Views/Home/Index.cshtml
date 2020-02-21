@@ -1,0 +1,193 @@
+﻿@model GMCINVENTORYSYSTEM.Models.AllModels
+
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<style>
+    td {
+        word-break: break-word;
+    }
+
+    .table > thead > tr > th, .table > thead > tr > td {
+        vertical-align: bottom;
+    }
+</style>
+
+<title>Home</title>
+
+<div class="page-header">
+    <h1>Dashboard</h1>
+    <ol class="breadcrumb">
+        <li class="active">Home</li>
+    </ol>
+</div>
+
+<div class="content-wrap">
+    <!--START: Content Wrap-->
+    @if (ViewBag.Content == true)
+    {
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <span>Date: @DateTime.Now.ToShortDateString()</span>
+            </div>
+            @if (Session["GroupID"].ToString() == "1")
+            {
+                @*using (Html.BeginForm("Index", "Home", FormMethod.Post, new { @id = "formvalidationtooltip", @class = "ItemReleasingForm", @role = "form" }))
+                    {
+                        <div class="col-md-3">
+                            <div class="form-group input-group">
+                                <span class="input-group-addon">Designation</span>
+                                @Html.DropDownListFor(Monitoring => Monitoring.Maintenance.DesignationID, Model.Maintenance.ddlDesignation, "Select All", new { @class = "form-control select2Search", @placeholder = "Required" })
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-primary">Filter</button>
+                            </div>
+                        </div>
+                    }*@
+                <div class="col-md-3">
+                    <div class="form-group input-group">
+                        <span class="input-group-addon">Designation</span>
+                        @Html.DropDownListFor(Monitoring => Monitoring.Maintenance.DesignationID, Model.Maintenance.ddlDesignation, "Select All", new { @class = "form-control select2Search", @placeholder = "Required" })
+                    </div>
+                </div>
+            }
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel-body">
+                        <table class="table table-striped table-hover" id="TableIndex">
+                            <thead>
+                                <tr>
+                                    <th class="col-md-1">Item Code</th>
+                                    <th class="col-md-5 hidden-xs">Part Name</th>
+                                    <th class="col-md-3 hidden-xs">Specification</th>
+                                    <th class="col-md-1 hidden-sm text-center" style="padding: 0 20px">Stock On Hand</th>
+                                    <th class="col-md-1">Designation</th>
+                                    <th class="col-md-1 hidden-sm">Type</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var row in Model.Maintenance.dtIteminformation)
+                                {
+                                    <tr>
+                                        <td>@Html.DisplayFor(Modelitem => row.StockNo)</td>
+                                        <td class="hidden-xs">@Html.DisplayFor(Modelitem => row.ItemName)</td>
+                                        <td class="hidden-xs">@Html.DisplayFor(Modelitem => row.Specification)</td>
+
+                                        @if (row.StockOnHand == row.SafetyStock)
+                                        {
+                                            <td class="hidden-sm text-center">
+                                                <span class="label label-warning">@Html.DisplayFor(Modelitem => row.StockOnHand)</span>
+                                                @Html.HiddenFor(Modelitem => row.StockOnHand)
+                                            </td>
+
+                                        }
+                                        else if (Convert.ToInt32(row.StockOnHand) < Convert.ToInt32(row.SafetyStock))
+                                        {
+                                            if (Convert.ToInt32(row.StockOnHand) == 0)
+                                            {
+                                                <td class="hidden-sm text-center">
+                                                    @*<span class="label label-danger">@Html.DisplayFor(Modelitem => row.StockOnHand)</span>*@
+                                                    <span class="label label-danger">Out of stock</span>
+                                                    @Html.HiddenFor(Modelitem => row.StockOnHand)
+                                                </td>
+
+                                            }
+                                            else if (Convert.ToInt32(row.StockOnHand) <= Convert.ToInt32(row.CriticalOrder))
+                                            {
+                                                <td class="hidden-sm text-center">
+                                                    <span class="label label-danger">@Html.DisplayFor(Modelitem => row.StockOnHand)</span>
+                                                    @Html.HiddenFor(Modelitem => row.StockOnHand)
+                                                </td>
+                                            }
+                                            else
+                                            {
+                                                <td class="hidden-sm text-center">
+                                                    <span class="label label-warning">@Html.DisplayFor(Modelitem => row.StockOnHand)</span>
+                                                    @Html.HiddenFor(Modelitem => row.StockOnHand)
+                                                </td>
+                                            }
+
+                                        }
+                                        else
+                                        {
+                                            <td class="hidden-sm text-center"><span class="label label-success">@Html.DisplayFor(Modelitem => row.StockOnHand)</span></td>
+                                        }
+                                        <td>@Html.DisplayFor(Modelitem => row.Designation)</td>
+                                        <td class="hidden-sm">@Html.DisplayFor(Modelitem => row.TypeID)</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="panel-body">
+                        <div class="col-md-12">
+                            @*<a class="btn btn-primary pull-right" href="@Url.Action("InventoryReports", "Report")" target="_blank" id="btnPrint">Print</a>*@
+                            <input type="button" id="btnPrint" class="btn btn-primary pull-right" value="Print" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    }
+</div>
+<!--END: Content Wrap-->
+@section scripts{
+
+    <script>
+        $('#btnPrint').on('click', function () {
+            var Designation = $('#Maintenance_DesignationID').val();
+
+            $.ajax({
+                url: '/Home/SetFilterData',
+                type: "post",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    Designation: Designation,
+                    Type: 'Index',
+                }),
+                dataType: 'json',
+                success: function (data) {
+                    window.open("/Report/InventoryReports/");
+                }
+            })
+        })
+    </script>
+
+    <script>
+        $(function () {
+            $.fn.dataTable.ext.search.push(
+                function (settings, data, dataIndex) {
+                    //var DesignationID = $('#Maintenance_DesignationID').text();
+                    var DesignationID = $('#Maintenance_DesignationID').children("option:selected").text();
+                    if (DesignationID == '') {
+                        DesignationID = 'Select All';
+                    }
+                    var Designation = data[4];
+                    if (DesignationID == 'Select All') return true;
+                    if (Designation == DesignationID) return true;
+                    return false;
+                }
+            );
+
+            var table = $('#TableIndex').DataTable({
+                //columnDefs: [{
+                //    orderable: false,
+                //    targets: [0]
+                //}],
+                lengthMenu: [[5, 10, 15, 20, 50, -1], [5, 10, 15, 20, 50, "All"]],
+                //dom: "<'row'<'col-md-3'l><'col-md-3'f>>" + //set column size
+                //     "<'row'<'col-md-12'tr>>" +
+                //     "<'row'<'col-md-5'i><'col-md-7'p>>",
+            })
+            $('#Maintenance_DesignationID').on('change', function () {
+                table.draw();
+            })
+        });
+    </script>
+}

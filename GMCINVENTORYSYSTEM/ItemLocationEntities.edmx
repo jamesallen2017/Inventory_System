@@ -1,0 +1,277 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="ItemLocationEntitiesModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'DB_INVENTORY.dbo.BIN' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="BIN">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="BinID" Type="nvarchar(max)" />
+          <Property Name="MainID" Type="nvarchar(max)" />
+          <Property Name="DrawerID" Type="nvarchar(max)" />
+          <Property Name="BinName" Type="nvarchar(max)" />
+          <Property Name="DateCreated" Type="datetime" />
+          <Property Name="Responsible" Type="int" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'DB_INVENTORY.dbo.CABINET' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="CABINET">
+          <Key>
+            <PropertyRef Name="CabinetID" />
+          </Key>
+          <Property Name="CabinetID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CabinetName" Type="nvarchar(max)" />
+          <Property Name="DateCreated" Type="datetime" />
+          <Property Name="Responsible" Type="int" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'DB_INVENTORY.dbo.DRAWER' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="DRAWER">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="DrawerID" Type="nvarchar(max)" />
+          <Property Name="MainID" Type="nvarchar(max)" />
+          <Property Name="DrawerName" Type="nvarchar(max)" />
+          <Property Name="DateCreated" Type="datetime" />
+          <Property Name="Responsible" Type="int" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'DB_INVENTORY.dbo.ITEM_LOCATION' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="ITEM_LOCATION">
+          <Key>
+            <PropertyRef Name="ItemLocationID" />
+          </Key>
+          <Property Name="ItemLocationID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="StockNo" Type="nvarchar(max)" />
+          <Property Name="ItemName" Type="nvarchar(max)" />
+          <Property Name="MainNo" Type="nvarchar(max)" />
+          <Property Name="DrawerNo" Type="nvarchar(max)" />
+          <Property Name="BinNo" Type="nvarchar(max)" />
+          <Property Name="DateCreated" Type="datetime" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'DB_INVENTORY.dbo.RACK' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="RACK">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="RackNo" Type="nvarchar(max)" />
+          <Property Name="RackName" Type="nvarchar(max)" />
+          <Property Name="DateCreated" Type="datetime" />
+          <Property Name="Responsible" Type="int" />
+        </EntityType>
+        <EntityContainer Name="ItemLocationEntitiesModelStoreContainer">
+          <EntitySet Name="BIN" EntityType="Self.BIN" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [BIN].[ID] AS [ID], 
+    [BIN].[BinID] AS [BinID], 
+    [BIN].[MainID] AS [MainID], 
+    [BIN].[DrawerID] AS [DrawerID], 
+    [BIN].[BinName] AS [BinName], 
+    [BIN].[DateCreated] AS [DateCreated], 
+    [BIN].[Responsible] AS [Responsible]
+    FROM [dbo].[BIN] AS [BIN]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="CABINET" EntityType="Self.CABINET" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [CABINET].[CabinetID] AS [CabinetID], 
+    [CABINET].[CabinetName] AS [CabinetName], 
+    [CABINET].[DateCreated] AS [DateCreated], 
+    [CABINET].[Responsible] AS [Responsible]
+    FROM [dbo].[CABINET] AS [CABINET]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="DRAWER" EntityType="Self.DRAWER" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [DRAWER].[ID] AS [ID], 
+    [DRAWER].[DrawerID] AS [DrawerID], 
+    [DRAWER].[MainID] AS [MainID], 
+    [DRAWER].[DrawerName] AS [DrawerName], 
+    [DRAWER].[DateCreated] AS [DateCreated], 
+    [DRAWER].[Responsible] AS [Responsible]
+    FROM [dbo].[DRAWER] AS [DRAWER]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="ITEM_LOCATION" EntityType="Self.ITEM_LOCATION" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [ITEM_LOCATION].[ItemLocationID] AS [ItemLocationID], 
+    [ITEM_LOCATION].[StockNo] AS [StockNo], 
+    [ITEM_LOCATION].[ItemName] AS [ItemName], 
+    [ITEM_LOCATION].[MainNo] AS [MainNo], 
+    [ITEM_LOCATION].[DrawerNo] AS [DrawerNo], 
+    [ITEM_LOCATION].[BinNo] AS [BinNo], 
+    [ITEM_LOCATION].[DateCreated] AS [DateCreated]
+    FROM [dbo].[ITEM_LOCATION] AS [ITEM_LOCATION]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="RACK" EntityType="Self.RACK" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [RACK].[ID] AS [ID], 
+    [RACK].[RackNo] AS [RackNo], 
+    [RACK].[RackName] AS [RackName], 
+    [RACK].[DateCreated] AS [DateCreated], 
+    [RACK].[Responsible] AS [Responsible]
+    FROM [dbo].[RACK] AS [RACK]</DefiningQuery>
+          </EntitySet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="ItemLocationEntitiesModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="BIN">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="BinID" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="MainID" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DrawerID" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="BinName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateCreated" Type="DateTime" Precision="3" />
+          <Property Name="Responsible" Type="Int32" />
+        </EntityType>
+        <EntityType Name="CABINET">
+          <Key>
+            <PropertyRef Name="CabinetID" />
+          </Key>
+          <Property Name="CabinetID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CabinetName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateCreated" Type="DateTime" Precision="3" />
+          <Property Name="Responsible" Type="Int32" />
+        </EntityType>
+        <EntityType Name="DRAWER">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="DrawerID" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="MainID" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DrawerName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateCreated" Type="DateTime" Precision="3" />
+          <Property Name="Responsible" Type="Int32" />
+        </EntityType>
+        <EntityType Name="ITEM_LOCATION">
+          <Key>
+            <PropertyRef Name="ItemLocationID" />
+          </Key>
+          <Property Name="ItemLocationID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="StockNo" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ItemName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="MainNo" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DrawerNo" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="BinNo" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateCreated" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="RACK">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="RackNo" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="RackName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateCreated" Type="DateTime" Precision="3" />
+          <Property Name="Responsible" Type="Int32" />
+        </EntityType>
+        <EntityContainer Name="ItemLocationEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="BINs" EntityType="Self.BIN" />
+          <EntitySet Name="CABINETs" EntityType="Self.CABINET" />
+          <EntitySet Name="DRAWERs" EntityType="Self.DRAWER" />
+          <EntitySet Name="ITEM_LOCATION" EntityType="Self.ITEM_LOCATION" />
+          <EntitySet Name="RACKs" EntityType="Self.RACK" />
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="ItemLocationEntitiesModelStoreContainer" CdmEntityContainer="ItemLocationEntities">
+          <EntitySetMapping Name="BINs">
+            <EntityTypeMapping TypeName="ItemLocationEntitiesModel.BIN">
+              <MappingFragment StoreEntitySet="BIN">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="BinID" ColumnName="BinID" />
+                <ScalarProperty Name="MainID" ColumnName="MainID" />
+                <ScalarProperty Name="DrawerID" ColumnName="DrawerID" />
+                <ScalarProperty Name="BinName" ColumnName="BinName" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="Responsible" ColumnName="Responsible" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CABINETs">
+            <EntityTypeMapping TypeName="ItemLocationEntitiesModel.CABINET">
+              <MappingFragment StoreEntitySet="CABINET">
+                <ScalarProperty Name="CabinetID" ColumnName="CabinetID" />
+                <ScalarProperty Name="CabinetName" ColumnName="CabinetName" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="Responsible" ColumnName="Responsible" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DRAWERs">
+            <EntityTypeMapping TypeName="ItemLocationEntitiesModel.DRAWER">
+              <MappingFragment StoreEntitySet="DRAWER">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="DrawerID" ColumnName="DrawerID" />
+                <ScalarProperty Name="MainID" ColumnName="MainID" />
+                <ScalarProperty Name="DrawerName" ColumnName="DrawerName" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="Responsible" ColumnName="Responsible" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ITEM_LOCATION">
+            <EntityTypeMapping TypeName="ItemLocationEntitiesModel.ITEM_LOCATION">
+              <MappingFragment StoreEntitySet="ITEM_LOCATION">
+                <ScalarProperty Name="ItemLocationID" ColumnName="ItemLocationID" />
+                <ScalarProperty Name="StockNo" ColumnName="StockNo" />
+                <ScalarProperty Name="ItemName" ColumnName="ItemName" />
+                <ScalarProperty Name="MainNo" ColumnName="MainNo" />
+                <ScalarProperty Name="DrawerNo" ColumnName="DrawerNo" />
+                <ScalarProperty Name="BinNo" ColumnName="BinNo" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="RACKs">
+            <EntityTypeMapping TypeName="ItemLocationEntitiesModel.RACK">
+              <MappingFragment StoreEntitySet="RACK">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="RackNo" ColumnName="RackNo" />
+                <ScalarProperty Name="RackName" ColumnName="RackName" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="Responsible" ColumnName="Responsible" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

@@ -1,0 +1,1060 @@
+﻿@model GMCINVENTORYSYSTEM.Models.AllModels
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    List<SelectListItem> MainList = new List<SelectListItem>();
+
+    MainList.Add(new SelectListItem
+    {
+
+        Text = "No Record",
+        Value = ""
+    });
+
+}
+
+<style>
+    td {
+        word-break: break-word;
+    }
+
+    .table > thead > tr > th, .table > thead > tr > td {
+        vertical-align: bottom;
+    }
+</style>
+
+<title>Item Management</title>
+
+<div class="page-header">
+    <h1>Item Management</h1>
+    <ol class="breadcrumb">
+        <li><a>Maintenance</a></li>
+        <li class="active">Item Management</li>
+    </ol>
+</div>
+
+<div class="content-wrap">
+    <!--START: Content Wrap-->
+    @if (ViewBag.ItemMaster == true)
+    {
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <span>Date: @DateTime.Now.ToShortDateString()</span>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel-body">
+                        <table class="table table-striped table-hover" id="MasterListTable">
+                            <thead>
+                                <tr>
+                                    <th class="col-md-1">Edit</th>
+                                    <th class="col-md-1">Item Code</th>
+                                    <th class="col-md-4 hidden-xs">Part Name</th>
+                                    <th class="col-md-2 hidden-xs">Specification</th>
+                                    <th class="col-md-1 text-center" style="padding-left:25px; padding-right:25px">Stock On Hand</th>
+                                    <th class="col-md-1">Designation</th>
+                                    <th class="col-md-1 hidden-sm">Type</th>
+                                    <th class="col-md-1 hidden-xs">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var row in Model.Maintenance.dtIteminformation)
+                                {
+                                    <tr>
+                                        <td class="text-center"><a href="@Url.Action("ItemManagement","Maintenance",new {@id = "edit" ,@ItemCode = row.StockNo })" class="btn btn-default"><span class="di di-edit"></span></a></td>
+                                        <td>@Html.DisplayFor(Modelitem => row.StockNo)</td>
+                                        <td class="hidden-xs">@Html.DisplayFor(Modelitem => row.ItemName)</td>
+                                        <td class="hidden-xs">@Html.DisplayFor(Modelitem => row.Specification)</td>
+                                        <td class="hidden-sm text-center">@Html.DisplayFor(Modelitem => row.StockOnHand)</td>
+                                        <td>@Html.DisplayFor(Modelitem => row.Designation)</td>
+                                        <td class="hidden-sm">@Html.DisplayFor(Modelitem => row.TypeID)</td>
+                                        <td class="hidden-xs">@Html.DisplayFor(Modelitem => row.StatusName)</td>
+                                        @*<td class="hidden-xs">
+                                            @Html.DropDownListFor(Modelitem => row.Status, new SelectList(Model.Maintenance.StatusList, "Value", "Text", row.Status)
+                                            , new { @class = "form-control select2Search", @style = "border-radius: 0; width: 100%;" })
+                                        </td>*@
+                                        @Html.HiddenFor(Modelitem => row.StockNo)
+                                        @*@Html.HiddenFor(Modelitem => row.Status, new { @id="HiddenStatus"})*@
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="panel-footer">
+
+                        <div class="row">
+                            <div class="pull-right" style="margin-right:10px">
+                                <a href="@Url.Action("ItemManagement","Maintenance",new { @id="create"})" class="btn btn-primary"><span><i class="di di-plus"></i> Add item</span></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else if (ViewBag.ItemMaster == false)
+    {
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <span>Date: @DateTime.Now.ToShortDateString()</span>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+
+                    @using (Html.BeginForm("InsertItemMasterInformation", "Maintenance", FormMethod.Post, new { @id = "formvalidationtooltip", @class = "ItemMasterform", @role = "form" }))
+                    {
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group input-group">
+                                        <span class="input-group-addon">Item Code</span>
+                                        @Html.TextBoxFor(item => item.Maintenance.StockNo, new { @class = "form-control validate[required]", placeholder = "Item Code" })
+                                    </div>
+
+                                    <div class="form-group input-group">
+                                        <span class="input-group-addon">Part Name</span>
+                                        @Html.TextBoxFor(item => item.Maintenance.ItemName, new { @class = "form-control validate[required]", placeholder = "Part Name" })
+                                    </div>
+
+                                    <div class="form-group input-group">
+                                        <span class="input-group-addon">Specification</span>
+                                        @Html.TextBoxFor(item => item.Maintenance.Specification, new { @class = "form-control validate[required]", placeholder = "Specification" })
+                                    </div>
+
+                                    <div class="form-group input-group">
+                                        <span class="input-group-addon">Group</span>
+                                        @Html.DropDownListFor(item => item.Maintenance.Group, MainList, new { @class = "form-control validate[required]", placeholder = "User Group", style = "width:100%" })
+                                    </div>
+
+                                    <div class="form-group input-group">
+                                        <span class="input-group-addon">Details</span>
+                                        @Html.TextBoxFor(item => item.Maintenance.Details, new { @class = "form-control", placeholder = "Details" })
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group input-group">
+                                        <span class="input-group-addon">UOM</span>
+                                        @Html.TextBoxFor(item => item.Maintenance.Unit, new { @class = "form-control validate[required]", placeholder = "UOM" })
+                                    </div>
+
+                                    <div class="form-group input-group">
+                                        <span class="input-group-addon">Description</span>
+                                        @Html.TextBoxFor(item => item.Maintenance.ItemDescription, new { @class = "form-control", placeholder = "Description" })
+                                    </div>
+
+                                    <div class="form-group input-group">
+                                        <span class="input-group-addon">Stock On Hand</span>
+                                        @Html.TextBoxFor(item => item.Maintenance.StockOnHand, new { @class = "form-control validate[required]", placeholder = "Stock on hand", oninput = "isNumber(this)", onpaste = "return false" })
+                                    </div>
+
+                                    <div class="form-group input-group">
+                                        <span class="input-group-addon">Safety Level</span>
+                                        @Html.TextBoxFor(item => item.Maintenance.SafetyStock, new { @class = "form-control validate[required]", placeholder = "Safety Level", oninput = "isNumber(this)", onpaste = "return false" })
+                                    </div>
+
+                                    <div class="form-group input-group">
+                                        <span class="input-group-addon">Critical Level</span>
+                                        @Html.TextBoxFor(item => item.Maintenance.CriticalOrder, new { @class = "form-control validate[required]", placeholder = "Critical Level", oninput = "isNumber(this)", onpaste = "return false" })
+                                    </div>
+
+                                    <div class="form-group input-group" style="display:none;" id="DivDesignation">
+                                        <span class="input-group-addon">Designation</span>
+                                        @Html.DropDownListFor(item => item.Maintenance.Designation, MainList, new { @class = "form-control validate[required]", placeholder = "User Designation", style = "width:100%" })
+                                    </div>
+                                </div>
+
+                                <div class="col-md-12" id="ItemLocationShowHide">
+                                    <div class="row">
+                                        <div class="table table-responsive">
+                                            <table class="table table-hover" id="ItemLocationTable">
+                                                <thead>
+                                                    <tr>
+                                                        <th> </th>
+                                                        <th> </th>
+                                                        <th> </th>
+                                                        <th> </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr id="ItemLocationBody">
+                                                        <td class="col-md-1 text-center">
+                                                            <div class="form-group">
+                                                                <a href="#" name="tbnadd" id="tbnadd" class="btn btn-link"><i class="di di-plus"></i></a>
+                                                                <a href="#" name="btndelete" id="btndelete" class="btn btn-link"><i class="di di-minus"></i></a>
+                                                            </div>
+                                                        </td>
+                                                        <td class="col-md-3">
+                                                            <div class="form-group input-group">
+                                                                <span class="input-group-addon">Rack #</span>
+                                                                @Html.DropDownListFor(Maintenance => Maintenance.Maintenance.MainNo, MainList, new { @class = "form-control select2Search ", @style = "width:100%" })
+                                                            </div>
+                                                        </td>
+                                                        <td class="col-md-3">
+                                                            <div class="form-group input-group">
+                                                                <span class="input-group-addon">Drawer #</span>
+                                                                @Html.DropDownListFor(Maintenance => Maintenance.Maintenance.DrawerNo, MainList, new { @class = "form-control select2Search ", @style = "width:100%" })
+                                                            </div>
+                                                        </td>
+                                                        <td class="col-md-3">
+                                                            <div class="form-group input-group">
+                                                                <span class="input-group-addon">Bin #</span>
+                                                                @Html.DropDownListFor(Maintenance => Maintenance.Maintenance.BinNo, MainList, new { @class = "form-control select2Search", @style = "width:100%" })
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+                                @*<div class="col-md-3" style="display:none;">
+                                        <div class="form-group input-group">
+                                            <span class="input-group-addon">Cabinet #</span>
+                                            @Html.DropDownListFor(Maintenance => Maintenance.Maintenance.MainNo, MainList, new { @class = "form-control select2Search", @style = "width:100%" })
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-3" style="display:none;">
+                                        <div class="form-group input-group">
+                                            <span class="input-group-addon">Drawer #</span>
+                                            @Html.DropDownListFor(Maintenance => Maintenance.Maintenance.MainNo, MainList, new { @class = "form-control select2Search", @style = "width:100%" })
+                                        </div>
+                                    </div>*@
+
+                            </div>
+                            <!--START: Content Wrap-->
+                        </div>
+                        <div class="panel-footer">
+                            <div class="row">
+                                <div class="pull-right" style="margin-right:10px">
+                                    <a class="btn btn-danger" href="@Url.Action("ItemManagement","Maintenance",new { @id="table"})">Back</a>
+                                    <button class="btn btn-primary" id="btnSave" type="submit">Save</button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                </div>
+            </div>
+        </div>
+    }
+
+
+
+
+</div>
+
+@section scripts{
+
+    <script>
+        $('#MasterListTable').DataTable({
+            columnDefs:[{
+                orderable:false,
+                targets: 0
+            }],
+        order: [[1, "asc"]],
+        lengthMenu: [[5, 10, 15, 20, 50, -1], [5, 10, 15, 20, 50, "All"]],
+        //dom: "<'row'<'col-md-3'l><'col-md-3'f>>" + //set column size
+        //     "<'row'<'col-md-12'tr>>" +
+        //     "<'row'<'col-md-5'i><'col-md-7'p>>",
+    }).rows().iterator('row', function (context, index) {
+        var node = $(this.row(index).node());
+        //node.context is element of tr generated by jQuery DataTables.
+    });
+    </script>
+
+    <script>
+        var Mainlist = [];
+        var Grouplist = [];
+
+        $(document).ready(function () {
+
+            FetchMainList($("#Maintenance_MainNo"))
+            FetchGroup($("#Maintenance_Group"))
+
+        })
+
+
+        function FetchGroup(element) {
+
+            if (Grouplist.length == 0) {
+
+                $.ajax({
+
+                    type: "GET",
+                    url: '/Maintenance/RetreiveUserGroup', //REDIRECT TO ACTION RESULT (HOME CONTROLLLER)
+                    contentType: "application/json",
+                    data: {},
+                    dataType: "json",
+                    success: function (data) { //RETURN DATA GALING SA CONTROLLER
+                        Grouplist = data; // RENDER DATA TO STRING ARRAY
+
+                        //render item category
+                        renderGroupCategory(element);
+                    }
+                })
+            }
+
+        }
+
+        function renderGroupCategory(element) {
+            var $ele = $(element);
+            $ele.empty();
+            $ele.append($('<option/>').val('').text('Select Group.'));
+            $.each(Grouplist, function (i, val) {
+                $ele.append($('<option/>').val(this['Value']).html(this['Text']));
+            })
+        }
+
+        function FetchMainList(element) {
+            if (Mainlist.length == 0) {
+
+                $.ajax({
+
+                    type: "GET",
+                    url: '/Maintenance/RetreiveMainItemLocation', //REDIRECT TO ACTION RESULT (HOME CONTROLLLER)
+                    contentType: "application/json",
+                    data: {},
+                    dataType: "json",
+                    success: function (data) { //RETURN DATA GALING SA CONTROLLER
+                        Mainlist = data; // RENDER DATA TO STRING ARRAY
+
+                        //render item category
+                        renderCategory(element);
+                    }
+                })
+            }
+        }
+
+        //$("#MasterListTable").on("change", "#row_Status", function () {
+        //    var row = $(this).closest("tr");
+
+        //    var StockNo = $("#row_StockNo", row).val()
+        //    var Status = $("#row_Status", row).val()
+        //    var HiddenStatus = $("#HiddenStatus", row).val()
+        //    var Status2 = $("#row_Status option:selected", row).html()
+
+        //    if (Status == HiddenStatus) {
+        //        return false
+        //    }
+
+        //    bootbox.confirm({
+        //        title: "Are you sure?",
+        //        message: "Item status will be change into " + Status2 + ".",
+        //        size: "small",
+        //        buttons: {
+        //            confirm: {
+        //                label: 'Yes',
+        //                className: 'btn-success'
+        //            },
+        //            cancel: {
+        //                label: 'No',
+        //                className: 'btn-danger'
+        //            }
+        //        },
+        //        callback: function (result) {
+
+        //            if (result) {
+        //                $.ajax({
+        //                    url: "/Maintenance/UpdateItemMasterStatus/",
+        //                    type: "POST",
+        //                    contentType: "application/json",
+        //                    data: JSON.stringify({
+        //                        StockNo: StockNo,
+        //                        Status: Status,
+        //                    }),
+        //                    dataType: "json",
+        //                    success: function (result) {
+
+        //                        if (result == 0) {
+        //                            $.toast({
+        //                                heading: "System Error",
+        //                                text: "Contact our adminstrator for assistance",
+        //                                showHideTransition: 'slide',
+        //                                icon: 'error',
+        //                                autoHideDelay: 3000,
+
+        //                                position: 'top-right',
+        //                                bgColor: '#FF4859'
+        //                            });
+        //                        }
+        //                        else if (result == "Exist") {
+        //                            $.toast({
+        //                                heading: "System Error",
+        //                                text: "This item is in used, deactivation is not allowed.",
+        //                                showHideTransition: 'slide',
+        //                                icon: 'error',
+        //                                autoHideDelay: 3000,
+
+        //                                position: 'top-right',
+        //                                bgColor: '#FF4859'
+
+        //                            });
+        //                            setTimeout(function () {
+        //                                window.location.reload();
+        //                            }, 3000);
+        //                        }
+        //                        else {
+        //                            $.toast({
+        //                                heading: "Account Status",
+        //                                text: StockNo + " status is now "+Status2+"D.",
+        //                                showHideTransition: 'slide',
+        //                                icon: 'success',
+        //                                autoHideDelay: 3000,
+
+        //                                position: 'top-right',
+        //                                bgColor: '#7EC857'
+        //                            });
+        //                        }
+
+        //                    }
+        //                });
+        //            }
+
+        //            else {
+        //                window.location.reload();
+        //                return;
+        //            }
+        //        }
+        //    })
+        //})
+
+        function renderCategory(element) {
+            var $ele = $(element);
+            $ele.empty();
+            $ele.append($('<option/>').val('').text('Select Main No.'));
+            $.each(Mainlist, function (i, val) {
+                $ele.append($('<option/>').val(this['Value']).html(this['Text']));
+            })
+        }
+
+        $("body").on('change', '#Maintenance_Group', function () {
+            var Group = $("#Maintenance_Group").val();
+
+            var Designationlist = [];
+            if (Group == "1") {
+                $("#DivDesignation").hide();
+                $("#ItemLocationShowHide").show();
+
+            }
+            else {
+                $("#DivDesignation").show();
+                $("#ItemLocationShowHide").hide();
+
+                $.ajax({
+                    url: '/Maintenance/RetreiveDesignation',
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        Group: Group,
+                    }),
+
+                    dataType: "json",
+                    success: function (data) {
+                        Designationlist = data;
+                        var $ele = $("#Maintenance_Designation");
+                        $ele.empty();
+
+                        if (Designationlist.length != 0) {
+                            $ele.append($('<option/>').val('').text('Select Designation.'));
+                            $.each(Designationlist, function (i, val) {
+                                $ele.append($('<option/>').val(this['Value']).html(this['Text']));
+                            })
+                        }
+                        else {
+                            $ele.append($('<option/>').val('').text('No Record.'));
+                        }
+
+                    }
+
+                })
+
+            }
+
+        })
+
+        $("#ItemLocationTable").on('change', '#Maintenance_MainNo', function () {
+            var row = $(this).closest("tr");
+            var MainNo = $("#Maintenance_MainNo", row).val();
+            var DrawerNo = $("#Maintenance_DrawerNo", row).val();
+            var Drawerlist = [];
+
+
+            $.ajax({
+                url: '/Maintenance/RetreiveDrawerItemLocation',
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    MainNo: MainNo,
+                }),
+
+                dataType: "json",
+                success: function (data) {
+                    Drawerlist = data;
+
+                    var $ele = $("#Maintenance_DrawerNo", row);
+                    $ele.empty();
+
+                    if (Drawerlist.length != 0) {
+                        $ele.append($('<option/>').val('').text('Select Drawer No.'));
+                        $.each(Drawerlist, function (i, val) {
+                            $ele.append($('<option/>').val(this['Value']).html(this['Text']));
+                        })
+                    }
+                    else {
+                        $ele.append($('<option/>').val('').text('No Record.'));
+                    }
+
+                }
+
+            })
+
+            var BinNo = $("#Maintenance_BinNo", row).val();
+            var Binlist = [];
+
+            $.ajax({
+                url: '/Maintenance/RetreiveNoDrawerItemLocation',
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    MainNo: MainNo,
+                }),
+
+                dataType: "json",
+                success: function (data) {
+                    Binlist = data;
+
+                    var $ele = $("#Maintenance_BinNo", row);
+                    $ele.empty();
+
+                    if (Binlist.length != 0) {
+                        $ele.append($('<option/>').val('').text('Select Bin No.'));
+                        $.each(Binlist, function (i, val) {
+                            $ele.append($('<option/>').val(this['Value']).html(this['Text']));
+                        })
+                    }
+                    else {
+                        $ele.append($('<option/>').val('').text('No Record.'));
+                    }
+
+                }
+
+            })
+
+        })
+
+        $("#ItemLocationTable").on('change', '#Maintenance_DrawerNo', function () {
+            var row = $(this).closest("tr");
+            var DrawerNo = $("#Maintenance_DrawerNo", row).val();
+            var BinNo = $("#Maintenance_BinNo", row).val();
+            var MainNo = $("#Maintenance_MainNo", row).val();
+
+            var Binlist = [];
+
+            $.ajax({
+                url: '/Maintenance/RetreiveBinItemLocation',
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    DrawerNo: DrawerNo,
+                    MainNo:MainNo,
+                }),
+
+                dataType: "json",
+                success: function (data) {
+                    Binlist = data;
+
+                    var $ele = $("#Maintenance_BinNo", row);
+                    $ele.empty();
+
+                    if (Binlist.length != 0) {
+                        $ele.append($('<option/>').val('').text('Select Bin No.'));
+                        $.each(Binlist, function (i, val) {
+                            $ele.append($('<option/>').val(this['Value']).html(this['Text']));
+                        })
+                    }
+                    else {
+                        $ele.append($('<option/>').val('').text('No Record.'));
+
+
+                        $.ajax({
+                            url: '/Maintenance/RetreiveNoDrawerItemLocation',
+                            type: "POST",
+                            contentType: "application/json",
+                            data: JSON.stringify({
+                                MainNo: MainNo,
+                            }),
+
+                            dataType: "json",
+                            success: function (data) {
+                                Binlist = data;
+
+                                var $ele = $("#Maintenance_BinNo", row);
+                                $ele.empty();
+
+                                if (Binlist.length != 0) {
+                                    $ele.append($('<option/>').val('').text('Select Bin No.'));
+                                    $.each(Binlist, function (i, val) {
+                                        $ele.append($('<option/>').val(this['Value']).html(this['Text']));
+                                    })
+                                }
+                                else {
+                                    $ele.append($('<option/>').val('').text('No Record.'));
+                                }
+
+                            }
+
+                        })
+                    }
+
+                }
+
+            })
+        })
+
+        $(".ItemMasterform").submit(function (event) {
+            var validate = 0;
+
+            var StockNo = $("#Maintenance_StockNo").val().trim()
+            var ItemName = $("#Maintenance_ItemName").val().trim()
+            var ItemDescription = $("#Maintenance_ItemDescription").val().trim()
+            var Specification = $("#Maintenance_Specification").val().trim()
+            var Details = $("#Maintenance_Details").val().trim()
+            var Unit = $("#Maintenance_Unit").val().trim()
+            var StockOnHand = $("#Maintenance_StockOnHand").val().trim()
+            var SafetyStock = $("#Maintenance_SafetyStock").val().trim()
+            var Group = $("#Maintenance_Group").val()
+            var Designation = "";
+            var TypeID = "";
+            if (Group == "1") {
+                TypeID = "1"
+                Designation = "8";
+            }
+            else {
+                TypeID = "2"
+                Designation = $("#Maintenance_Designation").val()
+            }
+            var CriticalOrder = $("#Maintenance_CriticalOrder").val().trim()
+
+
+            if (StockNo == "" || ItemName == "" || CriticalOrder == "" || Specification == "" || Unit == "" || StockOnHand == "" || SafetyStock == "" || Group == "" || Designation == "") { return false; }
+
+            if (SafetyStock <= 0 || CriticalOrder <= 0) {
+                $.toast({
+                    heading: "Invalid",
+                    text: "0 is not allowed.",
+                    showHideTransition: 'slide',
+                    icon: 'error',
+                    autoHideDelay: 3000,
+
+                    position: 'top-right',
+                    bgColor: '#FF4859'
+                });
+                return false;
+            }
+
+            if (parseFloat(SafetyStock) < parseFloat(CriticalOrder)) {
+                $.toast({
+                    heading: "Warning.",
+                    text: "Safety Stock cannot be less than Critical Order.",
+                    showHideTransition: 'slide',
+                    autoHideDelay: 3000,
+                    icon: 'error',
+                    position: 'top-right',
+                    bgColor: '#FF4859'
+                });
+                return false;
+            }
+
+            event.preventDefault();
+            event.stopImmediatePropagation();
+
+            var ItemLocationList = new Array();
+            var ValidateList = new Array();
+            if (Group == '1') {
+                $("#ItemLocationTable tbody tr").each(function () { //Loop through the Table rows
+                    var row = $(this);
+                    var MainNo = $("#Maintenance_MainNo", row).val();
+
+                    if (MainNo == "" || MainNo == null) {
+                        validate++;
+                    }
+
+                    var Location = {}; // SET DATA ARRAY TO STORED ALL DATA INSIDE OF TABLE
+
+                    Location.MainNo = MainNo;
+                    Location.BinNo = $("#Maintenance_BinNo", row).val();
+                    Location.DrawerNo = $("#Maintenance_DrawerNo", row).val();
+                    ItemLocationList.push(Location); // RENDER DATA ARRAY TO JSON ARRAY
+                    ValidateList.push(Location); // RENDER DATA ARRAY TO JSON ARRAY
+
+                });
+            }
+            else {
+                var Location = {}; // SET DATA ARRAY TO STORED ALL DATA INSIDE OF TABLE
+                Location.MainNo = '';
+                Location.BinNo = '';
+                Location.DrawerNo = '';
+                ItemLocationList.push(Location); // RENDER DATA ARRAY TO JSON ARRAY
+            }
+
+            if (validate > 0 && Group == '1') {
+                $.toast({
+                    heading: "Error",
+                    text: "Please, Select Item Location.",
+                    showHideTransition: 'slide',
+                    icon: 'error',
+                    autoHideDelay: 3000,
+
+                    position: 'top-right',
+                    bgColor: '#FF4859'
+
+                });
+
+                return false;
+            }
+
+            var MainNo = "";
+            var MainNo0 = "";
+            var DrawerNo = "";
+            var DrawerNo0 = "";
+            var BinNo = "";
+            var BinNo0 = "";
+            var main = "";
+
+            //ItemLocationList.sort(function (a, b) { return a.MainNo - b.MainNo });
+
+            for (var i = 0; i < ItemLocationList.length; i++) {
+
+                MainNo = ItemLocationList[i].MainNo;
+                DrawerNo = ItemLocationList[i].DrawerNo;
+                BinNo = ItemLocationList[i].BinNo;
+
+                ValidateList.splice(0, 1);
+
+                for (var j = 0; j < ValidateList.length; j++) {
+                    MainNo0 = ValidateList[j].MainNo;
+                    DrawerNo0 = ValidateList[j].DrawerNo;
+                    BinNo0 = ValidateList[j].BinNo;
+                    if (DrawerNo == DrawerNo0 && MainNo == MainNo0 && BinNo == BinNo0) {
+                        validate = 'duplicate';
+                    }
+                }
+            }
+
+            if (validate == 'duplicate') {
+                $.toast({
+                    heading: "Error",
+                    text: "Same item location is not allowed",
+                    showHideTransition: 'slide',
+                    icon: 'error',
+                    autoHideDelay: 3000,
+
+                    position: 'top-right',
+                    bgColor: '#FF4859'
+
+                });
+
+                return false;
+            }
+
+            var action = $(".ItemMasterform").attr("action");
+
+            bootbox.confirm({
+                title: "Are you sure you want to save?",
+                //message: "This Item will be add in Item Inventory.",
+                message: "Item Inventory will be updated.",
+                size: "small",
+                buttons: {
+                    confirm: {
+                        label: 'Yes',
+                        className: 'btn-success'
+                    },
+                    cancel: {
+                        label: 'No',
+                        className: 'btn-danger'
+                    }
+                },
+                callback: function (result) {
+
+                    if (result) {
+
+                        $.ajax({
+                            url: action,
+                            type: "POST",
+                            contentType: "application/json",
+                            data: JSON.stringify({
+                                ItemLocationList,
+                                StockNo: StockNo,
+                                ItemName: ItemName,
+                                ItemDescription: ItemDescription,
+                                Specification: Specification,
+                                Details: Details,
+                                Unit: Unit,
+                                StockOnHand: StockOnHand,
+                                SafetyStock: SafetyStock,
+                                Group: Group,
+                                Designation: Designation,
+
+                                TypeID: TypeID,
+                                CriticalOrder: CriticalOrder,
+                            }),
+                            dataType: "json",
+                            success: function (data) {
+                                if (data == 0) {
+                                    $.toast({
+                                        heading: "System Error",
+                                        text: "Please contact our administrator for assistance.",
+                                        showHideTransition: 'slide',
+                                        icon: 'error',
+                                        autoHideDelay: 3000,
+
+                                        position: 'top-right',
+                                        bgColor: '#FF4859'
+                                    });
+                                    return false;
+                                }
+                                else if(data == "StockInvalid")
+                                {
+                                    $.toast({
+                                        heading: "Error",
+                                        text: StockNo + " is already exists.",
+                                        showHideTransition: 'slide',
+                                        icon: 'error',
+                                        autoHideDelay: 3000,
+
+                                        position: 'top-right',
+                                        bgColor: '#FF4859'
+                                    });
+                                    return false;
+                                }
+                                else if (data == "Duplicated") {
+                                    $.toast({
+                                        heading: "Error",
+                                        text: "Specification and Description is already exists.",
+                                        showHideTransition: 'slide',
+                                        icon: 'error',
+                                        autoHideDelay: 3000,
+
+                                        position: 'top-right',
+                                        bgColor: '#FF4859'
+                                    });
+                                    return false;
+                                }
+                                else {
+                                    $.toast({
+                                        heading: 'Item Management.',
+                                        text: "Item Code " + StockNo + " Successfully added.",
+                                        showHideTransition: 'slide',
+                                        icon: 'success',
+                                        autoHideDelay: 3000,
+
+                                        position: 'top-right',
+                                        bgColor: '#7EC857'
+                                    });
+                                    var $this = $("#btnSave");
+                                    $this.button('loading');
+                                    setTimeout(function () {
+                                        $this.button('reset');
+                                        window.location.reload();
+                                    }, 3000);
+                                }
+
+                            }
+                        });
+
+
+                    }
+
+                    else {
+                        return;
+                    }
+                }
+            })
+
+        })
+
+    </script>
+
+
+
+    <script>
+        var $newRow;
+        $("#ItemLocationTable").on('click', "#tbnadd", function () {
+            var row = $(this).closest('tr');
+            var MainNo = $("#Maintenance_MainNo").val().trim()
+
+
+            if (MainNo == null || MainNo == "") {
+
+                $.toast({
+                    heading: "Error",
+                    text: "Please, Select Item Location.",
+                    showHideTransition: 'slide',
+                    icon: 'error',
+                    autoHideDelay: 3000,
+
+                    position: 'top-right',
+                    bgColor: '#FF4859'
+
+                });
+
+                return false;
+            }
+
+            $("select#Maintenance_MainNo").select2("destroy");
+            $("select#Maintenance_BinNo").select2("destroy");
+            $("select#Maintenance_DrawerNo").select2("destroy");
+
+
+            $newRow = $('#ItemLocationBody').clone(true).appendTo($("#ItemLocationTable")); // CLONE MAINROW UNDER TABLE ID
+            var main = $('#Maintenance_MainNo',row).val();
+            var draw = $('#Maintenance_DrawerNo',row).val();
+            var bin = $('#Maintenance_BinNo',row).val();
+
+            //$('#Maintenance_BinNo', $newRow).empty();
+            //$('#Maintenance_DrawerNo', $newRow).empty();
+            
+            PopulateDrawerItemLocation(row);
+
+            $('#Maintenance_MainNo', $newRow).val(main);// GET VALUE OF DROPDOWNLIST (THIS CODE IS FOR DROPDOWNLIST ONLY)
+            //$('#Maintenance_DrawerNo', $newRow).val(draw);// GET VALUE OF DROPDOWNLIST (THIS CODE IS FOR DROPDOWNLIST ONLY)
+            //$('#Maintenance_BinNo', $newRow).val(bin);// GET VALUE OF DROPDOWNLIST (THIS CODE IS FOR DROPDOWNLIST ONLY)
+
+            $('#Maintenance_MainNo,#Maintenance_DrawerNo,#Maintenance_BinNo', $newRow);
+
+
+            //$('#Maintenance_MainNo').val("")
+
+            //$('#Maintenance_BinNo').empty();
+            //$('#Maintenance_DrawerNo').empty();
+            //$('#Maintenance_BinNo').append($('<option/>').val('').text('No Record.'));
+            //$('#Maintenance_DrawerNo').append($('<option/>').val('').text('No Record.'));
+
+            $('select#Maintenance_MainNo').select2(); // SET AGAIN SELECT2 JAVASCRIPT TO DROPDOWNLIST
+            $('select#Maintenance_DrawerNo').select2(); // SET AGAIN SELECT2 JAVASCRIPT TO DROPDOWNLIST
+            $('select#Maintenance_BinNo').select2(); // SET AGAIN SELECT2 JAVASCRIPT TO DROPDOWNLIST
+        });
+
+        $('#ItemLocationTable').on('click', '#btndelete', function () {
+
+            var count = $('#ItemLocationTable tbody tr').length;
+
+            if (count > 1) {
+                $(this).closest("tr").remove();
+            } else {
+
+                $.toast({
+                    heading: "Error",
+                    text: "Sorry. Row can't be empty.",
+                    showHideTransition: 'slide',
+                    icon: 'error',
+                    autoHideDelay: 3000,
+
+                    position: 'top-right',
+                    bgColor: '#FF4859'
+
+                });
+                //alert("File Shouldn't Be Empty!!");
+                return false;
+
+            }
+        });
+
+        function PopulateDrawerItemLocation(event) {
+
+            var MainNo = $("#Maintenance_MainNo", event).val();          
+            var Drawer = $("#Maintenance_DrawerNo", event).val();
+            var $ele = $("#Maintenance_DrawerNo", $newRow);
+
+            $.ajax({
+                url: '/Maintenance/RetreiveDrawerItemLocation',
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    MainNo: MainNo,
+                }),
+
+                dataType: "json",
+                success: function (data) {
+
+                    $ele.empty();
+                    $ele.append($('<option></option>').val("").text("Select Drawer No."));
+                    $.each(data, function (i, value) {
+                        $ele.append(
+                            $('<option></option>').val(value.Value).text(value.Text));
+                    });
+                    //$ele.val(Drawer).change();
+                    $('#Maintenance_DrawerNo', $newRow).val(Drawer);// GET VALUE OF DROPDOWNLIST (THIS CODE IS FOR DROPDOWNLIST ONLY)
+
+                    PopulateBinItemLocation(event);
+                }
+            })
+        }
+
+        function PopulateBinItemLocation(event) {
+
+            var DrawerNo = $("#Maintenance_DrawerNo", event).val();
+            var BinNo = $("#Maintenance_BinNo", event).val();
+            var MainNo = $("#Maintenance_MainNo", event).val();
+
+            if (DrawerNo == "") {
+                $.ajax({
+                    url: '/Maintenance/RetreiveNoDrawerItemLocation',
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        MainNo: MainNo,
+                    }),
+
+                    dataType: "json",
+                    success: function (data) {
+
+                        var $ele = $("#Maintenance_BinNo", $newRow);
+                        $ele.empty();
+                        $ele.append($('<option></option>').val("").text("Select Bin No."));
+                        $.each(data, function (i, value) {
+                            $ele.append(
+                                $('<option></option>').val(value.Value).text(value.Text));
+                        });
+                        //$ele.val(BinNo).change();
+                        $('#Maintenance_BinNo', $newRow).val(BinNo);// GET VALUE OF DROPDOWNLIST (THIS CODE IS FOR DROPDOWNLIST ONLY)
+                    }
+
+                })
+            }
+            else {
+                $.ajax({
+                    url: '/Maintenance/RetreiveBinItemLocation',
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        DrawerNo: DrawerNo,
+                        MainNo: MainNo,
+                    }),
+
+                    dataType: "json",
+                    success: function (data) {
+                        var $ele = $("#Maintenance_BinNo", $newRow);
+                        $ele.empty();
+                        $ele.append($('<option></option>').val("").text("Select Bin No."));
+                        $.each(data, function (i, value) {
+                            $ele.append(
+                                $('<option></option>').val(value.Value).text(value.Text));
+                        });
+                        //$ele.val(BinNo).change();
+                        $('#Maintenance_BinNo', $newRow).val(BinNo);// GET VALUE OF DROPDOWNLIST (THIS CODE IS FOR DROPDOWNLIST ONLY)
+                    }
+                })
+            }
+        }
+
+    </script>
+
+}

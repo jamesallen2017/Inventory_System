@@ -1,0 +1,349 @@
+﻿@model GMCINVENTORYSYSTEM.Models.AllModels
+
+@{
+    Layout = null;
+}
+<style>
+    .field-icon {
+        float: right;
+        margin-right: 5px;
+        margin-top: -25px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .container {
+        padding-top: 50px;
+        margin: auto;
+    }
+</style>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+    @Styles.Render("~/loginbundles/Content")
+    <link href="~/assets/fonts/sli-icons/simple-line-icons.css" rel="stylesheet" />
+    <link href="~/assets/fonts/ff-din-pro/ff-din-pro.css" rel="stylesheet" />
+    <link href="~/assets/fonts/dashicons/css/dashicons.css" rel="stylesheet" />
+    <link href="~/assets/fonts/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/assets/fonts/fsquere/style.css" rel="stylesheet" />
+    <link href="~/assets/fonts/weather-icons/css/weather-icons.min.css" rel="stylesheet" />
+    <link href="~/assets/fonts/weather-icons/css/weather-icons-wind.min.css" rel="stylesheet" />
+    <style>
+    </style>
+</head>
+<body class="login2">
+
+    <!-- Login Div Start Here -->
+    @if (ViewBag.LoginAuthentication == "Login")
+    {
+        <div class="login" id="logindiv">
+            <div class="text-center logo">
+                <img src="~/assets/images/GMC.png" alt="logo">
+            </div>
+            @using (Html.BeginForm("LoginAuthentication", "Login", FormMethod.Post, new { @id = "formvalidationtooltip", @class = "loginForm", @role = "form" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="form-group">
+                    <div class="input-icon">
+                        @Html.TextBoxFor(Maintenance => Maintenance.Maintenance.Username, new { @class = "form-control validate[required]", @placeholder = "Username", @autocomplete = "off" })
+                        @*<span id="show_userName" class="fa fa-fw fa-eye field-icon" style="visibility: hidden"></span>*@
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-icon">
+                        @Html.PasswordFor(Maintenance => Maintenance.Maintenance.Password, new { @class = "form-control validate[required]", @placeholder = "Password" })
+                        <span id="show_password" class="fa fa-fw fa-eye field-icon" style="visibility: hidden"></span>
+                    </div>
+                </div>
+                <label id="divMayus" style="visibility: hidden; color: #da0000; font-weight: bold; float: right;"><i class='fa fa-exclamation-triangle' aria-hidden='true'></i>&nbsp;CAPS LOCK IS ON</label>
+                <label id="lblStatus" style="visibility: hidden;"></label>
+                <asp:label runat="server"></asp:label>
+                <br />
+                <div class="clearfix">
+                    <button type="submit" id="btnLogin" class="btn btn-primary btn-block">LOGIN</button>
+                </div>
+            }
+
+        </div>
+    }
+
+    else if (ViewBag.LoginAuthentication == "ResetPassword")
+    {
+
+        using (Html.BeginForm("ResetPassword", "Login", FormMethod.Post, new { @id = "formvalidationtooltip", role = "form" }))
+        {
+            @*@Html.AntiForgeryToken()*@
+
+            <div class="login" id="logindiv">
+                <div class="text-center logo">
+                    <img src="~/assets/images/General Milling Corporation Logo.jpg" alt="logo">
+                </div>
+                <div role="form" class="loginForm">
+                    @Html.HiddenFor(login => login.Maintenance.UserID, new { @id = "UserID" })
+                    @Html.HiddenFor(login => login.Maintenance.Password, new { @id = "Password" })
+
+                    <div class="form-group">
+                        <div class="input-icon">
+                            @Html.PasswordFor(login => login.Maintenance.NewPassword, new { @class = "form-control validate[required,minSize[6],maxSize[50]]", @placeholder = "New Password" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="input-icon">
+                            @Html.PasswordFor(login => login.Maintenance.ConfirmNewPassword, new { @class = "form-control validate[required,equals[Maintenance_NewPassword]]", @placeholder = "Re-type Password" })
+                        </div>
+                    </div>
+
+                    <div class="clearfix">
+                        <button type="submit" id="btnReset" class="btn btn-primary btn-block">Update</button>
+                    </div>
+                </div>
+            </div>
+        }
+
+    }
+    @Scripts.Render("~/loginbundles/jquery")
+</body>
+</html>
+
+<script>
+    jQuery(document).ready(function () {
+        FormValidationInline.init();
+        FormValidationTooltip.init();
+    });
+</script>
+
+
+@if (ViewBag.HeaderError != null)
+{
+    <script type="text/javascript">
+        window.onload = function () {
+            $.toast({
+                heading: "@ViewBag.HeaderError",
+                text: "@ViewBag.MessageError",
+                showHideTransition: 'slide',
+                autoHideDelay: 3000,
+                icon: 'error',
+                position: 'top-right',
+                bgColor: '#FF4859'
+            });
+            $("#Maintenance_Username").val("@ViewBag.UserField");
+            if ($("#Maintenance_Username").val()) {
+                document.getElementById('show_userName').style.visibility = 'visible';
+            }
+            else {
+                document.getElementById('show_userName').style.visibility = 'hidden';
+            }
+        };
+    </script>
+}
+else if (ViewBag.HeaderSuccess != null)
+{
+    <script type="text/javascript">
+        window.onload = function () {
+            $.toast({
+                heading: "@ViewBag.HeaderSuccess",
+                text: "@ViewBag.MessageSuccess",
+                showHideTransition: 'slide',
+                icon: 'success',
+                autoHideDelay: 3000,
+                position: 'top-right',
+                bgColor: '#7EC857'
+            });
+        };
+    </script>
+}
+else if (ViewBag.HeaderWarning != null)
+{
+    <script type="text/javascript">
+        window.onload = function () {
+            $.toast({
+                heading: "@ViewBag.HeaderWarning",
+                text: "@ViewBag.MessageWarning",
+                showHideTransition: 'slide',
+                icon: 'info',
+                autoHideDelay: 3000,
+                position: 'top-right',
+                bgColor: '#FF7F00'
+            });
+            $("#Maintenance_Username").val("@ViewBag.UserField");
+            if ($("#Maintenance_Username").val()) {
+                document.getElementById('show_userName').style.visibility = 'visible';
+            }
+            else {
+                document.getElementById('show_userName').style.visibility = 'hidden';
+            }
+        };
+    </script>
+}
+
+<script>
+    $("#formvalidationtooltip").submit("#btnLogin", function () {
+
+        var UserName = $("#Maintenance_Username").val()
+        var Password = $("#Maintenance_Password").val()
+        if (UserName == "" || Password == "") {
+            return false;
+        }
+    })
+
+    $("#formvalidationtooltip").submit("#btnReset", function () {
+
+        var UserID = $('#UserID').val()
+        var NewPassword = $("#Maintenance_NewPassword").val().trim()
+        var ConfirmNewPassword = $("#Maintenance_ConfirmNewPassword").val().trim()
+
+        if (NewPassword == "" || ConfirmNewPassword == "" || NewPassword != ConfirmNewPassword) {
+            return false;
+        }
+        else {
+            if (NewPassword.length < 6) {
+                return false;
+            }
+        }
+
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        var action = $("#formvalidationtooltip").attr("action");
+
+        $.ajax({
+            url: action,
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({
+                UserID: UserID,
+                NewPassword: NewPassword,
+            }),
+            dataType: "json",
+            success: function (data) {
+                if (data == 0) {
+                    $.toast({
+                        heading: "System Error",
+                        text: "Please contact our administrator for assistance.",
+                        showHideTransition: 'slide',
+                        icon: 'error',
+                        autoHideDelay: 3000,
+
+                        position: 'top-right',
+                        bgColor: '#FF4859'
+                    });
+                    return false;
+                }
+                else {
+                    $.toast({
+                        heading: 'New Password',
+                        text: "Your password has been successfully reset.",
+                        showHideTransition: 'slide',
+                        icon: 'success',
+                        autoHideDelay: 3000,
+                        position: 'top-right',
+                        bgColor: '#7EC857'
+                    });
+
+                    var $this = $("#btnReset");
+
+                    $this.button('loading');
+                    setTimeout(function () {
+                        $this.button('reset');
+                        //window.location.href = '@Url.Action("ConfirmResetPassword", "Login")'
+                        window.location.reload();
+                    }, 3000);
+                }
+            }
+        });
+
+    })
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#Maintenance_Username").keyup(function () {
+            if ($("#Maintenance_Username").val()) {
+                document.getElementById('show_userName').style.visibility = 'visible';
+            }
+            else {
+                document.getElementById('show_userName').style.visibility = 'hidden';
+            }
+        });
+
+        $("#Maintenance_Password").keyup(function () {
+            if ($("#Maintenance_Password").val()) {
+                document.getElementById('show_password').style.visibility = 'visible';
+            }
+            else {
+                document.getElementById('show_password').style.visibility = 'hidden';
+            }
+        });
+
+        $('#Maintenance_Password').keypress(function (e) {
+            var a = $('#Maintenance_Password').val();
+            kc = e.keyCode ? e.keyCode : e.which;
+            sk = e.shiftKey ? e.shiftKey : ((kc == 16) ? true : false);
+            if (((kc >= 65 && kc <= 90) && !sk) || ((kc >= 97 && kc <= 122) && sk)) {
+                document.getElementById('divMayus').style.visibility = 'visible';
+            }
+            else {
+                document.getElementById('divMayus').style.visibility = 'hidden';
+            }
+        })
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        var i = 0, timeOut = 0;
+        $("#show_userName").click(function () {
+
+            $(this).toggleClass("fa-eye fa-eye-slash");
+            var input = $($(this).attr("toggle"));
+            if ($('#Maintenance_Username').attr("type") == "password") {
+                $('#Maintenance_Username').attr("type", "text");
+            }
+            else {
+                $('#Maintenance_Username').attr("type", "password");
+            }
+            //$('#show_userName').addClass('active');
+            ////timeOut = setInterval(function () {
+            ////    console.log(i++);
+            ////}, 100);
+            //if (input.attr("type") == "password") {
+            //    input.attr("type", "text");
+            //} else {
+            //    input.attr("type", "password");
+            //}
+        })
+        //.click(function () {
+
+        //    $('#Maintenance_Username').attr("type", "password");
+        //    $('#show_userName').removeClass('active');
+        //    //clearInterval(timeOut);
+        //});
+        $("#show_password").click(function () {
+
+            $(this).toggleClass("fa-eye fa-eye-slash");
+            var input = $($(this).attr("toggle"));
+            if ($('#Maintenance_Password').attr("type") == "password") {
+                $('#Maintenance_Password').attr("type", "text");
+            }
+            else {
+                $('#Maintenance_Password').attr("type", "password");
+            }
+
+            //$('#Maintenance_Password').attr("type", "text");
+            //$('#show_password').addClass('active');
+            //timeOut = setInterval(function () {
+            //    console.log(i++);
+            //}, 100);
+        })
+        //.click(function () {
+        //    $('#Maintenance_Password').attr("type", "password");
+        //    $('#show_password').removeClass('active');
+        //    //clearInterval(timeOut);
+        //});
+    });
+</script>
+s

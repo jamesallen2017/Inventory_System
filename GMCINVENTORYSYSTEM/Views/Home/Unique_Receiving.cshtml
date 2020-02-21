@@ -1,0 +1,513 @@
+﻿@model GMCINVENTORYSYSTEM.Models.AllModels
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    td {
+        word-break: break-word;
+    }
+
+    .table > thead > tr > th, .table > thead > tr > td {
+        vertical-align: bottom;
+    }
+</style>
+
+<title>PR Receiving</title>
+
+<div class="page-header">
+    <h1>PR Receiving</h1>
+    <ol class="breadcrumb">
+        <li><a>Purchase Request</a></li>
+        <li class="active">PR Receiving</li>
+    </ol>
+</div>
+
+<div class="content-wrap">
+    <!--START: Content Wrap-->
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <span>Date: @DateTime.Now.ToShortDateString()</span>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel-body">
+                    <table class="table table-hover table-striped" id="TableItemReceiving">
+                        <thead>
+                            <tr>
+                                <th class="col-md-2">Reference No</th>
+                                <th class="col-md-2">PR No</th>
+                                <th class="col-md-2">Requestor</th>
+                                <th class="col-md-2">Date Approved</th>
+                                <th class="col-md-2">Date Requested</th>
+                                <th class="col-md-2">Request Status</th>
+                                <th style="display:none"></th>
+                                <th style="display:none"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Central.dtReceiving)
+                            {
+                                <tr>
+                                    <td class="text-left"><a id="ItemReceiving" href="#">@Html.DisplayFor(modelitem => item.ReferenceNo)</a></td>
+                                    <td>@Html.DisplayFor(modelitem => item.PRNo)</td>
+                                    <td>@Html.DisplayFor(modelitem => item.Responsible)</td>
+                                    <td>@Html.DisplayFor(modelitem => item.DateApprovedPR)</td>
+                                    <td>@Html.DisplayFor(modelitem => item.DateRequested)</td>
+                                    @if (item.RequestStatus == "FOR RECEIVING")
+                                    {
+                                        <td><span><i class="label label-danger">@Html.DisplayFor(modelitem => item.RequestStatus)</i></span></td>
+                                        @*<td><span><i class="label label-danger">FOR RECEIVING</i></span></td>*@
+                                    }
+                                    else
+                                    {
+                                        <td><span><i class="label label-warning">@Html.DisplayFor(modelitem => item.RequestStatus)</i></span></td>
+                                    }
+                                    <td style="display:none">@Html.HiddenFor(modelitem => item.PRNo)</td>
+                                    <td style="display:none">@Html.HiddenFor(modelitem => item.ReferenceNo)</td>
+
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal modal-secondary fade" id="myModal8" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        @using (Html.BeginForm("UpdateItemUniqueRequestForReceiving", "Home", FormMethod.Post, new { @id = "formvalidationtooltip", @class = "ItemReceivingForm", @role = "form" }))
+        {
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Item for Receiving</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="panel panel-default">
+                        <div class="row">
+                            <div class="panel-body">
+                                <div class="col-md-12">
+                                    @*@Html.HiddenFor(central => central.Central.DisplayReferenceNo)
+                                        @Html.HiddenFor(central => central.Central.DisplayPRNo, new { @class = "form-control", @disabled = "disabled", autocomplete = "off" })
+                                        @Html.HiddenFor(central => central.Central.SupplierName, new { @class = "form-control", @placeholder = "(Optional)", autocomplete = "off" })*@
+                                    <div class="col-md-6">
+                                        <div class="form-group input-group">
+                                            <span class="input-group-addon">PR No.</span>
+                                            @Html.HiddenFor(central => central.Central.DisplayReferenceNo)
+                                            @Html.TextBoxFor(central => central.Central.DisplayPRNo, new { @class = "form-control", @disabled = "disabled", autocomplete = "off" })
+                                        </div>
+                                        <div class="form-group input-group">
+                                            <span class="input-group-addon">Supplier</span>
+
+                                            @Html.TextBoxFor(central => central.Central.SupplierName, new { @class = "form-control", @placeholder = "(Optional)", autocomplete = "off" })
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group input-group">
+                                            <span class="input-group-addon">Date Received</span>
+                                            @Html.TextBoxFor(central => central.Central.DateReceived, new { @class = "form-control js-datepicker validate[required]", @placeholder = "Required", autocomplete = "off" })
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+                                <div class="col-md-12">
+                                    <table class="table" id="TableItemRequestForReceiving">
+                                        <thead>
+                                            <tr>
+                                                <th class="col-md-2">Item Code</th>
+                                                <th class="col-md-3">Part Name</th>
+                                                <th class="col-md-1 text-center">Excess</th>
+                                                <th class="col-md-1 text-center">Requested Quantity</th>
+                                                <th class="col-md-1 text-center">Collected</th>
+                                                <th class="col-md-1 text-center">Receive</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    @*<button type="button" class="btn btn-default" id="btnItemLocate">Item/s Location</button>*@
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" id="btnUpdate">Receive</button>
+                </div>
+            </div>
+        }
+
+    </div>
+</div>
+@section scripts {
+
+    <script>
+        $('#TableItemReceiving').DataTable({
+            order: [[3, "desc"]],
+            lengthMenu: [[5, 10, 15, 20, 50, -1], [5, 10, 15, 20, 50, "All"]],
+            //dom: "<'row'<'col-md-3'l><'col-md-3'f>>" + //set column size
+            //     "<'row'<'col-md-12'tr>>" +
+            //     "<'row'<'col-md-5'i><'col-md-7'p>>",
+        }).rows().iterator('row', function (context, index) {
+            var node = $(this.row(index).node());
+            //node.context is element of tr generated by jQuery DataTables.
+        });
+    </script>
+
+    <script>
+        $(document).ready(function (){
+            $('.js-datepicker').datepicker({
+                endDate: new Date(),
+                todayHighlight: true,
+            });
+        })
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $("#TableItemReceiving").on('click', "#ItemReceiving", function () {
+
+                var row = $(this).closest("tr");
+
+                var PRNo = $("#item_PRNo", row).val();
+                var ReferenceNo = $("#item_ReferenceNo", row).val();
+                $("#Central_DisplayPRNo").val(PRNo);
+                $("#Central_DisplayReferenceNo").val(ReferenceNo);
+                $("#Central_DateReceived").datepicker('setDate',new Date().toString('MM/dd/yyyy'));
+                $.ajax({
+                    url: '/Home/RetrieveItemRequestPR/',
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        PRNo: PRNo,
+                        ReferenceNo: ReferenceNo
+                    }),
+                    dataType: "json",
+                    success: function (data) {
+                        var TableItemReceiving = $('#TableItemRequestForReceiving tbody');
+                        TableItemReceiving.empty();
+
+                        $(data).each(function (index, data) {
+                            //var collect;
+                            //if (data.collected > data.qty) {
+                            //    collect = data.collected - data.Excess
+                            //}
+                            //else {
+                            //    collect = data.collected
+                            //}
+                            TableItemReceiving.append('<tr><td>' + data.StockNo + '</td><td>' + data.ItemName + '</td><td class="text-center"><label id="ExcessItem" style="font-weight:normal; margin-bottom:unset"></label></td><td class="text-center">' + data.qty
+                                + '</td><td class="text-center">' + data.collected + '</td><td><input type="text" class="form-control text-center" id="ItemCount" oninput="isNumber(this)"></td>'
+                                +'<td style="display:none;"><input type="text" class="form-control" value="' + data.StockNo
+                                + '" id="HiddenStockNo"></td><td style="display:none;"><input type="text" class="form-control" value="' + data.ItemName
+                                + '" id="HiddenItemName"></td><td style="display:none;"><input type="text" class="form-control" value="' + data.qty
+                                + '" id="HiddenQty"></td><td style="display:none;"><input type="text" class="form-control" value="' + data.collected
+                                + '" id="HiddenCollected"></td><td style="display:none;"><input type="text" class="form-control" value="' + data.Number
+                                + '" id="HiddenNumber"></td><td style="display:none;"><input type="text" class="form-control" value="' + data.StockOnHand
+                                + '" id="HiddenRemainingStock"></td></tr>');
+                        });
+
+                        $("#TableItemRequestForReceiving tbody tr").each(function () { //Loop through the Table rows
+                            var row = $(this);
+
+                            var qty = parseFloat($("#HiddenQty", row).val());
+                            var collected = parseFloat($("#HiddenCollected", row).val());
+                            if (collected >= qty) {
+                                $('#ExcessItem',row).html(collected - qty);
+                                $('#ItemCount',row).attr('disabled','disabled');
+                            }
+                            else {
+                                $('#ItemCount', row).attr('placeholder', qty - collected);
+                            }
+                        });
+                    }
+                });
+
+                $('#myModal8').modal({
+                    show: 'false',
+                    backdrop: 'static',
+                });
+            })
+
+
+            $("#TableItemRequestForReceiving").on("keyup","#ItemCount",function (){
+                var row = $(this).closest("tr");
+
+                var Received = parseFloat($("#ItemCount",row).val());
+                var Qty = parseFloat($("#HiddenQty",row).val());
+                var Collected = parseFloat($("#HiddenCollected",row).val());
+                var Excess = "";
+                Qty = Qty - Collected;
+                if (Received > Qty) {
+                    Excess = Received - Qty;
+                }
+                $("#ExcessItem",row).text(Excess);
+            })
+        })
+    </script>
+
+    <script>
+        $(".ItemReceivingForm").submit(function (event) {
+
+            var SupplierName = $("#Central_SupplierName").val()
+            var DateReceived = $("#Central_DateReceived").val()
+            var DisplayPRNo = $("#Central_DisplayPRNo").val()
+            var DisplayReferenceNo = $("#Central_DisplayReferenceNo").val()
+            var validation = false;
+            var count=0;
+
+            if (DateReceived == null || DateReceived == "" || DisplayPRNo == null || DisplayPRNo == "") {
+
+                return false;
+            }
+
+
+            event.preventDefault();
+            event.stopImmediatePropagation();
+
+
+            var ItemRequestList = new Array();
+            $("#TableItemRequestForReceiving tbody tr").each(function () { //Loop through the Table rows
+                var row = $(this);
+
+                var qty = $("#ItemCount", row).val();
+                var a = 0;
+                var b = 0;
+                var c = 0;
+                var d = 0;
+
+                a = parseFloat($("#HiddenCollected", row).val());
+                b = parseFloat($("#HiddenQty", row).val());
+                c = parseFloat($("#ItemCount", row).val());
+                d = a + c;
+
+                //if (d > b) {
+
+                //    $.toast({
+                //        heading: "Quantity Limit.",
+                //        text: "Received item/s Exceeds the Quantity Limit.",
+                //        showHideTransition: 'slide',
+                //        icon: 'error',
+                //        autoHideDelay: 3000,
+
+                //        position: 'top-right',
+                //        bgColor: '#FF4859'
+                //    });
+                //    validation = true;
+                //    return false;
+                //}
+                //else
+                if (c <= 0) {
+
+                    $.toast({
+                        heading: "Invalid.",
+                        text: "0 is not allowed.",
+                        showHideTransition: 'slide',
+                        icon: 'error',
+                        autoHideDelay: 3000,
+
+                        position: 'top-right',
+                        bgColor: '#FF4859'
+                    });
+                    validation = true;
+                    return false;
+                }
+
+                if (qty != null && qty != "") {
+                    count++;
+                }
+
+                var RequestItem = {}; // SET DATA ARRAY TO STORED ALL DATA INSIDE OF TABLE
+
+                RequestItem.Number = $("#HiddenNumber", row).val();
+                RequestItem.StockNo = $("#HiddenStockNo", row).val();
+                RequestItem.ItemName = $("#HiddenItemName", row).val();
+                RequestItem.qty = $("#HiddenQty", row).val();
+                RequestItem.collected = $("#HiddenCollected", row).val();
+                RequestItem.ItemReceived = $("#ItemCount", row).val();
+                ItemRequestList.push(RequestItem); // RENDER DATA ARRAY TO JSON ARRAY
+            });
+            if(validation == true){
+                return false;
+            }
+
+            if (count == 0) {
+                $.toast({
+                    heading: "Information.",
+                    text: "Please, receive at least one item.",
+                    showHideTransition: 'slide',
+                    icon: 'error',
+                    autoHideDelay: 3000,
+
+                    position: 'top-right',
+                    bgColor: '#FF4859'
+                });
+                return false;
+            }
+            var TransactionDetailList = new Array(); // For transaction code
+            $("#TableItemRequestForReceiving tbody tr").each(function () { //Loop through the Table rows
+                var row = $(this);
+
+                var Items = {}; // SET DATA ARRAY TO STORED ALL DATA INSIDE OF TABLE
+
+                var Receive = parseFloat($("#ItemCount", row).val());
+                var Collected = parseFloat($("#HiddenCollected", row).val());
+                var RemainingStock = parseFloat($("#HiddenRemainingStock",row).val());
+                var Stock = Receive + RemainingStock;
+
+                Items.TransactionType = "2";
+                Items.Item = $("#HiddenStockNo", row).val();
+                Items.TransStockOnHand = RemainingStock;
+                Items.RemainingStock = Stock;
+                Items.Quantity = $("#ItemCount", row).val();
+                TransactionDetailList.push(Items); // RENDER DATA ARRAY TO JSON ARRAY
+            });
+
+            bootbox.confirm({
+                title: "Are you sure you want to receive?",
+                message: "Item Inventory will be updated.",
+                size: "small",
+                buttons: {
+                    confirm: {
+                        label: 'Yes',
+                        className: 'btn-success'
+                    },
+                    cancel: {
+                        label: 'No',
+                        className: 'btn-danger'
+                    }
+                },
+                callback: function (result) {
+
+                    if (result) {
+                        var action = $(".ItemReceivingForm").attr("action");
+
+                        $.ajax({
+                            url: action,
+                            type: "POST",
+                            contentType: "application/json",
+                            data: JSON.stringify({
+                                ItemRequestList,
+                                TransactionDetailList,
+                                SupplierName: SupplierName,
+                                DateReceived: DateReceived,
+                                DisplayPRNo: DisplayPRNo,
+                                DisplayReferenceNo: DisplayReferenceNo,
+                            }),
+                            dataType: "json",
+                            success: function (data) {
+
+                                if (data == 0) {
+                                    $.toast({
+                                        heading: "Error",
+                                        text: "Fill out Received item at least one.",
+                                        showHideTransition: 'slide',
+                                        icon: 'error',
+                                        autoHideDelay: 3000,
+
+                                        position: 'top-right',
+                                        bgColor: '#FF4859'
+                                    });
+                                    return false;
+                                }
+                                else if (data == "system_error") {
+                                    $.toast({
+                                        heading: "System Error",
+                                        text: "Contact our administrator for assistance.",
+                                        showHideTransition: 'slide',
+                                        icon: 'error',
+                                        autoHideDelay: 3000,
+
+                                        position: 'top-right',
+                                        bgColor: '#FF4859'
+                                    });
+                                    return false;
+                                }
+                                else if (data == "Cannot") {
+                                    $.toast({
+                                        heading: "Item Receiving",
+                                        text: "Already Received.",
+                                        showHideTransition: 'slide',
+                                        icon: 'error',
+                                        autoHideDelay: 3000,
+
+                                        position: 'top-right',
+                                        bgColor: '#FF4859'
+                                    });
+                                    return false;
+                                }
+                                else {
+                                    $.toast({
+                                        heading: 'Item Received.',
+                                        text: data + " Item/s successfully Received.",
+                                        showHideTransition: 'slide',
+                                        icon: 'success',
+                                        autoHideDelay: 3000,
+
+                                        position: 'top-right',
+                                        bgColor: '#7EC857'
+                                    });
+                                    var $this = $("#btnUpdate");
+                                    $this.button('loading');
+                                    setTimeout(function () {
+                                        $this.button('reset');
+                                        window.location.reload();
+                                    }, 3000);
+                                }
+
+                            }
+                        });
+
+                    }
+
+                    else {
+                        return;
+                    }
+                }
+            })
+
+        })
+
+    </script>
+
+    <script>
+        $("#btnItemLocate").on("click",function () {
+            var all = "";
+            $("#TableItemRequestForReceiving tbody tr").each(function () {
+                var row = $(this);
+                var x = $("#HiddenStockNo",row).val();
+                if (all == "") {
+                    all = x;
+                }
+                else {
+                    all = all + "," + x
+                }
+            })
+            event.preventDefault();
+            event.stopImmediatePropagation();
+
+            $.ajax({
+                url: '/Home/GetItemLocation',
+                type: "post",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    StockNo: all
+                }),
+                dataType: "json",
+                success: function(resultData){
+                    window.open("/Report/ItemLocationReports/"+ resultData);
+                },
+                error: function (data) {  // detailed error messsage
+                    alert(JSON.stringify(data));
+                }
+            });
+
+        })
+    </script>
+}

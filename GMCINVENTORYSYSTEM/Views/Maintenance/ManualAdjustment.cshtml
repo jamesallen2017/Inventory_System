@@ -1,0 +1,719 @@
+﻿@model GMCINVENTORYSYSTEM.Models.AllModels
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    List<SelectListItem> MainList = new List<SelectListItem>();
+
+    MainList.Add(new SelectListItem
+    {
+
+        Text = "No Record",
+        Value = ""
+    });
+
+}
+
+<style>
+    td {
+        word-break: break-word;
+    }
+
+    div.wraptext {
+        word-break: break-word;
+    }
+</style>
+
+<title>Manual Adjustment</title>
+
+<style>
+    .select2-container .select2-selection--single {
+        height: auto !important;
+        padding: 5px 0;
+    }
+
+    .select2-container--default .select2-selection--single .select2-selection__rendered {
+        line-height: normal !important;
+    }
+
+    .select2-container .select2-selection--single .select2-selection__rendered {
+        white-space: normal !important;
+    }
+</style>
+
+<div class="page-header">
+    <h1>Manual Adjustment</h1>
+    <ol class="breadcrumb">
+        <li><a>Maintenance</a></li>
+        <li class="active">Manual Adjustment</li>
+    </ol>
+</div>
+
+<div class="content-wrap">
+    <!--START: Content Wrap-->
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <span>Date: @DateTime.Now.ToShortDateString()</span>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                @*<div class="panel panel-default">
+
+                        <div class="panel-body">
+                            <div class="col-md-6">
+                                <div class="form-group input-group">
+                                    <span class="input-group-addon">Stock No.</span>
+                                    <select name="ddlItems" id="ddlItems" class="form-control select2Search">
+                                        <option value="Select User Role">Select Stock No.</option>
+                                        <option value="Requestor">SAMPLE 1</option>
+                                        <option value="Requestor">SAMPLE 1</option>
+                                    </select>
+                                </div>
+                                <div class="form-group input-group">
+                                    <span class="input-group-addon">Specification</span>
+                                    <input name="UOM" type="text" id="UOM" class="form-control" placeholder="Specification" />
+                                </div>
+
+                                <div class="form-group input-group">
+                                    <span class="input-group-addon">Stock on Hand</span>
+                                    <input name="Specification" type="text" id="Specification" class="form-control" placeholder="Stock on Hand." />
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+
+                                <div class="form-group input-group">
+                                    <span class="input-group-addon">Description</span>
+                                    <input name="Description" type="text" id="Description" class="form-control" placeholder="Desription" />
+                                </div>
+
+                                <div class="form-group input-group">
+                                    <span class="input-group-addon">Details</span>
+                                    <input name="Details" type="text" id="Details" class="form-control" placeholder="Details" />
+
+                                </div>
+                                <div class="form-group input-group">
+                                    <span class="input-group-addon">Manual Count</span>
+                                    <input name="Details" type="text" id="Details" class="form-control" placeholder="Manual Count" />
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel-footer">
+                            <button class="btn btn-primary">Save</button>
+                        </div>
+                    </div>*@
+
+
+                @using (Html.BeginForm("UpdateStockOnHand", "Maintenance", FormMethod.Post, new { @id = "formvalidationtooltip", @class = "ManualAdjustmentform", @role = "form" }))
+                {
+                    <div class="panel panel-default">
+                        <div class="row">
+                            <div class="panel-body">
+                                <div class="col-md-12">
+                                    <table class="table" id="TableManualAdjustItem">
+                                        <thead>
+                                            <tr>
+                                                <th class="col-md-1">Action</th>
+                                                <th class="col-md-6">Items</th>
+                                                <th class="col-md-1">Stock On Hand</th>
+                                                <th class="col-md-2">Reason</th>
+                                                <th class="col-md-2">Adjust Stock To</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr id="RowRequestItem">
+                                                <td class="col-md-1">
+                                                    <div class="form-group">
+                                                        <a href="#" name="tbnadd" id="tbnadd" class="btn btn-link"><i class="di di-plus"></i></a>
+                                                        <a href="#" name="btndelete" id="btndelete" class="btn btn-link"><i class="di di-minus"></i></a>
+                                                    </div>
+                                                </td>
+                                                <td class="col-md-5">
+                                                    <div class="form-group">
+                                                        @Html.DropDownListFor(Maintenance => Maintenance.Maintenance.StockNo, Model.Maintenance.ddlAllItemStockNo, "Select Item Code", new { @class = "form-control select2Search validate[required]", @style = "width:100%" })
+                                                    </div>
+                                                </td>
+                                                @*<td class="col-md-5">
+                                                        <div class="form-group">
+                                                            @Html.TextBoxFor(Maintenance => Maintenance.Maintenance.ItemName, new { @class = "form-control", @placeholder = "Details", @autocomplete = "off", @disabled = "disabled" })
+                                                        </div>
+                                                    </td>*@
+                                                <td class="col-md-2">
+                                                    <div class="form-group">
+                                                        @Html.TextBoxFor(Maintenance => Maintenance.Maintenance.StockOnHand, new { @class = "form-control", @placeholder = "Stock On Hand", @autocomplete = "off", @disabled = "disabled" })
+                                                    </div>
+                                                </td>
+                                                <td class="col-md-2">
+                                                    <div class="form-group">
+                                                        @Html.TextBoxFor(Maintenance => Maintenance.Maintenance.Reason, new { @class = "form-control validate[required]", @placeholder = "Required", @autocomplete = "off", @style = "width:100%" })
+                                                    </div>
+                                                </td>
+                                                <td class="col-md-2">
+                                                    <div class="form-group">
+                                                        @Html.TextBoxFor(Maintenance => Maintenance.Maintenance.Quantity, new { @class = "form-control validate[required]", @placeholder = "Required", @autocomplete = "off", @style = "width:100%", @oninput = "isNumber(this)" })
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-footer">
+
+                            <div class="row">
+                                <div class="pull-right" style="margin-right:10px">
+                                    <a class="btn btn-danger" id="btnClear" href="@Url.Action("ManualAdjustment", "Maintenance")">Clear</a>
+                                    <button class="btn btn-primary " id="btnSave" type="submit">Save</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts
+    {
+
+    <script>
+        $(function() { // TableSearchBox
+            var firstEmptySelect = true;
+
+            function getResult(result) {
+                if (!result.id) {
+                    if (firstEmptySelect) {
+                        console.log('showing row');
+                        firstEmptySelect = false;
+                        return false;
+                    } else {
+                        console.log('skipping row');
+                        var $result = $(
+                            '<div class="row" style="font-weight: bolder ;display: block">' +
+                                '<div class="col-md-2" style="display: block; ">' + 'Item Code' + '</div>' +
+                                '<div class="col-md-5" style="display: block">' + 'Part Name' + '</div>' +
+                                '<div class="col-md-5" style="display: block">' + 'Specification' + '</div>' +
+                            '</div>'
+                        );
+                        return $result;
+                    }
+                    console.log('result');
+                    console.log($result);
+                }
+                var r = result.text.split('|');
+                var $result = $(
+                    '<div class="row">' +
+                        '<div class="wraptext col-md-2">' + r[0] + '</div>' + //split all value
+                        '<div class="wraptext col-md-5">' + r[1] + '</div>' +
+                        '<div class="wraptext col-md-5">' + r[2] + '</div>' +
+                    '</div>'
+                );
+                return $result;
+            }
+
+            function permute(input, permArr, usedChars) {
+                var i, ch;
+                for (i = 0; i < input.length; i++) {
+                    ch = input.splice(i, 1)[0];
+                    usedChars.push(ch);
+                    if (input.length == 0) {
+                        permArr.push(usedChars.slice());
+                    }
+                    permute(input, permArr, usedChars);
+                    input.splice(i, 0, ch);
+                    usedChars.pop();
+                }
+                return permArr
+            };
+
+            $("#Maintenance_StockNo").select2({
+                escapeMarkup: function(m) { return m; },
+                templateResult: getResult,
+                templateSelection: getResult,
+                matcher: function (params, data) {
+                    // If there are no search terms, return all of the data
+                    if ($.trim(params.term) === '') {
+                        return data;
+                    }
+                    // `params.term` should be the term that is used for searching
+                    // split by " " to get keywords
+                    keywords=(params.term).split(" ");
+                    // `data.text` is the text that is displayed for the data object
+                    // check if data.text contains all of keywords, if some is missing, return null
+                    for (var i = 0; i < keywords.length; i++) {
+
+                        if (((data.text).toUpperCase()).indexOf((keywords[i]).toUpperCase()) == -1)
+                            // Return `null` if the term should not be displayed
+                            return null;
+
+                    }
+                    // If here, data.text contains all keywords, so return it.
+                    return data;
+                }
+            });
+        });
+    </script>
+
+    <script>
+        //var Grouplist = [];
+
+        //$(document).ready(function () {
+
+        //    FetchStockNo($("#Maintenance_StockNo"));
+        //})
+
+        //function FetchStockNo(element) {
+
+        //    if (Grouplist.length == 0) {
+
+        //        $.ajax({
+        //            type: "GET",
+        //            url: '/Home/RetrieveAllStockNo', //REDIRECT TO ACTION RESULT (HOME CONTROLLLER)
+        //            contentType: "application/json",
+        //            data: {
+        //            },
+        //            dataType: "json",
+        //            success: function (data) { //RETURN DATA GALING SA CONTROLLER
+        //                Grouplist = data; // RENDER DATA TO STRING ARRAY
+
+        //                //render item category
+        //                renderGroupCategory(element);
+        //            }
+        //        })
+        //    }
+        //}
+
+        //function renderGroupCategory(element) {
+        //    var $ele = $(element);
+        //    $ele.empty();
+        //    $ele.append($('<option/>').val('').text('Select Item Code'));
+        //    $.each(Grouplist, function (i, val) {
+        //        $ele.append($('<option/>').val(this['Value']).html(this['Text']));
+        //    })
+        //}
+
+        $("#TableManualAdjustItem").on("change", "#Maintenance_StockNo", function () {
+
+            var row = $(this).closest("tr");
+            var StockNo = $("#Maintenance_StockNo", row).val();
+
+            $.ajax({
+                url: '/Maintenance/RetreiveDetails',
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    StockNo: StockNo,
+                }),
+
+                dataType: "json",
+                success: function (data) {
+                    d = data.split("|-|");
+                    $("#Maintenance_ItemName", row).val(d[0]);
+                    $("#Maintenance_StockOnHand", row).val(d[1]);
+                }
+
+            })
+        })
+
+        $(".ManualAdjustmentform").submit(function (event) {
+            var validate = 0;
+            var StockNo;
+            var count = 0;
+            $("#TableManualAdjustItem tbody tr").each(function () {
+                var row = $(this);
+                StockNo = $("#Maintenance_StockNo",row).val()
+                var StockOnHand = $("#Maintenance_StockOnHand",row).val()
+                var Quantity = $("#Maintenance_Quantity",row).val()
+
+
+                if (StockNo == null || Quantity == null || StockNo == "" || Quantity == "" || StockOnHand == null || StockOnHand == "") {
+                    validate++;
+                    $.toast({
+                        heading: "Error",
+                        text: "Please, fill out required fields.",
+                        showHideTransition: 'slide',
+                        icon: 'error',
+                        autoHideDelay: 3000,
+                        position: 'top-right',
+                        bgColor: '#FF4859'
+
+                    });
+                    return false;
+                }
+            })
+            if (validate > 0) {
+                return false;
+            }
+
+            event.preventDefault();
+            event.stopImmediatePropagation();
+
+            var ManualAdjustList = new Array();
+            var VerifyList = new Array();
+            $("#TableManualAdjustItem tbody tr").each(function () { //Loop through the Table rows
+                var row = $(this);
+
+                var RequestItem = {}; // SET DATA ARRAY TO STORED ALL DATA INSIDE OF TABLE
+                var Quantity = $("#Maintenance_Quantity", row).val();
+
+                if (Quantity <= 0) {
+                    count++
+                    return false;
+                }
+
+                RequestItem.StockNo = $("#Maintenance_StockNo", row).val();
+                RequestItem.ItemName = $("#Maintenance_StockNo option:selected", row).text();
+                RequestItem.StockOnHand = $("#Maintenance_StockOnHand", row).val();
+                RequestItem.Reason = $("#Maintenance_Reason", row).val();
+                RequestItem.qty = Quantity;
+                ManualAdjustList.push(RequestItem); // RENDER DATA ARRAY TO JSON ARRAY
+                VerifyList.push(RequestItem); // RENDER DATA ARRAY TO JSON ARRAY
+            });
+            
+            if (count > 0) {
+                $.toast({
+                    heading: "Invalid",
+                    text: "0 is not allowed.",
+                    showHideTransition: 'slide',
+                    icon: 'error',
+                    autoHideDelay: 3000,
+
+                    position: 'top-right',
+                    bgColor: '#FF4859'
+                });
+                return false;
+            }
+
+            var StockNo = "";
+            var StockNo0 = "";
+            var StockOnHand = "";
+            var Qty = "";
+            var stock = 0;
+            var qtyerr = 0;
+
+            for (var i = 0; i < ManualAdjustList.length; i++) {
+                StockNo = ManualAdjustList[i].StockNo;
+                StockOnHand = ManualAdjustList[i].StockOnHand;
+                for (var i = 0; i < ManualAdjustList.length; i++) {
+                    StockNo0 = ManualAdjustList[i].StockNo;
+                    Qty = ManualAdjustList[i].qty;
+                    if (StockNo == StockNo0 && Qty == StockOnHand) {
+                        qtyerr++
+                    }
+                }
+            }
+            if (qtyerr > 0) {
+    
+                $.toast({
+                    heading: "Error",
+                    text: "Same Stock on Hand and Adjust Stock to is not allowed.",
+                    showHideTransition: 'slide',
+                    icon: 'error',
+                    autoHideDelay: 3000,
+
+                    position: 'top-right',
+                    bgColor: '#FF4859'
+                });
+                return false;
+            }
+
+            for (var i = 0; i < ManualAdjustList.length; i++) {
+                StockNo = ManualAdjustList[i].StockNo;
+                VerifyList.splice(0, 1);
+
+                for (var j = 0; j < VerifyList.length; j++) {
+                    StockNo0 = VerifyList[j].StockNo;
+                    if (StockNo == StockNo0) {
+                        stock++;
+                    }
+                }
+            }
+            if (stock > 0) {
+                $.toast({
+                    heading: "Error",
+                    text: "Same Item Code is not allowed.",
+                    showHideTransition: 'slide',
+                    icon: 'error',
+                    autoHideDelay: 3000,
+
+                    position: 'top-right',
+                    bgColor: '#FF4859'
+                });
+                return false;
+            }
+
+            var TransactionDetailList = new Array(); // For transaction code
+            $("#TableManualAdjustItem tbody tr").each(function () { //Loop through the Table rows
+                var row = $(this);
+
+                var Items = {}; // SET DATA ARRAY TO STORED ALL DATA INSIDE OF TABLE
+
+                Items.TransactionType = "3";
+                Items.Item = $("#Maintenance_StockNo", row).val();
+                Items.TransStockOnHand = $("#Maintenance_StockOnHand", row).val();
+                Items.RemainingStock = $("#Maintenance_Quantity", row).val();
+                Items.Quantity = $("#Maintenance_Quantity", row).val();
+                TransactionDetailList.push(Items); // RENDER DATA ARRAY TO JSON ARRAY
+            });
+
+            var action = $(".ManualAdjustmentform").attr("action");
+            bootbox.confirm({
+                title: "Are you sure you want to save?",
+                message: "Item/s stock will be updated.",
+                size: "small",
+                buttons: {
+                    confirm: {
+                        label: 'Yes',
+                        className: 'btn-success'
+                    },
+                    cancel: {
+                        label: 'No',
+                        className: 'btn-danger'
+                    }
+                },
+                callback: function (result){
+                    if (result) {
+                        $.ajax({
+                            url: action,
+                            type: "POST",
+                            contentType: "application/json",
+                            data: JSON.stringify({
+                                ManualAdjustList,
+                                TransactionDetailList
+                                }),
+                            dataType: "json",
+                            success: function (data) {
+                                if (data == 0) {
+                                    $.toast({
+                                        heading: "System Error",
+                                        text: "Please contact our administrator for assistance.",
+                                        showHideTransition: 'slide',
+                                        icon: 'error',
+                                        autoHideDelay: 3000,
+
+                                        position: 'top-right',
+                                        bgColor: '#FF4859'
+                                    });
+                                    return false;
+                                }
+                                else if (data > 1) {
+
+                                    $.toast({
+                                        heading: 'Manual Adjustment.',
+                                        text: data + " Item/s has been successfully updated.",
+                                        showHideTransition: 'slide',
+                                        icon: 'success',
+                                        autoHideDelay: 3000,
+
+                                        position: 'top-right',
+                                        bgColor: '#7EC857'
+                                    });
+
+                                    var $this = $("#btnSave");
+                                    var btnClear = $("#btnClear");
+
+                                    $this.button('loading');
+                                    setTimeout(function () {
+                                        $this.button('reset');
+                                        btnClear.button('reset');
+
+                                        window.location.reload();
+                                    }, 3000);
+    
+                                }
+                                else {
+
+                                    $.toast({
+                                        heading: 'Manual Adjustment.',
+                                        text: "Item Code " + StockNo + " successfully updated.",
+                                        showHideTransition: 'slide',
+                                        icon: 'success',
+                                        autoHideDelay: 3000,
+
+                                        position: 'top-right',
+                                        bgColor: '#7EC857'
+                                    });
+
+                                    var $this = $("#btnSave");
+                                    var btnClear = $("#btnClear");
+
+                                    $this.button('loading');
+                                    setTimeout(function () {
+                                        $this.button('reset');
+                                        btnClear.button('reset');
+
+                                        window.location.reload();
+                                    }, 3000);
+                                }
+
+                            }
+                        });
+                    }
+                }
+            })
+            
+        })
+    </script>
+
+    <script>
+
+        $("#TableManualAdjustItem").on('click', "#tbnadd", function () {
+            //var validate = 0;
+            //var row = $(this).closest('tr');
+            //$("#TableManualAdjustItem tbody tr").each(function () {
+            //    var row = $(this);
+
+            //    var StockNo = $("#Maintenance_StockNo",row).val()
+            //    var StockOnHand = $("#Maintenance_StockOnHand",row).val()
+            //    var Quantity = $("#Maintenance_Quantity",row).val()
+
+
+            //    if (StockNo == null || Quantity == null || StockNo == "" || Quantity == "" || StockOnHand == null || StockOnHand == "") {
+            //        validate++;
+            //        $.toast({
+            //            heading: "Error",
+            //            text: "Please, fill out required fields.",
+            //            showHideTransition: 'slide',
+            //            icon: 'error',
+            //            autoHideDelay: 3000,
+            //            position: 'top-right',
+            //            bgColor: '#FF4859'
+
+            //        });
+
+            //        return false;
+            //    }
+            //})
+
+            //if (validate > 0) {
+            //    return false;
+            //}
+
+            $("select#Maintenance_StockNo").select2("destroy");
+
+            var $newRow = $('#RowRequestItem').clone(true).appendTo('#TableManualAdjustItem'); // CLONE MAINROW UNDER TABLE ID
+
+            $('#Maintenance_StockNo', $newRow).val('');// GET VALUE OF DROPDOWNLIST (THIS CODE IS FOR DROPDOWNLIST ONLY)
+            $('#Maintenance_StockOnHand', $newRow).val('');// GET VALUE OF DROPDOWNLIST (THIS CODE IS FOR DROPDOWNLIST ONLY)
+            $('#Maintenance_Reason', $newRow).val('');// GET VALUE OF DROPDOWNLIST (THIS CODE IS FOR DROPDOWNLIST ONLY)
+            $('#Maintenance_Quantity', $newRow).val('');// GET VALUE OF DROPDOWNLIST (THIS CODE IS FOR DROPDOWNLIST ONLY)
+
+
+            $('#Maintenance_StockNo,#Maintenance_StockOnHand,#Maintenance_Reason,#Maintenance_Quantity', $newRow);
+
+
+            //$('#Maintenance_StockNo').val("")
+            ////$('#Maintenance_ItemName').val("")
+            //$('#Maintenance_StockOnHand').val("")
+            //$('#Maintenance_Reason').val("")
+            //$('#Maintenance_Quantity').val("")
+
+
+            var firstEmptySelect = true;
+
+            function getResult(result) {
+                if (!result.id) {
+                    if (firstEmptySelect) {
+                        console.log('showing row');
+                        firstEmptySelect = false;
+                        return false;
+                    } else {
+                        console.log('skipping row');
+                        var $result = $(
+                            '<div class="row" style="font-weight: bolder ;display: block">' +
+                                '<div class="col-md-2" style="display: block; ">' + 'Item Code' + '</div>' +
+                                '<div class="col-md-5" style="display: block">' + 'Part Name' + '</div>' +
+                                '<div class="col-md-5" style="display: block">' + 'Specification' + '</div>' +
+                            '</div>'
+                        );
+                        return $result;
+                    }
+                    console.log('result');
+                    console.log($result);
+                }
+                var r = result.text.split('|');
+                var $result = $(
+                    '<div class="row">' +
+                        '<div class="wraptext col-md-2">' + r[0] + '</div>' + //split all value
+                        '<div class="wraptext col-md-5">' + r[1] + '</div>' +
+                        '<div class="wraptext col-md-5">' + r[2] + '</div>' +
+                    '</div>'
+                );
+                return $result;
+            }
+
+            function permute(input, permArr, usedChars) {
+                var i, ch;
+                for (i = 0; i < input.length; i++) {
+                    ch = input.splice(i, 1)[0];
+                    usedChars.push(ch);
+                    if (input.length == 0) {
+                        permArr.push(usedChars.slice());
+                    }
+                    permute(input, permArr, usedChars);
+                    input.splice(i, 0, ch);
+                    usedChars.pop();
+                }
+                return permArr
+            };
+
+            $("Select#Maintenance_StockNo").select2({
+                templateResult: getResult,
+                templateSelection: getResult,
+                escapeMarkup: function(m) { return m; },
+                matcher: function (params, data) {
+                    // If there are no search terms, return all of the data
+                    if ($.trim(params.term) === '') {
+                        return data;
+                    }
+                    // `params.term` should be the term that is used for searching
+                    // split by " " to get keywords
+                    keywords=(params.term).split(" ");
+                    // `data.text` is the text that is displayed for the data object
+                    // check if data.text contains all of keywords, if some is missing, return null
+                    for (var i = 0; i < keywords.length; i++) {
+
+                        if (((data.text).toUpperCase()).indexOf((keywords[i]).toUpperCase()) == -1)
+                            // Return `null` if the term should not be displayed
+                            return null;
+
+                    }
+                    // If here, data.text contains all keywords, so return it.
+                    return data;
+                }
+            });
+
+        });
+
+
+        $('#TableManualAdjustItem').on('click', '#btndelete', function () {
+
+            var count = $('#TableManualAdjustItem tbody tr').length;
+
+            if (count > 1) {
+                $(this).closest("tr").remove();
+            } else {
+
+                $.toast({
+                    heading: "Error",
+                    text: "Sorry. Row can't be empty.",
+                    showHideTransition: 'slide',
+                    icon: 'error',
+                    autoHideDelay: 3000,
+                    position: 'top-right',
+                    bgColor: '#FF4859'
+
+                });
+                //alert("File Shouldn't Be Empty!!");
+                return false;
+
+            }
+        });
+
+    </script>
+}

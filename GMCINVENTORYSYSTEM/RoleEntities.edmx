@@ -1,0 +1,137 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="RoleEntitiesModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="USERMAINMENU">
+          <Key>
+            <PropertyRef Name="MainAccessKey" />
+          </Key>
+          <Property Name="MainID" Type="int" Nullable="false" />
+          <Property Name="MainAccessKey" Type="int" Nullable="false" />
+          <Property Name="MainName" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="USERSUBMENU">
+          <Key>
+            <PropertyRef Name="SubAccessKey" />
+          </Key>
+          <Property Name="SubID" Type="int" Nullable="false" />
+          <Property Name="SubMainAccessKey" Type="int" Nullable="false" />
+          <Property Name="SubAccessKey" Type="int" Nullable="false" />
+          <Property Name="SubName" Type="nvarchar(max)" />
+        </EntityType>
+        <Association Name="FK_USERSUBMENU">
+          <End Role="USERMAINMENU" Type="Self.USERMAINMENU" Multiplicity="1" />
+          <End Role="USERSUBMENU" Type="Self.USERSUBMENU" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="USERMAINMENU">
+              <PropertyRef Name="MainAccessKey" />
+            </Principal>
+            <Dependent Role="USERSUBMENU">
+              <PropertyRef Name="SubMainAccessKey" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="RoleEntitiesModelStoreContainer">
+          <EntitySet Name="USERMAINMENU" EntityType="Self.USERMAINMENU" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="USERSUBMENU" EntityType="Self.USERSUBMENU" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_USERSUBMENU" Association="Self.FK_USERSUBMENU">
+            <End Role="USERMAINMENU" EntitySet="USERMAINMENU" />
+            <End Role="USERSUBMENU" EntitySet="USERSUBMENU" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="RoleEntitiesModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="USERMAINMENU">
+          <Key>
+            <PropertyRef Name="MainAccessKey" />
+          </Key>
+          <Property Name="MainID" Type="Int32" Nullable="false" />
+          <Property Name="MainAccessKey" Type="Int32" Nullable="false" />
+          <Property Name="MainName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="USERSUBMENUs" Relationship="Self.FK_USERSUBMENU" FromRole="USERMAINMENU" ToRole="USERSUBMENU" />
+        </EntityType>
+        <EntityType Name="USERSUBMENU">
+          <Key>
+            <PropertyRef Name="SubAccessKey" />
+          </Key>
+          <Property Name="SubID" Type="Int32" Nullable="false" />
+          <Property Name="SubMainAccessKey" Type="Int32" Nullable="false" />
+          <Property Name="SubAccessKey" Type="Int32" Nullable="false" />
+          <Property Name="SubName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="USERMAINMENU" Relationship="Self.FK_USERSUBMENU" FromRole="USERSUBMENU" ToRole="USERMAINMENU" />
+        </EntityType>
+        <Association Name="FK_USERSUBMENU">
+          <End Role="USERMAINMENU" Type="Self.USERMAINMENU" Multiplicity="1" />
+          <End Role="USERSUBMENU" Type="Self.USERSUBMENU" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="USERMAINMENU">
+              <PropertyRef Name="MainAccessKey" />
+            </Principal>
+            <Dependent Role="USERSUBMENU">
+              <PropertyRef Name="SubMainAccessKey" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="RoleEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="USERMAINMENUs" EntityType="Self.USERMAINMENU" />
+          <EntitySet Name="USERSUBMENUs" EntityType="Self.USERSUBMENU" />
+          <AssociationSet Name="FK_USERSUBMENU" Association="Self.FK_USERSUBMENU">
+            <End Role="USERMAINMENU" EntitySet="USERMAINMENUs" />
+            <End Role="USERSUBMENU" EntitySet="USERSUBMENUs" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="RoleEntitiesModelStoreContainer" CdmEntityContainer="RoleEntities">
+          <EntitySetMapping Name="USERMAINMENUs">
+            <EntityTypeMapping TypeName="RoleEntitiesModel.USERMAINMENU">
+              <MappingFragment StoreEntitySet="USERMAINMENU">
+                <ScalarProperty Name="MainID" ColumnName="MainID" />
+                <ScalarProperty Name="MainAccessKey" ColumnName="MainAccessKey" />
+                <ScalarProperty Name="MainName" ColumnName="MainName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="USERSUBMENUs">
+            <EntityTypeMapping TypeName="RoleEntitiesModel.USERSUBMENU">
+              <MappingFragment StoreEntitySet="USERSUBMENU">
+                <ScalarProperty Name="SubID" ColumnName="SubID" />
+                <ScalarProperty Name="SubMainAccessKey" ColumnName="SubMainAccessKey" />
+                <ScalarProperty Name="SubAccessKey" ColumnName="SubAccessKey" />
+                <ScalarProperty Name="SubName" ColumnName="SubName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

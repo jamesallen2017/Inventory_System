@@ -1,0 +1,357 @@
+﻿@model GMCINVENTORYSYSTEM.Models.AllModels
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .form-control[readonly] {
+        background-color: white;
+    }
+
+    td {
+        word-break: break-word;
+    }
+
+    .table > thead > tr > th, .table > thead > tr > td {
+        vertical-align: bottom;
+    }
+</style>
+
+<title>Inquiry - Created PR</title>
+
+<div class="page-header">
+    <h1>Created PR</h1>
+    <ol class="breadcrumb">
+        <li><a>Inquiry</a></li>
+        <li class="active">Created PR</li>
+    </ol>
+</div>
+
+<div class="content-wrap">
+    <!--START: Content Wrap-->
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <span>Date: @DateTime.Now.ToShortDateString()</span>
+        </div>
+        <div class="col-md-5">
+            <div class="form-group input-group" style="width:100%">
+                <div class="input-daterange input-group">
+                    <span class="input-group-addon">Date Requested</span>
+                    <input id="DateFrom" class="form-control js-datepicker" readonly name="start" placeholder="from" autocomplete="off" style="width:100%" />
+                    <span class="input-group-addon"><i class="di di-calendar"></i></span>
+                    <input id="DateTo" class="form-control" readonly name="end" placeholder="to" autocomplete="off" style="width:100%" />
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="panel-body">
+                    <table class="table table-hover table-striped" id="TableItemReceiving">
+                        <thead>
+                            <tr>
+                                <th class="col-md-2">Reference No</th>
+                                <th class="col-md-2">PR No</th>
+                                <th class="col-md-2">Responsible</th>
+                                <th class="col-md-2">Date Approved</th>
+                                <th class="col-md-2">Date Requested</th>
+                                <th class="col-md-2">Request Status</th>
+                                <th style="display:none"></th>
+                                <th style="display:none"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Central.dtPRRequest)
+                            {
+                                <tr>
+                                    <td class="text-center"><a id="ItemReceiving" href="#">@Html.DisplayFor(modelitem => item.ReferenceNo)</a></td>
+                                    <td>@Html.DisplayFor(modelitem => item.PRNo)</td>
+                                    <td>@Html.DisplayFor(modelitem => item.Responsible)</td>
+                                    <td>@Html.DisplayFor(modelitem => item.DateApprovedPR)</td>
+                                    <td>@Html.DisplayFor(modelitem => item.DateRequested)</td>
+                                    @if (item.RequestStatus == "FOR RECEIVING" || item.RequestStatus == "CREATED")
+                                    {
+                                        <td><span><i class="label label-danger">@Html.DisplayFor(modelitem => item.RequestStatus)</i></span></td>
+                                    }
+                                    else
+                                    {
+                                        <td><span><i class="label label-success">@Html.DisplayFor(modelitem => item.RequestStatus)</i></span></td>
+                                    }
+
+                                    <td style="display:none">@Html.HiddenFor(modelitem => item.PRNo)</td>
+                                    <td style="display:none">@Html.HiddenFor(modelitem => item.ReferenceNo)</td>
+
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal modal-secondary fade" id="myModal8" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        @using (Html.BeginForm("UpdateItemRequestForReceiving", "Home", FormMethod.Post, new { @id = "formvalidationtooltip", @class = "ItemReceivingForm", @role = "form" }))
+        {
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Item for Receiving</h4>
+                </div>
+                <div class="modal-body">
+
+                    <div class="panel panel-default">
+                        <div class="row">
+                            <div class="panel-body">
+
+
+
+                                <div class="col-md-12">
+                                    <table class="table" id="TableItemRequestForReceiving">
+                                        <thead>
+                                            <tr>
+                                                <th class="col-md-2">Item Code</th>
+                                                <th class="col-md-3">Part Name</th>
+                                                <th class="col-md-1 text-center">Excess</th>
+                                                <th class="col-md-1 text-center">Requested Quantity</th>
+                                                <th class="col-md-1 text-center">Collected</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        }
+
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            var date = new Date();
+            var today = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+            var end = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
+            $('.js-datepicker').datepicker({
+                formatDate: "mm/dd/yyyy",
+                //todayHighlight: true,
+                //startDate: new Date(),
+                //autoclose: true
+            });
+
+            $('.input-group.date').datepicker({
+                formatDate: "mm/dd/yyyy",
+                //todayHighlight: true,
+                //startDate: new Date(),
+                //autoclose: true
+            });
+
+            $('.input-daterange').datepicker({
+                formatDate: "mm/dd/yyyy",
+                //todayHighlight: true,
+                //startDate: new Date(),
+                //autoclose: true
+            });
+
+        });
+    </script>
+
+    <script>
+        $(function () {
+            //$.fn.dataTable.ext.search.push(
+            //    function (settings, data, dataIndex) {
+            //        var min = $('#DateFrom').datepicker('getDate');
+            //        var max = $('#DateTo').datepicker('getDate');
+
+            //        var date = data[3].split(' ')
+            //        if (date[1] == "") {
+            //            var startDate = date[0] + "/" + date[2] + "/" + date[3];
+            //        }
+            //        else {
+            //            var startDate = date[0] + "/" + date[1] + "/" + date[2];
+            //        }
+
+            //        startDate = new Date(startDate);
+
+            //        if (min == null && max == null) return true;
+            //        if (min == null && startDate <= max) return true;
+            //        if (max == null && startDate >= min) return true;
+            //        if (startDate <= max && startDate >= min) return true;
+            //        return false;
+            //    }
+            //);
+
+            $('#TableItemReceiving').DataTable({
+                order: [[4, "desc"]],
+                lengthMenu: [[5, 10, 15, 20, 50, -1], [5, 10, 15, 20, 50, "All"]],
+                //dom: "<'row'<'col-md-3'l><'col-md-3'f>>" + //set column size
+                //     "<'row'<'col-md-12'tr>>" +
+                //     "<'row'<'col-md-5'i><'col-md-7'p>>",
+            }).rows().iterator('row', function (context, index) {
+                var node = $(this.row(index).node());
+                //node.context is element of tr generated by jQuery DataTables.
+            });
+            // Event listener to the two range filtering inputs to redraw on input
+
+            //$('#DateFrom, #DateTo').change(function () {
+            //    table.draw();
+            //});
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            //$("#DateFrom").datepicker({
+            //    formatDate: "mm/dd/yyyy",
+            //    //todayBtn: 1,
+            //    autoclose: true,
+            //    //todayHighlight: true,
+            //}).on('changeDate', function (selected) {
+            //    var minDate = new Date(selected.date.valueOf());
+            //    $('#DateTo').datepicker('setStartDate', minDate);
+            //});
+
+            //$("#DateTo").datepicker({
+            //    formatDate: "mm/dd/yyyy",
+            //    autoclose: true,
+            //    todayHighlight: true
+            //}).on('changeDate', function (selected) {
+            //    var maxDate = new Date(selected.date.valueOf());
+            //    //$('#DateFrom').datepicker('setEndDate', maxDate);
+            //});
+
+            $('#DateFrom').datepicker('setDate', '@ViewBag.Week');
+            $('#DateTo').datepicker('setDate', '@ViewBag.Date');
+            $('#DateTo,#DateFrom').datepicker('setEndDate', '@ViewBag.Date');
+        });
+
+        $('#DateFrom, #DateTo').change(function () {
+            var Date = $('#DateTo').val();
+            var Week = $('#DateFrom').val();
+
+            if (Date == "" || Week == "") {
+                return false;
+            }
+
+            $.ajax({
+                url: '/Home/InquiryCreatedPR/',
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({
+                    Date: Date,
+                    Week: Week,
+                }),
+                dataType: "json",
+                success: function (data) {
+                    $('#TableItemReceiving').DataTable().clear();
+                    $('#TableItemReceiving').DataTable().destroy();
+                    $('#TableItemReceiving').dataTable({
+                        destroy: true,
+                        order: [[4, "desc"]],
+                        lengthMenu: [[5, 10, 15, 20, 50, -1], [5, 10, 15, 20, 50, "All"]],
+                        data: data,
+                        columns: [
+                            {
+                                data: 'ReferenceNo',
+                                render: function (data,type,row) {
+                                    return '<td class="text-center"><a id="ItemReceiving" href="#">' + data + '</a>' +
+                                    '<input id="PRNo" type="hidden" value="' + row.PRNo + '">' +
+                                    '<input id="ReferenceNo" type="hidden" value="' + row.ReferenceNo + '"></td>'
+                                }
+                            },
+                            { data: 'PRNo' },
+                            { data: 'Responsible' },
+                            { data: 'DateApprovedPR' },
+                            { data: 'DateRequested' },
+                            {
+                                data: 'RequestStatus',
+                                render: function (data, type, row) {
+                                    if (data == "FOR RECEIVING") {
+                                        return '<td><span><i class="label label-danger">' + data + '</i></span></td>'
+                                    }
+                                    else if (data == "INCOMPLETE") {
+                                        return '<td><span><i class="label label-warning">' + data + '</i></span></td>'
+                                    }
+                                    else {
+                                        return '<td><span><i class="label label-success">' + data + '</i></span></td>'
+                                    }
+                                }
+                            }]
+                    })
+                }
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $("#TableItemReceiving").on('click', "#ItemReceiving", function () {
+
+                var row = $(this).closest("tr");
+
+                var PRNo = $("#PRNo", row).val();
+                var ReferenceNo = $("#ReferenceNo", row).val();
+                $("#Central_DisplayPRNo").val(PRNo);
+                $("#Central_DisplayReferenceNo").val(ReferenceNo);
+                $.ajax({
+                    url: '/Home/RetrieveItemRequestPR/',
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        PRNo: PRNo,
+                        ReferenceNo: ReferenceNo
+                    }),
+                    dataType: "json",
+                    success: function (data) {
+                        var TableItemReceiving = $('#TableItemRequestForReceiving tbody');
+                        TableItemReceiving.empty();
+
+                        $(data).each(function (index, data) {
+                            TableItemReceiving.append('<tr><td>' + data.StockNo + '</td><td>' + data.ItemName + '</td><td class="text-center"><label id="ExcessItem" style="font-weight:normal; margin-bottom:unset"></label></td><td class="text-center">' + data.qty
+                                + '</td><td class="text-center">' + data.collected + '</td>'
+                                + '<td style="display:none;"><input type="text" class="form-control" value="' + data.StockNo
+                                + '" id="HiddenStockNo"></td><td style="display:none;"><input type="text" class="form-control" value="' + data.ItemName
+                                + '" id="HiddenItemName"></td><td style="display:none;"><input type="text" class="form-control" value="' + data.qty
+                                + '" id="HiddenQty"></td><td style="display:none;"><input type="text" class="form-control" value="' + data.collected
+                                + '" id="HiddenCollected"></td><td style="display:none;"><input type="text" class="form-control" value="' + data.Number
+                                + '" id="HiddenNumber"></td><td style="display:none;"><input type="text" class="form-control" value="' + data.StockOnHand
+                                + '" id="HiddenRemainingStock"></td></tr>');
+
+                        });
+
+                        $("#TableItemRequestForReceiving tbody tr").each(function () { //Loop through the Table rows
+                            var row = $(this);
+
+                            var qty = parseFloat($("#HiddenQty", row).val());
+                            var collected = parseFloat($("#HiddenCollected", row).val());
+                            if (collected > qty) {
+                                $('#ExcessItem', row).html(collected - qty);
+                                $('#ItemCount', row).attr('disabled', 'disabled');
+                            }
+                            else {
+                                $('#ItemCount', row).attr('placeholder', qty - collected);
+                            }
+
+                        });
+                    }
+                });
+
+                $('#myModal8').modal({
+                    show: 'false',
+                    backdrop: 'static',
+                });
+            })
+
+        })
+
+    </script>
+}
